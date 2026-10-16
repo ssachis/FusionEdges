@@ -1,0 +1,9 @@
+:root { --crust: #8a4b1f; --flour: #fbf7f0; }
+body { margin: 0; font-family: Georgia, serif; background: var(--flour); color: #2b211b; }
+.site-header { display: flex; gap: 16px; align-items: center; padding: 12px 24px; }
+.main-nav a { margin-right: 14px; color: var(--crust); }
+.menu-toggle { display: none; }
+.hero { padding: 64px 24px; background: url(../img/logo.png) right / 120px no-repeat; }
+.btn { background: var(--crust); color: #fff; padding: 10px 18px; border-radius: 4px; text-decoration: none; }
+.site-footer { padding: 24px; border-top: 1px solid #e5d9c9; }
+@media (max-width: 700px) { .menu-toggle { display: block; } .main-nav { display: none; } .main-nav.open { display: block; } }

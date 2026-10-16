@@ -1,0 +1,13 @@
+.navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: transparent; transition: background .2s; }
+.navbar--scrolled { background: #0f172a; box-shadow: 0 2px 12px rgba(0,0,0,.2); }
+.navbar__brand { display: flex; gap: 8px; align-items: center; color: #fff; font-weight: 700; text-decoration: none; }
+.navbar__brand img { width: 28px; }
+.navbar__links { display: flex; gap: 24px; }
+.navbar__links a { color: #cbd5e1; text-decoration: none; }
+.navbar__links a.active { color: #38bdf8; }
+.navbar__toggle { display: none; background: none; border: 0; color: #fff; font-size: 24px; }
+@media (max-width: 768px) {
+  .navbar__toggle { display: block; }
+  .navbar__links { display: none; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; padding: 16px 32px; background: #0f172a; }
+  .navbar__links.is-open { display: flex; }
+}

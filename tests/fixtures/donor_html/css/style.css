@@ -1,0 +1,10 @@
+:root { --primary: #ff4d8d; --gap: 14px; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: Georgia, "Times New Roman", serif; background: #fffaf3; color: #3a2e2e; }
+.top { padding: 16px 32px; border-bottom: 1px solid #eadfce; }
+.intro { padding: 48px 32px 80px; }
+footer a { color: var(--primary); }
+.footer { background: var(--footer-bg, #2b2d42); color: #f1ecec; padding: calc(var(--gap) * 2) 32px; }
+.footer-links { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.footer-links input { padding: 6px 8px; border-radius: 4px; border: 0; }
+@media (max-width: 600px) { .footer-links { flex-direction: column; align-items: flex-start; } }
