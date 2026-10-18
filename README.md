@@ -135,6 +135,22 @@ python3 -m fusionedges run  --source you/my-site --donor someone/next-site --rep
 python3 -m fusionedges run  --source you/next-site --donor someone/react-app --component navbar --report
 ```
 
+## Benchmark (many tasks, comparable results)
+
+Run the same tasks with and without the report and get a paired comparison.
+
+```bash
+# one JSON object per line: id, source, donor, component, optional category
+python3 -m fusionedges bench run --tasks benchmark/tasks.example.jsonl --name pilot --reps 3
+python3 -m fusionedges bench report --name pilot --baseline A     # rebuild the report only
+```
+
+- Conditions: `A` agent alone, `D` agent + report (`--conditions A,D`). Job order is shuffled with `--seed`.
+- Resumable: every finished run is appended to `output/bench/<name>/results.jsonl`; rerun the same command to continue after a crash or rate limit. `--limit N` runs only N jobs.
+- Output in `output/bench/<name>/`: `report.md` (per-condition table, paired differences with bootstrap 95% intervals and an exact sign test, per-category and per-task tables, failed runs), `results.csv`, `summary.json`.
+- Use one provider (`FUSIONEDGES_PROVIDERS=...`) so the comparison is fair; the report warns if runs used different models.
+- Success means the static checks all passed. Browser/runtime checks are not part of the score yet.
+
 ## Tests
 
 ```bash

@@ -1,0 +1,3 @@
+# One task per line. source/donor: GitHub link, owner/repo, or a local folder. category is free text used for grouping.
+{"id": "navbar-next-to-react", "source": "tests/fixtures/host_react", "donor": "tests/fixtures/donor_next", "component": "navbar", "category": "next->react"}
+{"id": "header-react-to-next", "source": "tests/fixtures/next_host", "donor": "tests/fixtures/react_donor", "component": "header", "category": "react->next"}
