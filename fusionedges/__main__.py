@@ -33,7 +33,29 @@ def main(argv=None):
     s.add_argument("--donor", required=True)
     s.add_argument("--no-migration", action="store_true")
     sub.add_parser("providers")
+    b = sub.add_parser("bench", help="run a benchmark of many tasks under several conditions, or report on one")
+    bs = b.add_subparsers(dest="bench_cmd", required=True)
+    br = bs.add_parser("run")
+    br.add_argument("--tasks", required=True, help="manifest: one JSON task per line")
+    br.add_argument("--name", required=True)
+    br.add_argument("--conditions", default="A,D", help="comma-separated condition ids (default A,D)")
+    br.add_argument("--reps", type=int, default=3)
+    br.add_argument("--seed", type=int, default=1)
+    br.add_argument("--limit", type=int, help="run at most this many jobs now (the rest resume later)")
+    bp = bs.add_parser("report")
+    bp.add_argument("--name", required=True)
+    bp.add_argument("--baseline", help="condition to compare against (default: first)")
     a = ap.parse_args(argv)
+
+    if a.cmd == "bench":
+        from . import bench, benchreport
+        out = bench.bench_dir(a.name)
+        if a.bench_cmd == "run":
+            bench.run_bench(a.name, a.tasks, [c.strip() for c in a.conditions.split(",") if c.strip()], a.reps, a.seed,
+                            limit=a.limit)
+        res = benchreport.generate(a.name, out / "results.jsonl", out, getattr(a, "baseline", None), a.seed if a.bench_cmd == "run" else 1)
+        print(f"{res['runs']} runs -> {res['report']}")
+        return 0
 
     if a.cmd == "providers":
         for p in llm.status():
