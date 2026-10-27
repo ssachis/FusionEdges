@@ -268,8 +268,21 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 .rvh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:700 14px var(--sans)}
 .hnote{display:flex;gap:8px;margin-top:12px;align-items:flex-start}
 .hnote textarea{min-height:60px;font-size:13.5px}
+.train{margin-top:10px;background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:14px 18px}
+.fbq{font:700 16px var(--sans);margin-bottom:6px}
+.fbt{font-size:13.5px;margin-bottom:8px}.fbt a{display:inline-block;margin-top:4px;font-size:13px}
+.fbrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.fbbtn{border:2px solid var(--ink);border-radius:10px;background:var(--surface);color:var(--ink);font:700 14px var(--sans);padding:7px 14px;cursor:pointer}
+.fbbtn.yes:hover{background:var(--ok-soft)}.fbbtn.no:hover{background:var(--bad-soft)}
+.fbbtn:disabled{opacity:.5;cursor:default}
+.fbnote{flex:1;min-width:200px;font:inherit;font-size:13.5px;color:var(--ink);background:var(--sunk);border:2px solid transparent;border-radius:10px;padding:7px 10px}
+.fbnote:focus{border-color:var(--ink);outline:none;background:var(--surface)}
+.fbl{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--muted);margin-top:8px}
+.fbdone{font-size:14px;color:var(--ok)}
+.fb.mini{white-space:nowrap}.fb.mini .fbbtn{padding:3px 8px;font-size:13px;margin:4px 4px 0 0}
+.yesno a{color:inherit}
 .yesno{display:flex;gap:18px;align-items:center;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:14px 18px;box-shadow:4px 4px 0 var(--ink)}
-.yesno:hover{background:var(--sunk)}
+
 .yesno b{font:700 34px/1 var(--display);flex:none}
 .yesno.improved b{color:var(--ok)}.yesno.worse b{color:var(--bad)}.yesno.inconclusive b,.yesno.nochange b{color:var(--warn)}
 .yesno span{font-size:15px}
@@ -813,7 +826,7 @@ const VCLS = v => (v || "").replace(" ", "");
 function reviewHtml(rv){
   if (!rv) return "";
   const list = (t, xs) => xs && xs.length ? `<div class="tag" style="margin-top:6px"><b>${t}:</b> ${xs.map(esc).join(" · ")}</div>` : "";
-  return `<div class="review"><div class="rvh">Code review by ${esc(rv.reviewer)} <span class="vpill ${VCLS(rv.verdict)}">${esc(rv.verdict)}</span><span class="tag">${esc((rv.created || "").replace("T", " ").slice(0, 16))}</span></div>
+  return `<div class="review"><div class="rvh">Review by ${esc(rv.reviewer)} <span class="vpill ${VCLS(rv.verdict)}">${esc(rv.verdict)}</span><span class="tag">${esc((rv.created || "").replace("T", " ").slice(0, 16))}</span></div>
     <p>${esc(rv.summary)}</p>
     ${rv.prompt_run_notes ? `<p class="tag"><b>Agent alone:</b> ${esc(rv.prompt_run_notes)}</p>` : ""}
     ${rv.report_run_notes ? `<p class="tag"><b>With report:</b> ${esc(rv.report_run_notes)}</p>` : ""}
@@ -833,9 +846,14 @@ async function loadVerdict(a, b, treatedMode){
         <table class="adh"><thead><tr><th>Report item</th><th>${modeName(treatedMode)}</th><th>Agent alone</th></tr></thead><tbody>
         ${items.map(it => `<tr><td>${esc(it.title)}<small>${esc(it.instruction)}</small></td><td>${st(it.report_run)}</td><td>${st(it.agent_alone)}</td></tr>`).join("")}
         </tbody></table><p class="tag" style="margin-top:6px">Automatic: markers from each instruction (identifiers, classes, packages) are looked for in the lines each run added. Check by hand before you rely on it.</p></details>` : ""}
+      <div id="fbbox" style="margin-top:12px"></div>
       <div class="hnote"><textarea id="hnote" placeholder="Your note on this comparison (saved in runs.db)">${esc(c.human_note || "")}</textarea>
         <button class="ghost" id="hsave">Save note</button></div>
     </div>`;
+  fetch("/api/analysis").then(r => r.json()).then(an => {
+    const row = an.rows.find(x => x.id === c.id), fb = $("#fbbox");
+    if (row && fb) { fb.innerHTML = feedbackForm({...row, task: "", review_summary: ""}, "Your answer: did the report help here?"); wireFeedback(fb, () => loadVerdict(a, b, treatedMode)); }
+  }).catch(() => {});
   $("#hsave").onclick = async e => {
     await fetch("/api/compare", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({id: c.id, note: $("#hnote").value})});
     e.target.textContent = "Saved"; setTimeout(() => e.target.textContent = "Save note", 1500); loadExperiments();
@@ -844,13 +862,43 @@ async function loadVerdict(a, b, treatedMode){
 }
 
 async function loadExperiments(){
-  // the front page answers one question (stored in runs.db); the Analysis tab has the details
+  // the front page answers one question (stored in runs.db) and asks you to help label the next comparison
   const box = $("#experiments"); if (!box) return;
   let a; try { a = await (await fetch("/api/analysis")).json(); } catch(e){ return; }
   const ans = a.answer || {answer: "not yet", reason: ""};
   const label = {yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[ans.answer] || ans.answer;
   const cls = {yes: "improved", no: "worse"}[ans.answer] || "inconclusive";
-  box.innerHTML = `<a class="yesno ${cls}" href="#analysis"><b>${esc(label)}</b><span>${esc(ans.reason)}<small>Pilot numbers · see the analysis →</small></span></a>`;
+  const next = (a.waiting || [])[0], row = next && a.rows.find(r => r.id === next.id);
+  box.innerHTML = `<div class="yesno ${cls}"><b>${esc(label)}</b><span>${esc(ans.reason)}<small>Pilot numbers · <a href="#analysis">see the analysis →</a></small></span></div>
+    ${row ? `<div class="train">${feedbackForm(row, `Help train it (${a.waiting.length} waiting): did the report help here?`)}</div>`
+          : a.rows.length ? '<p class="tag" style="margin:8px 2px 0">You have answered every comparison. Thanks — each answer trains the next report.</p>' : ""}`;
+  wireFeedback(box, loadExperiments);
+}
+
+/* Yes / No on one comparison: stored in runs.db (feedback), outranks the automatic and reviewed verdicts */
+function feedbackForm(r, question){
+  const said = r.your_answer ? `<span class="tag">You said <b>${esc(r.your_answer)}</b>${r.your_note ? `: “${esc(r.your_note)}”` : ""} · change it:</span>` : "";
+  return `<div class="fb" data-id="${esc(r.id)}">
+    <div class="fbq">${esc(question)}</div>
+    ${r.task ? `<div class="fbt"><b>${esc(r.task)}</b> · ${esc(r.component || "")} · checks ${esc(r.score_alone || "–")} → ${esc(r.score_report || "–")}
+      ${r.review_summary ? `<div class="tag" style="margin-top:4px">${esc(r.review_summary.length > 220 ? r.review_summary.slice(0, 220) + "…" : r.review_summary)}</div>` : ""}
+      <a href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Look at both diffs first →</a></div>` : ""}
+    ${said}
+    <div class="fbrow"><button type="button" class="fbbtn yes" data-h="yes">👍 Yes</button><button type="button" class="fbbtn no" data-h="no">👎 No</button>
+      <input type="text" class="fbnote" placeholder="Optional: what made the difference?" aria-label="What made the difference">
+    </div>
+    <label class="fbl"><input type="checkbox" class="fblesson"> Teach future reports this (your note becomes a lesson)</label>
+  </div>`;
+}
+function wireFeedback(root, after){
+  root.querySelectorAll(".fb").forEach(f => f.querySelectorAll(".fbbtn").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const r = await fetch("/api/feedback", {method: "POST", headers: {"content-type": "application/json"},
+      body: JSON.stringify({id: f.dataset.id, helped: b.dataset.h, note: f.querySelector(".fbnote").value, as_lesson: f.querySelector(".fblesson").checked})});
+    if (!r.ok) { b.disabled = false; alert((await r.json()).error || "Could not save"); return; }
+    f.innerHTML = `<div class="fbdone">Saved: <b>${b.dataset.h === "yes" ? "yes, it helped" : "no, it didn't"}</b>. Thanks — this trains the next report.</div>`;
+    setTimeout(after, 900);
+  }));
 }
 
 
@@ -894,7 +942,7 @@ async function loadAnalysis(exp){
       <div class="tile"><span>Crashes on scroll (browser)</span><b>${s.scroll_errors_alone} <span style="font-size:15px;color:var(--muted)">A</span> · ${s.scroll_errors_report} <span style="font-size:15px;color:var(--muted)">D</span></b><small>pages that threw when scrolled</small></div>
       <div class="tile"><span>Tokens per run</span><b>${(s.tokens_report || 0).toLocaleString()}</b><small>with the report, vs ${(s.tokens_alone || 0).toLocaleString()} alone (${pct(s.tokens_report, s.tokens_alone)})</small></div>
     </div>
-    <table class="antable"><thead><tr><th>Task</th><th>Same model</th><th>Checks A → D</th><th>Automatic</th><th>Reviewed</th><th>Browser A</th><th>Browser D</th><th></th></tr></thead><tbody>
+    <table class="antable"><thead><tr><th>Task</th><th>Same model</th><th>Checks A → D</th><th>Automatic</th><th>Reviewed</th><th>Browser A</th><th>Browser D</th><th>You</th><th></th></tr></thead><tbody>
     ${a.rows.map((r, i) => `<tr class="anrow${r.same_model ? " fair" : ""}">
       <td class="t"><b>${esc(r.task)}</b><small>${esc(r.component)} · condition ${esc(r.condition)}</small></td>
       <td data-l="Same model">${r.same_model ? "yes" : `<span class="tag" title="${esc(r.models_alone.join(", "))} vs ${esc(r.models_report.join(", "))}">no</span>`}</td>
@@ -903,8 +951,9 @@ async function loadAnalysis(exp){
       <td data-l="Reviewed">${vpill(r.reviewed_verdict)}</td>
       <td data-l="Browser A" class="bw">${bwCell(r.browser_alone)}</td>
       <td data-l="Browser D" class="bw">${bwCell(r.browser_report)}</td>
+      <td data-l="Did it help? (you)"><div class="fb mini" data-id="${esc(r.id)}">${r.your_answer ? `<span class="vpill ${r.your_answer === "yes" ? "improved" : "worse"}">${esc(r.your_answer)}</span><br>` : ""}<button type="button" class="fbbtn yes" data-h="yes" title="Yes, the report helped">👍</button><button type="button" class="fbbtn no" data-h="no" title="No, it didn't">👎</button><input type="hidden" class="fbnote" value=""><input type="checkbox" class="fblesson" hidden></div></td>
       <td><a class="ghost" style="padding:5px 10px;font-size:13px" href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Diff</a></td></tr>
-      ${r.review_summary ? `<tr class="more"><td colspan="8"><b>Review:</b> ${esc(r.review_summary)}</td></tr>` : ""}`).join("")}
+      ${r.review_summary ? `<tr class="more"><td colspan="9"><b>Review:</b> ${esc(r.review_summary)}</td></tr>` : ""}`).join("")}
     </tbody></table>
     <p class="tag">Green edge: both runs used the same model. Pairs that mixed models count only as context.</p>
     <div class="twocol" style="margin-top:16px">
@@ -915,6 +964,7 @@ async function loadAnalysis(exp){
       ${a.lessons.map(l => `<div class="lesson"><span class="kind ${l.kind === "do" ? "do" : "avoid"}">${l.kind === "do" ? "Do" : "Avoid"}</span>${esc(l.text)} <span class="tag">· ${esc(l.trust)} · from ${esc(l.task)}</span></div>`).join("") || '<p class="tag">No lessons yet.</p>'}</div>
     <p class="method"><b>How to read this.</b> Automatic verdicts come from static checks (build, rendered, script selectors, packages). Reviewed verdicts come from reading the diff and opening the page in Chromium at 1280px and 390px; when they differ, the review wins. Small numbers: treat this as a pilot, not a result.</p>`;
   $("#anExp").onchange = e => loadAnalysis(e.target.value);
+  wireFeedback(box, () => loadAnalysis(a.experiment));
 }
 
 /* #run=<id> and #compare=<a>,<b> are linkable */

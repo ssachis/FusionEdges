@@ -174,6 +174,7 @@ def analysis(experiment: str = "") -> dict:
             "fair": _fair(c.get("fair")) if c.get("fair") is not None else None,
             "helped": c.get("helped") or compare.helped(c["verdict"], rv.get("verdict"))[0],
             "helped_basis": c.get("helped_basis"),
+            "your_answer": (c.get("feedback") or {}).get("helped"), "your_note": (c.get("feedback") or {}).get("note"),
             "id": c["id"], "experiment": c["experiment"], "condition": c.get("condition") or "D",
             "task": f"{c['source'].split('/')[-1]} ← {c['donor'].split('/')[-1]}", "source": c["source"], "donor": c["donor"],
             "component": c["component"], "prompt_run": c["prompt_run"], "report_run": c["report_run"],
@@ -196,14 +197,12 @@ def analysis(experiment: str = "") -> dict:
             side = "report run" if f.lower().startswith("report") else "agent alone" if f.lower().startswith("agent") else "pair"
             kind = f.split(":", 1)[1].split("(")[0].split(" - ")[0].strip() if ":" in f else f
             cats[(side, kind)] += 1
+    ids = {x["id"] for x in rows}
     lessons, seen = [], set()
-    for x in rows:
-        for l in x["lessons"]:
-            t = l.get("text") if isinstance(l, dict) else l
-            if t and t not in seen:
-                seen.add(t)
-                lessons.append({**(l if isinstance(l, dict) else {"text": l}), "task": x["task"],
-                                "trust": "AI-reviewed" if (x["reviewer"] or "").lower().startswith("claude") else "human-reviewed"})
+    for l in compare.lessons():          # same rule as the memory: latest review + every lesson people gave
+        if l["comparison"] in ids and l.get("text") not in seen:
+            seen.add(l.get("text"))
+            lessons.append({**l, "task": next(x["task"] for x in rows if x["id"] == l["comparison"])})
     tok = [(x["tokens_alone"], x["tokens_report"]) for x in rows if x["tokens_alone"] and x["tokens_report"]]
     with store.connect() as db:
         exps = [e[0] for e in db.execute("SELECT DISTINCT experiment FROM comparisons WHERE experiment<>'' ORDER BY 1")]
@@ -213,6 +212,8 @@ def analysis(experiment: str = "") -> dict:
             x["fair"] = x["same_model"]
     return {
         "answer": answer(rows),
+        "waiting": [{"id": x["id"], "prompt_run": x["prompt_run"], "report_run": x["report_run"], "task": x["task"]}
+                    for x in sorted(rows, key=lambda x: not x["fair"]) if not x["your_answer"]],   # fair pairs first
         "experiments": exps, "experiment": experiment, "rows": rows,
         "summary": {
             "pairs": len(rows), "fair_pairs": len(fair), "reviewed": sum(1 for x in rows if x["reviewed_verdict"]),

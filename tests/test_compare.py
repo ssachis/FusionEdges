@@ -233,3 +233,44 @@ class FairTextTest(Base):
         from fusionedges.records import answer
         rows = [{"fair": "0", "helped": "no", "final": "worse"}, {"fair": "1", "helped": "yes", "final": "improved"}]
         self.assertIn("1 of 1 fair comparison", answer(rows)["reason"])
+
+
+class FeedbackTest(Base):
+    def test_a_persons_answer_outranks_and_trains(self):
+        from fusionedges import records
+        a = CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        cid = d["comparison"]
+        self.assertEqual(compare.get(cid)["helped"], "yes")                     # automatic
+        an = records.analysis()
+        self.assertEqual([w["id"] for w in an["waiting"]], [cid])               # waiting for a person
+        compare.add_feedback(cid, "no", "the links vanish on desktop", as_lesson=True, user="Sachi")
+        c = compare.get(cid)
+        self.assertEqual((c["helped"], c["helped_basis"]), ("no", "user"))
+        self.assertEqual(c["feedback"]["note"], "the links vanish on desktop")
+        self.assertEqual(records.analysis()["waiting"], [])
+        compare.add_review(cid, "Claude", "improved", "later review")           # a review does not overwrite the person
+        self.assertEqual(compare.get(cid)["helped"], "no")
+        compare.record(a["id"], d["id"])                                        # neither does re-recording
+        self.assertEqual(compare.get(cid)["helped"], "no")
+        ls = compare.lessons()                                                  # the note became a human-reviewed lesson
+        mine = [l for l in ls if l["text"] == "the links vanish on desktop"]
+        self.assertEqual(len(mine), 1)                        # still used after a later AI review
+        self.assertEqual((mine[0]["trust"], mine[0]["kind"]), ("human-reviewed", "avoid"))
+        compare.add_feedback(cid, "yes")                                        # changing your mind keeps history
+        self.assertEqual(compare.get(cid)["helped"], "yes")
+        self.assertEqual([f["helped"] for f in compare.feedback_for(cid)], ["no", "yes"])
+        with self.assertRaises(ValueError):
+            compare.add_feedback(cid, "maybe")
+
+
+class WaitingOrderTest(Base):
+    def test_fair_pairs_are_asked_first_and_lessons_add_up(self):
+        from fusionedges import records
+        CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        cid = d["comparison"]
+        compare.add_review(cid, "Claude", "improved", "r", lessons=[{"kind": "do", "text": "AI lesson"}])
+        compare.add_feedback(cid, "yes", "my lesson", as_lesson=True)
+        texts = {l["text"] for l in records.analysis()["lessons"]}
+        self.assertEqual(texts, {"AI lesson", "my lesson"})      # the person's lesson is added, not swapped in

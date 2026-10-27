@@ -36,6 +36,10 @@ CREATE TABLE IF NOT EXISTS experiments (
   name TEXT, date TEXT, task_file TEXT, writeup TEXT, reviews TEXT, browser_dir TEXT, git_commit TEXT,
   note TEXT, created TEXT, answer TEXT, answer_reason TEXT, answered_at TEXT, PRIMARY KEY (name, date)
 );
+CREATE TABLE IF NOT EXISTS feedback (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, comparison_id TEXT, created TEXT, user TEXT, helped TEXT, note TEXT,
+  as_lesson INTEGER
+);
 CREATE TABLE IF NOT EXISTS conflicts (
   run_id TEXT, cid TEXT, type TEXT, severity TEXT, confidence TEXT, basis TEXT, citation TEXT,
   title TEXT, impact TEXT, adaptation TEXT, evidence TEXT, source_framework TEXT, donor_framework TEXT,

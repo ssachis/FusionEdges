@@ -222,6 +222,12 @@ class Handler(BaseHTTPRequestHandler):
             busy = RUN_LOCK.locked()
             threading.Thread(target=_worker, args=(job, params), daemon=True).start()
             return self._json({"id": job.id, "queued": busy})
+        if self.path == "/api/feedback":
+            try:
+                return self._json(compare.add_feedback(str(params.get("id", "")), str(params.get("helped", "")),
+                                                       str(params.get("note", ""))[:2000], bool(params.get("as_lesson"))))
+            except ValueError as e:
+                return self._json({"error": str(e)}, 400)
         if self.path == "/api/compare":
             try:
                 if "note" in params and params.get("id"):

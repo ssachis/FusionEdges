@@ -198,6 +198,9 @@ def record(prompt_id: str, report_id: str, experiment: str = "", human_note: str
     row["fair"] = int(bool(mp) and mp == mr)
     last = (reviews_for(cid) or [None])[-1] if old else None
     row["helped"], row["helped_basis"] = helped(j["verdict"], (last or {}).get("verdict"))
+    fb = feedback_for(cid) if old else []
+    if fb:                                       # a person's answer outranks the review and the automatic verdict
+        row["helped"], row["helped_basis"] = fb[-1]["helped"], "user"
     with connect() as db:
         db.execute(f"INSERT OR REPLACE INTO comparisons ({','.join(COLS)}) VALUES ({','.join('?' * len(COLS))})",
                    [json.dumps(row[c]) if c in JSON_COLS else row[c] for c in COLS])
@@ -211,6 +214,11 @@ def _row(r) -> dict:
     except Exception:
         rv = []
     d["review"] = rv[-1] if rv else None
+    try:
+        fb = feedback_for(d["id"])
+    except Exception:
+        fb = []
+    d["feedback"] = fb[-1] if fb else None
     for c in JSON_COLS:
         try:
             d[c] = json.loads(d[c]) if d.get(c) else []
@@ -277,13 +285,40 @@ def auto_pair(rec: dict, log=lambda m: None):
 REVIEW_JSON = ("prompt_run_notes", "report_run_notes", "failure_categories", "check_errors", "lessons")
 
 
+def feedback_for(comparison_id: str) -> list:
+    with connect() as db:
+        db.row_factory = sqlite3.Row
+        return [dict(r) for r in db.execute("SELECT * FROM feedback WHERE comparison_id=? ORDER BY id", (comparison_id,))]
+
+
+def add_feedback(comparison_id: str, helped_: str, note: str = "", as_lesson: bool = False, user: str = "you") -> dict:
+    """A person answers 'did the report help here?'. Kept as history; the newest answer sets comparisons.helped.
+    With as_lesson and a note, the note also becomes a human-reviewed lesson that condition E retrieves."""
+    if helped_ not in ("yes", "no"):
+        raise ValueError("answer yes or no")
+    if not get(comparison_id):
+        raise ValueError("unknown comparison")
+    note = (note or "").strip()
+    if as_lesson and note:
+        add_review(comparison_id, f"{user} (feedback)", "improved" if helped_ == "yes" else "no change",
+                   f"{user.capitalize()} answered {helped_}: {note}",
+                   lessons=[{"kind": "do" if helped_ == "yes" else "avoid", "topic": "feedback", "text": note,
+                             "evidence": f"{user} answered '{helped_}' after looking at this comparison"}])
+    with connect() as db:
+        db.execute("INSERT INTO feedback (comparison_id, created, user, helped, note, as_lesson) VALUES (?,?,?,?,?,?)",
+                   (comparison_id, store.now_iso(), user, helped_, note, int(bool(as_lesson and note))))
+        db.execute("UPDATE comparisons SET helped=?, helped_basis='user' WHERE id=?", (helped_, comparison_id))
+    return get(comparison_id)
+
+
 def add_review(comparison_id: str, reviewer: str, verdict: str, summary: str, **notes) -> dict:
     """A reviewer's verdict after reading the code (can differ from the automatic one). Kept as history, never overwritten."""
     if verdict not in ("improved", "no change", "worse", "inconclusive"):
         raise ValueError("verdict must be improved, no change, worse or inconclusive")
     with connect() as db:
         h, basis = helped("", verdict)
-        db.execute("UPDATE comparisons SET helped=?, helped_basis=? WHERE id=?", (h, basis, comparison_id))
+        db.execute("UPDATE comparisons SET helped=?, helped_basis=? WHERE id=? AND COALESCE(helped_basis,'')<>'user'",
+                   (h, basis, comparison_id))
         db.execute("INSERT INTO reviews (comparison_id, created, reviewer, verdict, summary, prompt_run_notes, "
                    "report_run_notes, failure_categories, check_errors, lessons) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (comparison_id, store.now_iso(), reviewer, verdict, summary,
@@ -334,17 +369,24 @@ def lessons(exclude_task=None) -> list:
     """Every lesson from the latest review of each comparison, with where it came from."""
     out = []
     for c in all_rows():
-        rv = c.get("review")
-        if not rv or not rv.get("lessons"):
-            continue
         if exclude_task and (c["source"], c["donor"], (c["component"] or "").lower()) == exclude_task:
             continue
-        human = not (rv.get("reviewer") or "").lower().startswith("claude")
-        for l in rv["lessons"]:
-            if isinstance(l, str):
-                l = {"text": l}
-            out.append({**l, "comparison": c["id"], "task": f"{c['source']} <- {c['donor']} ({c['component']})",
-                        "frameworks": f"{c['source_framework']} <- {c['donor_framework']}", "component": c["component"] or "",
-                        "review_verdict": rv["verdict"], "reviewer": rv.get("reviewer"),
-                        "trust": "human-reviewed" if human else "AI-reviewed"})
+        hist = reviews_for(c["id"])
+        # the latest review speaks for the comparison; lessons people gave as feedback always count
+        fb = [r for r in hist if (r.get("reviewer") or "").endswith("(feedback)")]
+        other = [r for r in hist if r not in fb]
+        use = other[-1:] + fb
+        seen = set()
+        for rv in use:
+            human = not (rv.get("reviewer") or "").lower().startswith("claude")
+            for l in rv.get("lessons") or []:
+                if isinstance(l, str):
+                    l = {"text": l}
+                if l.get("text") in seen:
+                    continue
+                seen.add(l.get("text"))
+                out.append({**l, "comparison": c["id"], "task": f"{c['source']} <- {c['donor']} ({c['component']})",
+                            "frameworks": f"{c['source_framework']} <- {c['donor_framework']}", "component": c["component"] or "",
+                            "review_verdict": rv["verdict"], "reviewer": rv.get("reviewer"),
+                            "trust": "human-reviewed" if human else "AI-reviewed"})
     return out
