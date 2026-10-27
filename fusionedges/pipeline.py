@@ -250,6 +250,11 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
             if not seen.get("skipped"):
                 records.save_browser(run_id, seen)
                 log("[browser] final check: " + ("works at desktop and phone width" if seen["pass"] else "; ".join(seen["problems"])))
+                if seen["problems"]:
+                    from . import lessons_auto
+                    drafts = lessons_auto.store_drafts({**rec, "facts": sc["facts"]}, seen["problems"])
+                    for d in drafts:
+                        log(f"[lessons] proposed ({d['cause']}): {d['text'][:110]}")
         if component:
             rec["checks"] = component_checks(source.path, project, component, build, sc["source"]["framework"],
                                                donor=donor.path, facts=sc["facts"], browser=seen)

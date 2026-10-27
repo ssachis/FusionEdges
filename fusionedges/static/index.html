@@ -269,6 +269,10 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 .rvh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:700 14px var(--sans)}
 .hnote{display:flex;gap:8px;margin-top:12px;align-items:flex-start}
 .hnote textarea{min-height:60px;font-size:13.5px}
+.plh{font:700 14px var(--sans);margin:14px 0 4px;padding-top:12px;border-top:1px solid var(--line)}
+.pl{border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px;font-size:13.5px}
+.pl.kept{border-color:var(--ok)}.pl.discarded{opacity:.6}
+.plb{display:flex;gap:8px;align-items:center;margin-top:8px}.plb .fbbtn{padding:4px 12px;font-size:13px}
 .train{margin-top:10px;background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:14px 18px}
 .fbq{font:700 16px var(--sans);margin-bottom:6px}
 .fbt{font-size:13.5px;margin-bottom:8px}.fbt a{display:inline-block;margin-top:4px;font-size:13px}
@@ -900,7 +904,8 @@ async function askAboutRun(rec){
   const row = a.rows.find(r => r.prompt_run === rec.id || r.report_run === rec.id);
   if ($("#askbox") !== box) return;
   if (!row) {
-    box.innerHTML = `<p class="tag" style="margin:12px 0 0">To find out whether the report helps, run the same task in the ${rec.mode === "prompt" ? "Agent + report" : "Agent alone"} tab too.</p>`;
+    box.innerHTML = `<p class="tag" style="margin:12px 0 0">To find out whether the report helps, run the same task in the ${rec.mode === "prompt" ? "Agent + report" : "Agent alone"} tab too.</p><div id="lessonbox"></div>`;
+    loadProposed([rec.id]);
     return;
   }
   const said = row.your_answer ? ` <span class="tag">You said <b>${esc(row.your_answer)}</b> · change it:</span>` : "";
@@ -909,8 +914,30 @@ async function askAboutRun(rec){
     <div class="fbt"><a href="#compare=${encodeURIComponent(row.prompt_run)},${encodeURIComponent(row.report_run)}">Compare it with the ${rec.mode === "prompt" ? "report" : "agent-alone"} run →</a></div>
     <div class="fbrow"><button type="button" class="fbbtn yes" data-h="yes">👍 Yes</button><button type="button" class="fbbtn no" data-h="no">👎 No</button>
       <input type="text" class="fbnote" placeholder="Optional: why?" aria-label="Why (optional)"></div>
-    <input type="checkbox" class="fblesson" hidden></div></div>`;
+    <input type="checkbox" class="fblesson" hidden></div><div id="lessonbox"></div></div>`;
   wireFeedback(box, () => askAboutRun(rec));
+  loadProposed([row.prompt_run, row.report_run]);
+}
+
+/* lessons drafted from what the browser saw; a person keeps or discards each one */
+const CAUSE = {"report advice": "the report's advice caused this", "not in the report": "the report did not warn about this",
+               "agent alone": "the agent without the report did this"};
+async function loadProposed(ids){
+  const box = $("#lessonbox"); if (!box) return;
+  let j; try { j = await (await fetch("/api/lessons/" + ids.map(encodeURIComponent).join(","))).json(); } catch(e){ return; }
+  if (!j.lessons || !j.lessons.length || $("#lessonbox") !== box) return;
+  box.innerHTML = `<div class="plh">Lessons the browser check suggests <span class="tag">· kept ones teach future reports</span></div>` +
+    j.lessons.map(l => `<div class="pl ${esc(l.status)}" data-id="${l.id}">
+      <div><span class="kind ${l.kind === "do" ? "do" : "avoid"}">${l.kind === "do" ? "Do" : "Avoid"}</span>${esc(l.text)}</div>
+      <div class="tag" style="margin-top:4px">Seen: ${esc(l.evidence)} · ${esc(CAUSE[l.cause] || l.cause)}${l.mode === "prompt" ? " (agent-alone run)" : ""}</div>
+      <div class="plb">${l.status === "proposed"
+        ? `<button type="button" class="fbbtn yes" data-s="kept">Keep</button><button type="button" class="fbbtn no" data-s="discarded">Discard</button>`
+        : `<span class="vpill ${l.status === "kept" ? "improved" : "nochange"}">${esc(l.status)}</span> <button type="button" class="linkbtn" data-s="proposed">undo</button>`}</div></div>`).join("");
+  box.querySelectorAll(".pl button").forEach(b => b.onclick = async () => {
+    const id = +b.closest(".pl").dataset.id;
+    const r = await fetch("/api/lesson", {method: "POST", headers: {"content-type": "application/json"}, body: JSON.stringify({id, status: b.dataset.s})});
+    if (r.ok) loadProposed(ids); else alert((await r.json()).error || "Could not save");
+  });
 }
 
 /* Yes / No on one comparison: stored in runs.db (feedback), outranks the automatic and reviewed verdicts */

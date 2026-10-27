@@ -198,11 +198,14 @@ def analysis(experiment: str = "") -> dict:
             kind = f.split(":", 1)[1].split("(")[0].split(" - ")[0].strip() if ":" in f else f
             cats[(side, kind)] += 1
     ids = {x["id"] for x in rows}
+    by_run = {rid: x for x in rows for rid in (x["prompt_run"], x["report_run"])}
     lessons, seen = [], set()
-    for l in compare.lessons():          # same rule as the memory: latest review + every lesson people gave
-        if l["comparison"] in ids and l.get("text") not in seen:
+    for l in compare.lessons():          # same rule as the memory: latest review, lessons people gave, kept drafts
+        c = l["comparison"]
+        row = next((x for x in rows if x["id"] == c), None) or by_run.get(c[4:] if c.startswith("run:") else "")
+        if row and l.get("text") not in seen:
             seen.add(l.get("text"))
-            lessons.append({**l, "task": next(x["task"] for x in rows if x["id"] == l["comparison"])})
+            lessons.append({**l, "task": row["task"]})
     tok = [(x["tokens_alone"], x["tokens_report"]) for x in rows if x["tokens_alone"] and x["tokens_report"]]
     with store.connect() as db:
         exps = [e[0] for e in db.execute("SELECT DISTINCT experiment FROM comparisons WHERE experiment<>'' ORDER BY 1")]

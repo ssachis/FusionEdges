@@ -274,3 +274,51 @@ class WaitingOrderTest(Base):
         compare.add_feedback(cid, "yes", "my lesson", as_lesson=True)
         texts = {l["text"] for l in records.analysis()["lessons"]}
         self.assertEqual(texts, {"AI lesson", "my lesson"})      # the person's lesson is added, not swapped in
+
+
+class ProposedLessonsTest(Base):
+    def test_drafts_causes_and_keep(self):
+        from fusionedges import lessons_auto, memory
+        rep_rec = {"id": "r1", "mode": "report", "source": {"label": "me/site"}, "donor": {"label": "you/donor"},
+                   "options": {"component": "navbar"}, "source_framework": "react-cra", "donor_framework": "next",
+                   "facts": [{"kind": "styling-system"}],
+                   "report": {"conflicts": [{"title": "Tailwind missing", "adaptation": "Convert the classes to inline styles."}]}}
+        d = lessons_auto.draft(rep_rec, ["On desktop (1280px) 5 of the navbar's links are hidden (Home, About); only ☰ is visible."])
+        self.assertEqual((d[0]["topic"], d[0]["cause"]), ("tailwind-responsive", "report advice"))   # the report misled
+        alone = {**rep_rec, "id": "a1", "mode": "prompt", "report": None}
+        d2 = lessons_auto.draft(alone, ["On desktop (1280px) the navbar is 212px tall: it is probably unstyled.",
+                                        "On phone (390px) the navbar is 212px tall: it is probably unstyled."])
+        self.assertEqual(len(d2), 1)                                                   # one lesson per pattern
+        self.assertEqual(d2[0]["cause"], "agent alone")
+        crash = lessons_auto.draft({**alone, "facts": []}, ["On desktop the page throws while scrolling: pageerror: x is undefined"])
+        self.assertEqual(crash[0]["topic"], "runtime-error")                           # no script fact: generic lesson
+        lessons_auto.store_drafts(rep_rec, ["On desktop (1280px) 5 of the navbar's links are hidden (Home); only ☰ is visible."])
+        lessons_auto.store_drafts(rep_rec, ["On desktop (1280px) 5 of the navbar's links are hidden (Home); only ☰ is visible."])
+        rows = lessons_auto.for_runs(["r1"])
+        self.assertEqual(len(rows), 1)                                                 # not drafted twice
+        self.assertEqual(rows[0]["status"], "proposed")
+        self.assertEqual(compare.lessons(), [])                                        # proposed: not used yet
+        lessons_auto.decide(rows[0]["id"], "kept")
+        got = compare.lessons()
+        self.assertEqual(len(got), 1)
+        self.assertEqual(got[0]["trust"], "human-reviewed")
+        self.assertEqual(compare.lessons(exclude_task=("me/site", "you/donor", "navbar")), [])   # leakage guard
+        sc = {"source": {"framework": "react-cra"}, "donor": {"framework": "next"}, "facts": [{"kind": "styling-system", "text": "tailwind"}]}
+        self.assertTrue(memory.review_lessons(sc, "navbar", ("other/site", "you/donor", "navbar")))  # reaches condition E
+        lessons_auto.decide(rows[0]["id"], "discarded")
+        self.assertEqual(compare.lessons(), [])
+        with self.assertRaises(ValueError):
+            lessons_auto.decide(rows[0]["id"], "maybe")
+
+
+class KeptInAnalysisTest(Base):
+    def test_kept_browser_lessons_show_in_the_analysis(self):
+        from fusionedges import lessons_auto, records
+        CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        rec = store.load(d["id"])
+        lessons_auto.store_drafts(rec, ["On desktop (1280px) the navbar is 212px tall: it is probably unstyled."])
+        lid = lessons_auto.for_runs([d["id"]])[0]["id"]
+        self.assertNotIn("unstyled", " ".join(l["text"] for l in records.analysis()["lessons"]))
+        lessons_auto.decide(lid, "kept")
+        self.assertIn("unstyled", " ".join(l["text"] for l in records.analysis()["lessons"]))

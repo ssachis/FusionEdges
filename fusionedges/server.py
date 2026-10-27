@@ -165,6 +165,10 @@ class Handler(BaseHTTPRequestHandler):
                            "new": sum(f["status"] == "added" for f in saved), "changed": sum(f["status"] == "modified" for f in saved),
                            "deleted": sum(f["status"] == "deleted" for f in saved)}}
             return self._json(res)
+        if p.startswith("/api/lessons/"):
+            from . import lessons_auto
+            ids = urllib.parse.unquote(p.rsplit("/", 1)[1]).split(",")
+            return self._json({"lessons": lessons_auto.for_runs(ids)})
         if p.startswith("/api/browser/"):
             from . import records
             return self._json({"checks": records.browser_for(urllib.parse.unquote(p.rsplit("/", 1)[1]))})
@@ -222,6 +226,12 @@ class Handler(BaseHTTPRequestHandler):
             busy = RUN_LOCK.locked()
             threading.Thread(target=_worker, args=(job, params), daemon=True).start()
             return self._json({"id": job.id, "queued": busy})
+        if self.path == "/api/lesson":
+            from . import lessons_auto
+            try:
+                return self._json(lessons_auto.decide(int(params.get("id", 0)), str(params.get("status", ""))))
+            except (ValueError, TypeError) as e:
+                return self._json({"error": str(e)}, 400)
         if self.path == "/api/feedback":
             try:
                 return self._json(compare.add_feedback(str(params.get("id", "")), str(params.get("helped", "")),

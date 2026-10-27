@@ -389,4 +389,9 @@ def lessons(exclude_task=None) -> list:
                             "frameworks": f"{c['source_framework']} <- {c['donor_framework']}", "component": c["component"] or "",
                             "review_verdict": rv["verdict"], "reviewer": rv.get("reviewer"),
                             "trust": "human-reviewed" if human else "AI-reviewed"})
+    try:    # lessons drafted from browser problems that a person kept
+        from . import lessons_auto
+        out += lessons_auto.kept(exclude_task)
+    except Exception:
+        pass
     return out
