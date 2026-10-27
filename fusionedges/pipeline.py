@@ -19,7 +19,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import paths, rag, store
+from . import compare, diffs, memory, paths, rag, store
 from .agents import fit_to_limit, report_markdown, run_edit_agent, run_oneshot, run_report_agent
 from .checks import component_checks, run_checks
 from .repos import fetch
@@ -125,6 +125,9 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
     if not prompt:
         raise ValueError("The prompt is empty")
     run_id = run_id or f"{time.strftime('%Y%m%d-%H%M%S')}-{mode}"
+    base_id, n = run_id, 2
+    while (paths.OUTPUT / run_id / "project").exists():   # two runs started in the same second
+        run_id, n = f"{base_id}-{n}", n + 1
     folder = paths.OUTPUT / run_id
     folder.mkdir(parents=True, exist_ok=True)
     project = folder / "project"
@@ -157,13 +160,21 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
 
         report, report_usage = None, None
         fitted = {}  # the code budget the report step settled on; the coding step starts from it
-        if mode == "report":
+        if mode in ("report", "history"):
             stage("report", "running")
+            mem = None
+            if mode == "history":   # condition E: the report also sees past cases from OTHER tasks
+                mem = memory.retrieve(sc, component, source.label, donor.label)
+                log(f"[memory] {len(mem['cases'])} past cases from {len(mem['runs'])} of {mem['pool']} earlier report runs "
+                    f"(this task's own runs excluded); {len(mem['lessons'])} lessons")
+            mt = (mem or {}).get("text", "")
             if component:
                 report, report_usage = fit_to_limit(lambda b: run_report_agent(
-                    prompt, source.path, donor.path, sc, log, component=component, budget_chars=b), log, used=fitted)
+                    prompt, source.path, donor.path, sc, log, component=component, budget_chars=b, memory_text=mt), log, used=fitted)
             else:
-                report, report_usage = run_report_agent(prompt, source.path, donor.path, sc, log, component=component)
+                report, report_usage = run_report_agent(prompt, source.path, donor.path, sc, log, component=component, memory_text=mt)
+            if mem is not None:
+                report["memory"] = {k: mem[k] for k in ("runs", "cases", "lessons", "pool")}
             (folder / "report.json").write_text(json.dumps(report, indent=1))
             (folder / "report.md").write_text(report_markdown(report))
             rec["report"], rec["report_usage"] = report, report_usage
@@ -177,6 +188,9 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         start_from = donor if opts["migration"] else source
         shutil.copytree(start_from.path, project, ignore=COPY_IGNORE, symlinks=False)
         rec["started_from"] = "donor" if opts["migration"] else "source"
+        # snapshot the starting copy so output/<run>/changes.diff shows exactly what the agent changed
+        _git_commit(project, f"{diffs.BASELINE_MSG}: copy of the {rec['started_from']} "
+                             f"({start_from.label}{' @ ' + start_from.commit[:7] if start_from.commit else ''})", log)
         can_build = bool(params.get("build", True)) and build_command(project)[0] is not None
         try:
             if opts["edit"] == "agent":
@@ -210,7 +224,7 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         rec["build_tail"] = (build.get("output") or "")[-2000:]
         if component:
             rec["checks"] = component_checks(source.path, project, component, build, sc["source"]["framework"],
-                                               donor=donor.path)
+                                               donor=donor.path, facts=sc["facts"])
         else:
             rec["checks"] = run_checks(source.path, donor.path, project, opts["migration"], opts["style"], build,
                                        donor_style_files(donor.path, sc["donor"]) if opts["migration"] and opts["style"] else [])
@@ -219,6 +233,13 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
                 " + ".join(x for x, on in (("migration", opts["migration"]), ("style", opts["style"])) if on))
         _git_commit(project, f"FusionEdges {mode} run: {what} ({source.label} with {donor.label})", log)
         _zip(project, folder / "project.zip")
+        ch = diffs.for_run(rec, refresh=True)
+        if ch.get("ok"):
+            rec["changes"] = ch["totals"]
+            t = ch["totals"]
+            log(f"Code changes: {t['files']} files (+{t['added']} -{t['removed']} lines), see changes.diff")
+        else:
+            log(f"note: could not compute the code diff ({ch.get('error')})")
         o = rec["checks"]["outcome"]
         stage("check", "done" if o.startswith("passed") else "failed" if o == "failed" else "warn",
               f"{o} · {rec['checks']['score']} checks")
@@ -231,4 +252,12 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         raise
     rec["seconds"] = round(time.time() - t0, 1)
     save()
+    if params.get("auto_compare", True):
+        try:
+            c = compare.auto_pair(rec, log)
+            if c:
+                rec["comparison"] = c["id"]
+                save()
+        except Exception as e:
+            log(f"note: could not record the comparison ({e})")
     return rec

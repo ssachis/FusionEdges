@@ -1,0 +1,12 @@
+{
+ "name": "next-to-react-navbar",
+ "note": "Pilot: a Next.js + Tailwind donor's navbar into a Create React App site with react-router (2 sites x 2 donors).",
+ "conditions": ["prompt", "report"],
+ "repeats": 1,
+ "tasks": [
+  {"source": "https://github.com/sanajitjana/React-Portfolio",  "donor": "https://github.com/muhammad-fiaz/portfolio",               "component": "navbar"},
+  {"source": "https://github.com/sanajitjana/React-Portfolio",  "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog",   "component": "navbar"},
+  {"source": "https://github.com/soumyajit4419/Portfolio",      "donor": "https://github.com/muhammad-fiaz/portfolio",               "component": "navbar"},
+  {"source": "https://github.com/soumyajit4419/Portfolio",      "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog",   "component": "navbar"}
+ ]
+}

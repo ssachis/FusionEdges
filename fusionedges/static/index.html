@@ -90,7 +90,7 @@ input[type=text]:focus,textarea:focus{border-color:var(--ink);outline:none;backg
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .chip{border:1.5px solid var(--line);background:none;color:var(--ink);border-radius:99px;padding:3px 11px;font:500 13px var(--sans);cursor:pointer}
 .chip:hover,.chip.on{border-color:var(--ink);background:var(--ink);color:var(--surface)}
-.seg{margin-top:25px;display:grid;grid-template-columns:1fr 1fr;border:2px solid var(--ink);border-radius:12px;overflow:hidden;min-width:300px;flex:1}
+.seg{margin-top:25px;display:grid;grid-template-columns:1fr 1fr 1fr;border:2px solid var(--ink);border-radius:12px;overflow:hidden;min-width:300px;flex:1}
 .seg button{background:none;border:0;color:var(--ink);padding:9px 12px;text-align:left;font:700 14px var(--sans);cursor:pointer;display:flex;gap:10px;align-items:center}
 .seg button+button{border-left:2px solid var(--ink)}
 .seg button small{display:block;font:400 12px var(--sans);color:var(--muted)}
@@ -190,7 +190,94 @@ a.ghost.main{background:var(--ink);color:var(--surface)}
 .mode.rep{background:var(--donor-soft);color:var(--donor)}
 .sec{margin-top:34px;font:700 20px var(--display)}
 
+
+/* code changes */
+.dsum{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin:0 0 10px;font-size:14px}
+.dsum b{font:700 22px var(--display)}
+.plus{color:var(--ok);font-weight:700}.minus{color:var(--bad);font-weight:700}
+.dbar{display:inline-flex;gap:2px;vertical-align:middle;margin-left:6px}
+.dbar i{width:7px;height:7px;border-radius:1.5px;background:var(--line)}
+.dbar i.a{background:var(--ok)}.dbar i.r{background:var(--bad)}
+.dlist{display:grid;gap:6px}
+.dfile{border:2px solid var(--line);border-radius:12px;overflow:hidden}
+.dfile>summary{cursor:pointer;display:flex;gap:10px;align-items:center;padding:8px 12px;font:12.5px var(--mono);list-style:none}
+.dfile>summary::-webkit-details-marker{display:none}
+.dfile>summary::before{content:"▸";color:var(--muted);flex:none}
+.dfile[open]>summary::before{content:"▾"}
+.dfile[open]>summary{border-bottom:2px solid var(--line)}
+.dfile .p{flex:1;min-width:0;overflow-wrap:anywhere}
+.st{flex:none;border-radius:6px;padding:0 7px;font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.03em}
+.st.added{background:var(--ok-soft);color:var(--ok)}.st.modified{background:var(--warn-soft);color:var(--warn)}
+.st.deleted{background:var(--bad-soft);color:var(--bad)}.st.none{background:var(--sunk);color:var(--muted)}
+.cnt{flex:none;font:600 12px var(--mono);white-space:nowrap}
+.dview{max-height:560px;overflow:auto;background:var(--surface)}
+table.diff{border-collapse:collapse;width:100%;font:12px/1.5 var(--mono)}
+table.diff td{padding:0 8px;vertical-align:top;white-space:pre-wrap;overflow-wrap:anywhere}
+table.diff td.ln{width:1%;min-width:38px;text-align:right;color:var(--muted);user-select:none;white-space:nowrap;opacity:.75}
+table.diff tr.a td{background:var(--ok-soft)}table.diff tr.r td{background:var(--bad-soft)}
+table.diff tr.h td{background:var(--site-soft);color:var(--site);padding-top:3px;padding-bottom:3px}
+table.diff tr.a td.tx::before{content:"+";color:var(--ok);margin-right:6px}
+table.diff tr.r td.tx::before{content:"−";color:var(--bad);margin-right:6px}
+table.diff tr.c td.tx::before{content:" ";margin-right:6px}
+.note{padding:10px 12px;font-size:13px;color:var(--muted)}
+.dtools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--sunk);border:2px solid transparent;border-radius:10px;padding:8px 10px;max-width:100%}
+select:focus{border-color:var(--ink);outline:none}
+
+/* compare */
+.cmphead{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.cmpcol{border:2px solid var(--ink);border-radius:14px;padding:12px 14px;background:var(--surface)}
+.cmpcol.rep{box-shadow:4px 4px 0 var(--donor)}.cmpcol.alone{box-shadow:4px 4px 0 var(--site)}
+.cmpcol h3{margin:0 0 4px;font:700 18px var(--display);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.cmpcol .kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px;margin-top:8px}
+.cmpcol .kv span{color:var(--muted)}
+.mtx{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:13px}
+.mtx th{text-align:left;font:600 12px var(--sans);color:var(--muted);padding:0 10px}
+.mtx td{background:var(--sunk);padding:8px 10px;vertical-align:middle}
+.mtx td:first-child{border-radius:10px 0 0 10px;font:12.5px var(--mono);overflow-wrap:anywhere}
+.mtx td:last-child{border-radius:0 10px 10px 0}
+.mtx tr.row{cursor:pointer}.mtx tr.row:hover td{background:var(--line)}
+.mtx tr.row.open td{background:var(--ink);color:var(--surface)}
+.mtx tr.row.open td .tag{color:var(--surface);opacity:.75}
+.mtx td.side{width:24%;white-space:nowrap}
+.mtx tr.only td:first-child{box-shadow:inset 4px 0 0 var(--warn)}
+.mtx tr.pane td{background:none;padding:0}
+.pair2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin:2px 0 8px}
+.pair2 .dfile{border-width:2px}
+.pair2 .lab{padding:6px 12px;font:700 12px var(--sans);border-bottom:2px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.pair2 .alone .lab{color:var(--site)}.pair2 .rep .lab{color:var(--donor)}
+.keyline{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:6px 0 4px}
+.keyline i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+
+
+/* verdicts */
+.vbox{border:2px solid var(--ink);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.vbox.improved{background:var(--ok-soft)}.vbox.worse{background:var(--bad-soft)}.vbox.nochange{background:var(--sunk)}.vbox.inconclusive{background:var(--warn-soft)}
+.vbox h3{margin:0 0 6px;font:700 20px var(--display);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.vbox p{margin:0;font-size:14px}
+.vpill{border-radius:99px;padding:2px 11px;font:700 12.5px var(--sans);text-transform:capitalize;border:1.5px solid currentColor}
+.vpill.improved{color:var(--ok)}.vpill.worse{color:var(--bad)}.vpill.nochange{color:var(--muted)}.vpill.inconclusive{color:var(--warn)}
+table.adh{width:100%;border-collapse:collapse;font-size:13px;margin-top:10px}
+table.adh th{text-align:left;font:600 12px var(--sans);color:var(--muted);padding:4px 8px}
+table.adh td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
+table.adh td small{display:block;color:var(--muted);font-size:12px}
+.as{font-weight:700;font-size:12px;white-space:nowrap}
+.as.addressed{color:var(--ok)}.as.partial{color:var(--warn)}.as.notaddressed{color:var(--bad)}.as.unclear{color:var(--muted)}
+.review{margin-top:12px;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.review p{margin:6px 0 0}
+.rvh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:700 14px var(--sans)}
+.hnote{display:flex;gap:8px;margin-top:12px;align-items:flex-start}
+.hnote textarea{min-height:60px;font-size:13.5px}
+.exsum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 12px}
+.exrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:13.5px}
+.exrow .t b{font-weight:600}.exrow .t p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
+.exrow .t p.h{color:var(--ink)}
+.cond{font:700 11.5px var(--sans);border-radius:6px;padding:1px 7px;background:var(--donor-soft);color:var(--donor)}
+
 @media (max-width:760px){
+  .exsum{grid-template-columns:repeat(2,1fr)}.exrow{grid-template-columns:1fr}
+  .cmphead,.pair2{grid-template-columns:1fr}
+  .mtx td.side{width:auto;white-space:normal}
   .hero{grid-template-columns:1fr;gap:18px;padding-top:22px}
   .pair{grid-template-columns:1fr}.link{display:none}
   .rail{grid-template-columns:1fr;gap:6px}
@@ -213,7 +300,7 @@ a.ghost.main{background:var(--ink);color:var(--surface)}
 
   <section class="hero">
     <div>
-      <h1>Borrow a navbar from any repo.</h1>
+      <h1>Borrow a component from any repo.</h1>
       <p class="lede">The agent rewrites it to fit your site, then builds and checks the result.</p>
     </div>
     <div class="stage" id="stage" role="img" aria-label="A navbar moves from the donor site into your site and replaces its header" title="Click to replay">
@@ -256,6 +343,9 @@ a.ghost.main{background:var(--ink);color:var(--surface)}
         <button type="button" role="tab" aria-selected="false" data-mode="report">
           <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9h8M9 13h8M9 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <span>Agent + report<small>compatibility check first</small></span></button>
+        <button type="button" role="tab" aria-selected="false" data-mode="history">
+          <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9h8M9 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="19" cy="19" r="5" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M19 16.5V19l1.7 1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
+          <span>Report + history<small>learns from past reports</small></span></button>
       </div>
     </div>
     <p class="explain" id="explain"></p>
@@ -281,6 +371,9 @@ a.ghost.main{background:var(--ink);color:var(--surface)}
 
   <div id="result"></div>
 
+  <h2 class="sec">Did the report help?</h2>
+  <div id="experiments"><span class="tag">Loading…</span></div>
+
   <h2 class="sec">Recent runs</h2>
   <div id="history" class="hist"><span class="tag">None yet.</span></div>
 </div>
@@ -291,7 +384,8 @@ const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt
 let mode = "prompt", prompts = {}, edited = false, poll = null;
 const EXPLAIN = {
   prompt: "The agent gets the component's code and your prompt, nothing else.",
-  report: "A compatibility report is written first (what breaks, where it mounts, what to change), then sent to the agent with the same code."
+  report: "A compatibility report is written first (what breaks, where it mounts, what to change), then sent to the agent with the same code.",
+  history: "Like Agent + report, but the report also sees past cases from earlier reports on other repos and how those runs turned out. This task's own earlier runs are never used."
 };
 const OUTCOME = {"passed":["All checks passed","ok"], "passed-unbuilt":["Checks passed, not built","meh"], "partial":["Some checks failed","meh"], "failed":["Failed","bad"]};
 const SHORT = {fetch:"Clone", scan:"Scan", report:"Report", agent:"Write code", check:"Check"};
@@ -310,7 +404,7 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   mode = b.dataset.mode;
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-selected", x === b));
   $("#explain").textContent = EXPLAIN[mode];
-  $("#go").textContent = mode === "report" ? "Write report & run" : "Run";
+  $("#go").textContent = mode === "prompt" ? "Run" : "Write report & run";
 });
 $("#explain").textContent = EXPLAIN.prompt;
 
@@ -431,7 +525,9 @@ function render(rec){
     </div>
     ${a.summary ? `<details class="more"><summary>What the agent says it did</summary><p style="white-space:pre-wrap;font-size:13.5px">${esc(a.summary)}</p></details>` : ""}
   </section>
+  <section class="panel" id="changes"><h2>Code changes</h2><span class="tag">Working out what the agent changed…</span></section>
   ${reportHtml(rec)}`;
+  loadChanges(rec);
 }
 
 async function runIt(rid, btn){
@@ -460,15 +556,222 @@ async function loadHistory(){
   $("#history").innerHTML = j.runs.map(r => {
     const [w, c] = OUTCOME[r.outcome] || [r.status === "error" ? "Error" : (r.outcome || r.status), r.status === "error" ? "bad" : "meh"];
     return `<button class="run" data-id="${esc(r.id)}"><span class="when">${esc((r.created||"").replace("T"," ").slice(5,16))}</span>
-      <span class="what"><span class="mode ${r.mode === "report" ? "rep" : ""}" style="margin:0 8px 0 0">${r.mode === "report" ? "with report" : "agent alone"}</span><b>${esc(r.component || "")}</b><span>${esc(r.source)} ← ${esc(r.donor)}</span></span>
+      <span class="what"><span class="mode ${r.mode !== "prompt" ? "rep" : ""}" style="margin:0 8px 0 0">${{report: "with report", history: "report + history"}[r.mode] || "agent alone"}</span><b>${esc(r.component || "")}</b><span>${esc(r.source)} ← ${esc(r.donor)}</span></span>
       <span class="pill ${c}">${esc(w)}${r.score ? " · " + esc(r.score) : ""}</span></button>`; }).join("");
-  document.querySelectorAll("#history .run").forEach(b => b.onclick = async () => {
-    const rec = await (await fetch("/api/run/" + encodeURIComponent(b.dataset.id))).json();
-    $("#progress").classList.add("hidden"); render(rec); $("#result").scrollIntoView({behavior: "smooth"});
-  });
+  HIST = j.runs;
+  document.querySelectorAll("#history .run").forEach(b => b.onclick = () => go("run=" + b.dataset.id));
 }
 
-loadStatus(); loadHistory(); setInterval(loadStatus, 20000);
+
+/* ---------- code changes ---------- */
+let HIST = [];
+const DIFFS = {};
+async function getDiff(id, refresh){
+  if (!refresh && DIFFS[id]) return DIFFS[id];
+  const r = await fetch("/api/diff/" + encodeURIComponent(id) + (refresh ? "?refresh=1" : ""));
+  return DIFFS[id] = await r.json();
+}
+const getRun = async id => (await fetch("/api/run/" + encodeURIComponent(id))).json();
+const modeName = m => ({report: "Agent + report", history: "Report + history"})[m] || "Agent alone";
+function bar(a, r){
+  const t = a + r; if (!t) return "";
+  const n = Math.min(5, Math.max(1, Math.round(Math.log2(t + 1)))), na = Math.round(n * a / t);
+  return `<span class="dbar">${"<i class=a></i>".repeat(na)}${"<i class=r></i>".repeat(n - na)}</span>`;
+}
+const counts = f => f.kind === "code" || f.kind === "generated" ? `<span class="plus">+${f.added}</span> <span class="minus">−${f.removed}</span>` : `<span class="tag">${esc(f.kind)}</span>`;
+
+function diffTable(patch){
+  if (!patch) return '<div class="note">No text diff.</div>';
+  let o = 0, n = 0; const rows = [];
+  for (const l of patch.split("\n")) {
+    if (l.startsWith("---") || l.startsWith("+++")) continue;
+    if (l.startsWith("@@")) {
+      const m = l.match(/-(\d+)(?:,\d+)? \+(\d+)/); if (m) { o = +m[1]; n = +m[2]; }
+      rows.push(`<tr class="h"><td class="ln">…</td><td class="ln">…</td><td class="tx">${esc(l)}</td></tr>`); continue;
+    }
+    const c = l[0], t = esc(l.slice(1));
+    if (c === "+") rows.push(`<tr class="a"><td class="ln"></td><td class="ln">${n++}</td><td class="tx">${t}</td></tr>`);
+    else if (c === "-") rows.push(`<tr class="r"><td class="ln">${o++}</td><td class="ln"></td><td class="tx">${t}</td></tr>`);
+    else rows.push(`<tr class="c"><td class="ln">${o++}</td><td class="ln">${n++}</td><td class="tx">${t}</td></tr>`);
+  }
+  return `<div class="dview"><table class="diff">${rows.join("")}</table></div>`;
+}
+function fileBody(f){
+  if (f.kind === "generated") return '<div class="note">Generated file (lockfile). Diff hidden.</div>';
+  if (f.kind === "binary") return '<div class="note">Binary file (image, font…).</div>';
+  if (f.kind === "large") return '<div class="note">Too large to show here; open it from the project folder.</div>';
+  return diffTable(f.patch) + (f.truncated ? '<div class="note">Diff cut short. The full patch is in changes.diff.</div>' : "");
+}
+function fileItem(f, open){
+  return `<details class="dfile"${open ? " open" : ""}><summary><span class="st ${esc(f.status)}">${esc(f.status)}</span><span class="p">${esc(f.path)}</span><span class="cnt">${counts(f)}${bar(f.added, f.removed)}</span></summary>${fileBody(f)}</details>`;
+}
+function summaryLine(d){
+  const t = d.totals;
+  return `<div class="dsum"><b>${t.files}</b> file${t.files === 1 ? "" : "s"}
+    <span>${t.new} new · ${t.changed} changed · ${t.deleted} deleted</span>
+    <span><span class="plus">+${t.added}</span> <span class="minus">−${t.removed}</span> lines</span></div>`;
+}
+function counterparts(rec){
+  const comp = (rec.options.component || "").toLowerCase(), src = rec.source.label || rec.source.spec, don = rec.donor.label || rec.donor.spec;
+  const same = HIST.filter(r => r.id !== rec.id && r.status === "done" && (r.component || "").toLowerCase() === comp && r.source === src && r.donor === don);
+  return {other: same.filter(r => (r.mode === "prompt") !== (rec.mode === "prompt")), same: same.filter(r => (r.mode === "prompt") === (rec.mode === "prompt"))};
+}
+const runLabel = r => `${modeName(r.mode)} · ${(r.created || "").replace("T", " ").slice(5, 16)} · ${r.score || r.outcome || r.status}`;
+
+async function loadChanges(rec){
+  const box = $("#changes"); if (!box) return;
+  const d = await getDiff(rec.id);
+  if (!HIST.length) { try { HIST = (await (await fetch("/api/history")).json()).runs; } catch(e){} }
+  if ($("#changes") !== box) return;
+  const id = encodeURIComponent(rec.id);
+  if (!d.ok) { box.innerHTML = `<h2>Code changes</h2><div class="err">Could not compute the diff: ${esc(d.error)}</div>`; return; }
+  const {other, same} = counterparts(rec);
+  const opts = [...other, ...same].map(r => `<option value="${esc(r.id)}">${esc(runLabel(r))}</option>`).join("");
+  box.innerHTML = `<h2>Code changes</h2>${summaryLine(d)}
+    <p class="tag" style="margin:-4px 0 12px">Compared with the starting copy: ${esc(d.baseline_note)}</p>
+    <div class="dlist">${d.files.map((f, i) => fileItem(f, d.files.length <= 3 && i < 3)).join("") || '<span class="tag">The agent changed nothing.</span>'}</div>
+    <div class="dtools">
+      <a class="ghost" href="/output/${id}/changes.diff" target="_blank">changes.diff</a>
+      <button class="ghost" id="dexp">Expand all</button>
+      ${opts ? `<span style="flex:1"></span><select id="cmpWith" aria-label="Run to compare with">${opts}</select>
+        <button class="ghost main" id="cmpGo" style="background:var(--ink);color:var(--surface)">Compare side by side</button>`
+        : `<span class="tag">Run the same pair in the ${rec.mode !== "prompt" ? "Agent alone" : "Agent + report"} tab to compare side by side.</span>`}
+    </div>`;
+  $("#dexp").onclick = e => { const all = box.querySelectorAll(".dfile"), open = [...all].some(x => !x.open);
+    all.forEach(x => x.open = open); e.target.textContent = open ? "Collapse all" : "Expand all"; };
+  if (opts) $("#cmpGo").onclick = () => go("compare=" + rec.id + "," + $("#cmpWith").value);
+}
+
+/* match files across two runs: same path first, then same file name if it is unique on both sides */
+function matchFiles(fa, fb){
+  const rows = [], ub = new Map(fb.map(f => [f.path, f])), ua = [];
+  for (const f of fa) { if (ub.has(f.path)) { rows.push([f, ub.get(f.path)]); ub.delete(f.path); } else ua.push(f); }
+  const base = p => p.split("/").pop().toLowerCase().replace(/\.(jsx?|tsx?)$/, "");
+  const cnt = arr => arr.reduce((m, f) => m.set(base(f.path), (m.get(base(f.path)) || 0) + 1), new Map());
+  const ca = cnt(ua), cb = cnt([...ub.values()]);
+  for (const f of ua) {
+    const k = base(f.path), g = ca.get(k) === 1 && cb.get(k) === 1 ? [...ub.values()].find(x => base(x.path) === k) : null;
+    if (g) { rows.push([f, g]); ub.delete(g.path); } else rows.push([f, null]);
+  }
+  for (const g of ub.values()) rows.push([null, g]);
+  const kind = r => (r[0] || r[1]).kind === "code" ? 0 : 1;
+  return rows.sort((x, y) => kind(x) - kind(y) || (!!x[0] && !!x[1] ? 0 : 1) - (!!y[0] && !!y[1] ? 0 : 1) || (x[0] || x[1]).path.localeCompare((y[0] || y[1]).path));
+}
+
+async function renderCompare(idA, idB){
+  $("#progress").classList.add("hidden");
+  $("#result").innerHTML = '<section class="panel"><h2>With vs without the report</h2><span class="tag">Loading both runs…</span></section>';
+  let [ra, rb] = await Promise.all([getRun(idA), getRun(idB)]);
+  if (ra.mode !== "prompt" && rb.mode === "prompt") [ra, rb] = [rb, ra];   // agent alone on the left
+  const [da, db] = await Promise.all([getDiff(ra.id), getDiff(rb.id)]);
+  const cls = r => r.mode !== "prompt" ? "rep" : "alone";
+  const col = (r, d) => {
+    const c = r.checks || {}, [w, k] = OUTCOME[c.outcome] || [c.outcome || r.status, "meh"], a = r.agent || {};
+    const tokens = num(a) + num(r.report_usage), cost = (a.est_cost_usd || 0) + ((r.report_usage || {}).est_cost_usd || 0);
+    return `<div class="cmpcol ${cls(r)}"><h3>${modeName(r.mode)} <span class="pill ${k}">${esc(w)}${c.score ? " · " + esc(c.score) : ""}</span></h3>
+      <div class="tag">${esc((r.created || "").replace("T", " "))} · <a href="#run=${encodeURIComponent(r.id)}">open run</a></div>
+      <div class="kv">
+        <span>Files</span><b>${d.ok ? `${d.totals.files} (${d.totals.new} new, ${d.totals.changed} changed, ${d.totals.deleted} deleted)` : "–"}</b>
+        <span>Lines</span><b>${d.ok ? `<span class="plus">+${d.totals.added}</span> <span class="minus">−${d.totals.removed}</span>` : esc(d.error)}</b>
+        <span>Tokens</span><b>${tokens.toLocaleString()} · ${money(cost)}</b>
+        <span>Build</span><b>${r.build ? (r.build.ok ? "passes" : r.build.skipped ? "skipped" : "fails") : "–"}${a.retries ? ` after ${a.retries} repair${a.retries > 1 ? "s" : ""}` : ""}</b>
+        <span>Model</span><b>${esc((r.models || []).join(", ") || "–")}</b>
+      </div></div>`;
+  };
+  const failed = [ra, rb].filter(r => r.checks).map(r => Object.values(r.checks.checks).filter(x => x.pass === false).map(x => x.label));
+  const rows = da.ok && db.ok ? matchFiles(da.files, db.files) : [];
+  const shared = rows.filter(r => r[0] && r[1]).length;
+  const side = f => f ? `<span class="st ${esc(f.status)}">${esc(f.status)}</span> <span class="cnt">${counts(f)}</span>` : '<span class="tag">not touched</span>';
+  const name = ([a, b]) => a && b && a.path !== b.path ? `${esc(a.path)}<br><span class="tag">↔ ${esc(b.path)}</span>` : esc((a || b).path);
+  $("#result").innerHTML = `<section class="panel"><h2>With vs without the report</h2>
+    <p class="tag" style="margin:-6px 0 14px">${esc(ra.options.component ? "Add the " + ra.options.component : "Run")} · ${esc(ra.source.label || ra.source.spec)} ← ${esc(ra.donor.label || ra.donor.spec)}${ra.mode === rb.mode ? " · <b>both runs are " + esc(modeName(ra.mode)) + "</b>" : ""}</p>
+    <div id="verdictbox"></div>
+    <div class="cmphead">${col(ra, da)}${col(rb, db)}</div>
+    ${failed.some(f => f.length) ? `<div class="cmphead">${failed.map(f => `<div class="tag">${f.length ? "Failed: " + f.map(esc).join(", ") : "No failed checks"}</div>`).join("")}</div>` : ""}
+    <div class="keyline"><span>${rows.length} files in total · ${shared} touched by both · ${rows.length - shared} by only one (yellow edge)</span><span>Click a file to see both diffs.</span></div>
+    <table class="mtx"><thead><tr><th>File</th><th>${modeName(ra.mode)}</th><th>${modeName(rb.mode)}</th></tr></thead>
+    <tbody>${rows.map((r, i) => `<tr class="row${r[0] && r[1] ? "" : " only"}" data-i="${i}"><td>${name(r)}</td><td class="side">${side(r[0])}</td><td class="side">${side(r[1])}</td></tr>
+      <tr class="pane hidden" data-p="${i}"><td colspan="3"></td></tr>`).join("")}</tbody></table>
+    <div class="dtools"><button class="ghost" id="cexp">Expand all</button>
+      <a class="ghost" href="/output/${encodeURIComponent(ra.id)}/changes.diff" target="_blank">${modeName(ra.mode)}: changes.diff</a>
+      <a class="ghost" href="/output/${encodeURIComponent(rb.id)}/changes.diff" target="_blank">${modeName(rb.mode)}: changes.diff</a></div>
+  </section>`;
+  const pane = (f, r) => `<div class="dfile ${cls(r)}"><div class="lab"><span>${modeName(r.mode)}</span><span class="mono" style="font-weight:400">${f ? esc(f.path) : ""}</span></div>${f ? fileBody(f) : '<div class="note">This run did not touch this file.</div>'}</div>`;
+  const toggle = (i, force) => {
+    const tr = document.querySelector(`tr.row[data-i="${i}"]`), p = document.querySelector(`tr.pane[data-p="${i}"]`);
+    const open = force ?? p.classList.contains("hidden");
+    if (open && !p.firstElementChild.innerHTML) p.firstElementChild.innerHTML = `<div class="pair2">${pane(rows[i][0], ra)}${pane(rows[i][1], rb)}</div>`;
+    p.classList.toggle("hidden", !open); tr.classList.toggle("open", open);
+  };
+  document.querySelectorAll("tr.row").forEach(tr => tr.onclick = () => toggle(+tr.dataset.i));
+  if (ra.mode === "prompt" && rb.mode !== "prompt") loadVerdict(ra.id, rb.id, rb.mode);
+  $("#cexp").onclick = e => { const open = e.target.textContent === "Expand all"; rows.forEach((_, i) => toggle(i, open)); e.target.textContent = open ? "Collapse all" : "Expand all"; };
+  $("#result").scrollIntoView({behavior: "smooth"});
+}
+
+
+/* ---------- did the report help? ---------- */
+const VCLS = v => (v || "").replace(" ", "");
+function reviewHtml(rv){
+  if (!rv) return "";
+  const list = (t, xs) => xs && xs.length ? `<div class="tag" style="margin-top:6px"><b>${t}:</b> ${xs.map(esc).join(" · ")}</div>` : "";
+  return `<div class="review"><div class="rvh">Code review by ${esc(rv.reviewer)} <span class="vpill ${VCLS(rv.verdict)}">${esc(rv.verdict)}</span><span class="tag">${esc((rv.created || "").replace("T", " ").slice(0, 16))}</span></div>
+    <p>${esc(rv.summary)}</p>
+    ${rv.prompt_run_notes ? `<p class="tag"><b>Agent alone:</b> ${esc(rv.prompt_run_notes)}</p>` : ""}
+    ${rv.report_run_notes ? `<p class="tag"><b>With report:</b> ${esc(rv.report_run_notes)}</p>` : ""}
+    ${list("Checks that were wrong", rv.check_errors)}${list("Failure categories", rv.failure_categories)}</div>`;
+}
+async function loadVerdict(a, b, treatedMode){
+  const box = $("#verdictbox"); if (!box) return;
+  const r = await fetch("/api/compare", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({a, b})});
+  const c = await r.json(); if (!r.ok) { box.innerHTML = `<div class="err">${esc(c.error)}</div>`; return; }
+  const ad = c.adherence || {}, items = ad.items || [];
+  const st = x => x ? `<span class="as ${VCLS(x.status)}">${esc(x.status)}</span>${x.failed && x.failed.length ? `<small>missing: ${x.failed.map(esc).join(", ")}</small>` : ""}` : "–";
+  box.innerHTML = `<div class="vbox ${VCLS(c.verdict)}">
+      <h3>Did the report help? <span class="vpill ${VCLS(c.verdict)}">${esc(c.verdict)}</span><span class="cond">condition ${esc(c.condition || "D")}</span></h3>
+      <p>${esc(c.note)}</p>
+      ${reviewHtml(c.review)}
+      ${items.length ? `<details class="more" ${ad.only_with_report ? "open" : ""}><summary>What the agent did with each report item (read from the diff, ${ad.testable} testable)</summary>
+        <table class="adh"><thead><tr><th>Report item</th><th>${modeName(treatedMode)}</th><th>Agent alone</th></tr></thead><tbody>
+        ${items.map(it => `<tr><td>${esc(it.title)}<small>${esc(it.instruction)}</small></td><td>${st(it.report_run)}</td><td>${st(it.agent_alone)}</td></tr>`).join("")}
+        </tbody></table><p class="tag" style="margin-top:6px">Automatic: markers from each instruction (identifiers, classes, packages) are looked for in the lines each run added. Check by hand before you rely on it.</p></details>` : ""}
+      <div class="hnote"><textarea id="hnote" placeholder="Your note on this comparison (saved in runs.db)">${esc(c.human_note || "")}</textarea>
+        <button class="ghost" id="hsave">Save note</button></div>
+    </div>`;
+  $("#hsave").onclick = async e => {
+    await fetch("/api/compare", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify({id: c.id, note: $("#hnote").value})});
+    e.target.textContent = "Saved"; setTimeout(() => e.target.textContent = "Save note", 1500); loadExperiments();
+  };
+  loadExperiments();
+}
+
+async function loadExperiments(){
+  let j; try { j = await (await fetch("/api/comparisons")).json(); } catch(e){ return; }
+  const box = $("#experiments"); if (!box) return;
+  if (!j.rows.length) { box.innerHTML = '<span class="tag">No comparisons yet. Run the same task with and without the report (or run an experiment from the command line) and the verdict shows up here.</span>'; return; }
+  const s = j.summary;
+  box.innerHTML = `<div class="exsum">
+      <div class="stat"><b style="color:var(--ok)">${s.improved}</b><span>improved</span></div>
+      <div class="stat"><b>${s["no change"]}</b><span>no change</span></div>
+      <div class="stat"><b style="color:var(--bad)">${s.worse}</b><span>worse</span></div>
+      <div class="stat"><b style="color:var(--warn)">${s.inconclusive}</b><span>inconclusive</span></div></div>
+    <div class="hist">${j.rows.map(r => `<div class="exrow">
+      <span class="vpill ${VCLS(r.verdict)}">${esc(r.verdict)}</span>
+      <div class="t"><span class="cond">${esc(r.condition || "D")}</span>${r.review ? ` <span class="vpill ${VCLS(r.review.verdict)}" title="verdict after reading the code">reviewed: ${esc(r.review.verdict)}</span>` : ""} <b>${esc(r.component)}</b> <span class="tag">${esc(r.source)} ← ${esc(r.donor)} · ${esc(r.prompt_score || "–")} → ${esc(r.report_score || "–")}${r.experiment ? " · " + esc(r.experiment) : ""}</span>
+        <p>${esc(r.note)}</p>${r.review ? `<p class="h"><b>Review (${esc(r.review.reviewer)}):</b> ${esc(r.review.summary)}</p>` : ""}${r.human_note ? `<p class="h"><b>Note:</b> ${esc(r.human_note)}</p>` : ""}</div>
+      <a class="ghost" href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Open diff</a></div>`).join("")}</div>`;
+}
+
+/* #run=<id> and #compare=<a>,<b> are linkable */
+function go(h){ if (location.hash.slice(1) === h) route(); else location.hash = h; }
+async function route(){
+  const h = location.hash.slice(1);
+  if (h.startsWith("run=")) { const rec = await getRun(decodeURIComponent(h.slice(4))); if (rec && rec.id) { $("#progress").classList.add("hidden"); render(rec); $("#result").scrollIntoView({behavior: "smooth"}); } }
+  else if (h.startsWith("compare=")) { const [a, b] = decodeURIComponent(h.slice(8)).split(","); if (a && b) renderCompare(a, b); }
+}
+window.addEventListener("hashchange", route);
+
+loadStatus(); loadExperiments(); loadHistory().then(route); setInterval(loadStatus, 20000);
 </script>
 </body>
 </html>

@@ -330,7 +330,7 @@ def _fact_type(kind: str) -> str:
 
 
 def run_report_agent(task: str, source: Path, donor: Path, scan: dict, log, max_steps: int = 6,
-                     component: str = "", budget_chars: int | None = None) -> tuple:
+                     component: str = "", budget_chars: int | None = None, memory_text: str = "") -> tuple:
     s = Session("report", log)
     system = REPORT_SYSTEM_COMPONENT if component else REPORT_SYSTEM
     ctx = rag.component_context(source, donor, scan, component, budget_chars) if component else None
@@ -359,11 +359,14 @@ def run_report_agent(task: str, source: Path, donor: Path, scan: dict, log, max_
     first = (f"TASK:\n{task}\n\nSCANNER FACTS:\n{facts_markdown(scan)}\n\n"
              f"RETRIEVED CODE:\n{rag.render(retrieved['chunks'])}\n\n{extra}"
              f"{_brief('source', scan['source'], source, True, listed)}\n\n{_brief('donor', scan['donor'], donor, True, listed)}\n\n"
+             + (memory_text + "\n\n" if memory_text else "")
              + ("Use the tools only for what the retrieved code does not show, then output the JSON report." if use_tools else
                 "No tools are available. Work only from the code above, then output the JSON report."))
     parts = {"system prompt": system, "scanner facts": facts_markdown(scan), "code": rag.render(retrieved["chunks"]),
              "repo descriptions": _brief('source', scan['source'], source, True, listed)
              + _brief('donor', scan['donor'], donor, True, listed)}
+    if memory_text:
+        parts["past cases"] = memory_text
     log("[report] first message: " + ", ".join(f"{k} ~{round(len(v) / 3.6):,}" for k, v in parts.items())
         + f" = ~{round(sum(len(v) for v in parts.values()) / 3.6):,} tokens (est.)" + ("; each tool step resends all of it" if use_tools else "; one call, no tools"))
     text = run_loop(s, system, first, ws, make_tools(("source", "donor"), False) if use_tools else [],
@@ -456,6 +459,10 @@ def report_for_agent(r: dict, packages: list | None = None, contracts: list | No
     if cs:
         out.append("Change these:")
         out += [f"- {c.get('title', '').rstrip('.')}: {c['adaptation'].rstrip('.')}." for c in cs]
+    lessons = (r.get("memory") or {}).get("lessons") or []
+    if lessons:   # condition E only: what earlier report-guided runs on similar repos still got wrong
+        out.append("From earlier runs on other repositories (advisory):")
+        out += [f"- {l}" for l in lessons[:3]]
     return "\n".join(out)
 
 

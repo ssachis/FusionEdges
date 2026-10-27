@@ -255,8 +255,66 @@ def donor_identifiers(donor: Path, component: str, source: Path) -> list:
     return sorted(n for n in names if not re.search(r"\b%s\b" % re.escape(n), own))
 
 
+CHECKS_VERSION = 3   # v2 (2026-10-27 pilot review): reachability for 'rendered', camelCase words for 'single',
+                     # adapted donor code (its distinctive strings) counts for 'donor_code'
+                     # v3: the site's own scripts still find the classes/ids they look up (host-script-coupling)
+ENTRIES = ("src/index.js", "src/index.jsx", "src/index.tsx", "src/main.jsx", "src/main.tsx", "src/main.js",
+           "app/layout.tsx", "app/layout.jsx", "app/layout.js", "src/app/layout.tsx", "src/app/layout.jsx",
+           "src/app/layout.js", "pages/_app.tsx", "pages/_app.jsx", "pages/_app.js", "src/pages/_app.tsx",
+           "src/pages/_app.jsx", "src/pages/_app.js", "app/page.tsx", "src/app/page.tsx", "pages/index.tsx",
+           "pages/index.js", "src/App.js", "src/App.jsx", "src/App.tsx")
+
+
+def reachable(out: Path) -> set:
+    """Files imported, directly or through other files, from the app's entry points."""
+    from . import rag
+    starts = [e for e in ENTRIES if (Path(out) / e).is_file()]
+    if not starts:
+        return set()
+    return {rel for rel, _, _ in rag.import_closure(Path(out), starts, max_files=2000, max_depth=40)[0]}
+
+
+def _is_role(name: str, words: set) -> bool:
+    """NavBar, Navbar, SiteHeader, MobileNav count as a navbar; Navigate, NavLink, HeaderLink do not."""
+    w = _camel_words(name)
+    return bool(w) and (name.lower() in words or w[-1] in words or "".join(w[-2:]) in words)
+
+
+def _camel_words(name: str) -> list:
+    return [w.lower() for w in re.findall(r"[A-Z]+(?![a-z])|[A-Z]?[a-z0-9]+", name)]
+
+
+_STRING = re.compile(r"""(?:["'`])([A-Za-z][^"'`\n{}<>$]{3,40})(?:["'`])|>\s*([A-Za-z][^<>{}\n]{3,40}?)\s*<""")
+_COMMON = {"button", "submit", "menu", "home", "about", "blog", "contact", "projects", "close", "open", "true", "false",
+           "react", "default", "children", "className", "noopener noreferrer", "_blank", "button", "light", "dark",
+           "system", "toggle menu", "github", "linkedin", "twitter", "currentColor", "none", "auto", "center"}
+
+
+def donor_strings(donor: Path, component: str, source: Path) -> list:
+    """Distinctive text from the donor component's files (labels, aria-labels, data, class names) that the source
+    does not contain. Finding several in the output means the donor component came over even if it was renamed."""
+    from . import rag
+    donor, source = Path(donor), Path(source)
+    mains = rag.find_component_files(donor, component)
+    if not mains:
+        return []
+    files = [rel for rel, _, _ in rag.import_closure(donor, mains, max_files=10, max_depth=1)[0]]
+    own = " ".join(read(p) for p in walk(source, {".js", ".jsx", ".ts", ".tsx", ".html", ".css"})).lower()
+    found = []
+    for rel in files:
+        for m in _STRING.finditer(read(donor / rel)):
+            t = (m.group(1) or m.group(2) or "").strip()
+            low = t.lower()
+            if (len(t) < 4 or low in _COMMON or low in own or t.startswith(("./", "../", "@/", "http", "/"))
+                    or re.fullmatch(r"[\w-]+/[\w/-]+", t) or "." in t and " " not in t):
+                continue
+            if t not in found:
+                found.append(t)
+    return found[:60]
+
+
 def component_checks(source: Path, out: Path, component: str, build: dict, framework: str,
-                     donor: Path | None = None) -> dict:
+                     donor: Path | None = None, facts: list | None = None) -> dict:
     """Checks for 'add the <component> from the donor to my site'. `source` is the user's site before the change."""
     source, out = Path(source), Path(out)
     kw = (component or "").strip().lower()
@@ -273,22 +331,36 @@ def component_checks(source: Path, out: Path, component: str, build: dict, frame
 
     # the donor's own component (by name) must be in the output, not just any change that makes the build pass
     idents = donor_identifiers(donor, component, source) if donor else []
-    found = [n for n in idents if any(re.search(r"\b%s\b" % re.escape(n), after[p]) for p in touched_code)]
-    if donor and idents:
+    def _name_in(n, t):   # Header or header (a data file such as headerNavLinks.ts imported as headerNavLinks)
+        return re.search(r"\b(?:%s|%s)\b" % (re.escape(n), re.escape(n[:1].lower() + n[1:])), t)
+    found = [n for n in idents if any(_name_in(n, after[p]) for p in touched_code)]
+    strings = donor_strings(donor, component, source) if donor else []
+    new_text = " ".join(after[p] for p in touched_code + [q for q in touched if q not in touched_code])
+    carried = [t for t in strings if t in new_text]
+    if donor and (idents or strings):
+        ok = bool(found) or len(carried) >= 3
         res["donor_code"] = {"label": f"The donor's {component or 'component'} code is in the result",
-                             "value": ", ".join(found[:4]) or "none of its parts found",
-                             "missing": [] if found else idents[:6], "pass": bool(found)}
+                             "value": (", ".join(found[:4]) if found else "") + (
+                                 (("; " if found else "") + f"{len(carried)} of its distinctive strings (adapted)") if carried else "")
+                                      or "none of its parts found",
+                             "missing": [] if ok else (idents[:6] or strings[:6]), "pass": ok}
 
-    # mounted: a new component is rendered by another file
-    names = {Path(p).stem for p in added_code if Path(p).stem[:1].isupper()} | set(found)
-    def _defined_in(n):
-        return {q for q, t in after.items() if re.search(r"(?:function|const|class)\s+%s\b" % re.escape(n), t)
-                or Path(q).stem == n}
-    rendered = {n for n in names for q, t in after.items() if q not in _defined_in(n)
-                and re.search(r"<%s[\s/>]" % re.escape(n), t)}
-    res["mounted"] = {"label": f"The {component or 'component'} is rendered", "value": ", ".join(sorted(rendered)) or "not rendered anywhere",
-                      "missing": sorted(names - rendered),
-                      "pass": bool(rendered) if names else (False if donor and idents else None)}
+    # mounted: the new code is reachable from the app's entry through imports. This counts an in-place rewrite of the
+    # site's existing component (still imported by App) and catches new files that nothing imports.
+    live = reachable(out)
+    new_ui = [p for p in touched_code if Path(p).name.split(".")[0] not in ("index", "main", "reportWebVitals", "setupTests")]
+    has_evidence = bool(donor and (idents or strings))
+    carriers = [p for p in new_ui if (found and any(_name_in(n, after[p]) for n in found))
+                or (carried and any(t in after[p] for t in carried))]
+    if not has_evidence:      # nothing to recognise the donor's code by: any new UI code that is reachable
+        carriers = new_ui
+    mounted = [p for p in carriers if p in live]
+    dead = [p for p in added_code if p not in live and Path(p).suffix in code_exts]
+    res["mounted"] = {"label": f"The {component or 'component'} is rendered",
+                      "value": (", ".join(Path(p).name for p in mounted[:4]) or
+                                ("not reachable from the app's entry" if carriers else "none of the donor's code to render"))
+                               + (f"; {len(dead)} new file(s) imported by nothing" if dead else ""),
+                      "missing": dead or carriers, "pass": bool(mounted) if (carriers or has_evidence) else None}
 
     is_next = framework == "next"
     out_deps = _deps(out)
@@ -349,9 +421,26 @@ def component_checks(source: Path, out: Path, component: str, build: dict, frame
         tags = set()
         for p in roots_files:
             tags |= {m.group(1) for m in re.finditer(r"<([A-Z]\w*)", after[p])
-                     if any(w in m.group(1).lower() for w in words)}
+                     if _is_role(m.group(1), words)}
         res["single"] = {"label": f"Only one {component} on the page", "value": ", ".join(sorted(tags)) or "none in layout/home",
                          "missing": sorted(tags) if len(tags) > 1 else [], "pass": None if not tags else len(tags) == 1}
+
+    # the site's own scripts (e.g. jQuery in public/) look up classes/ids; losing them breaks the page at runtime,
+    # which the build cannot see. The scanner found these selectors before the run, for both conditions alike.
+    need = []
+    for f in facts or []:
+        if f.get("kind") == "host-script-coupling":
+            m = re.search(r"class or id:\s*(.+?)\.\s", f.get("text", ""))
+            need += [x for x in re.findall(r"[.#][\w-]+", m.group(1) if m else "") if x not in need]
+    if need:
+        markup = " ".join(after[p] for p in after if Path(p).suffix in code_exts and (p in live or not live))
+        markup += " ".join(read(p) for p in walk(out, {".html", ".htm"}) if "public" in p.parts)
+        attrs = re.findall(r"""\b(className|class|id)\s*=\s*\{?\s*(?:[\w.]+\s*\(\s*)?["'`]([^"'`]*)["'`]""", markup)
+        have = {("#" if k == "id" else ".") + tok for k, v in attrs for tok in re.split(r"[\s${}]+", v) if tok}
+        lost = [x for x in need if x not in have]
+        res["host_scripts"] = {"label": "The site's own scripts still find their elements",
+                               "value": "all kept" if not lost else "lost " + ", ".join(lost),
+                               "missing": lost, "pass": not lost}
 
     b = build or {}
     res["build"] = {"label": "Builds", "value": "passes" if b.get("ok") else (

@@ -17,6 +17,14 @@ CREATE TABLE IF NOT EXISTS runs (
   agent_tokens INTEGER, report_tokens INTEGER, total_cost REAL, retries INTEGER, models TEXT,
   seconds REAL, folder TEXT, data TEXT
 );
+CREATE TABLE IF NOT EXISTS diff_files (
+  run_id TEXT, path TEXT, status TEXT, kind TEXT, added INTEGER, removed INTEGER, truncated INTEGER, patch TEXT,
+  baseline TEXT, PRIMARY KEY (run_id, path)
+);
+CREATE TABLE IF NOT EXISTS reviews (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, comparison_id TEXT, created TEXT, reviewer TEXT, verdict TEXT,
+  summary TEXT, prompt_run_notes TEXT, report_run_notes TEXT, failure_categories TEXT, check_errors TEXT
+);
 CREATE TABLE IF NOT EXISTS conflicts (
   run_id TEXT, cid TEXT, type TEXT, severity TEXT, confidence TEXT, basis TEXT, citation TEXT,
   title TEXT, impact TEXT, adaptation TEXT, evidence TEXT, source_framework TEXT, donor_framework TEXT,
@@ -80,6 +88,29 @@ def save(run: dict):
                 c.get("citation"), c.get("title"), c.get("impact"), c.get("adaptation"),
                 json.dumps(c.get("evidence", [])), run.get("source_framework"), run.get("donor_framework"),
                 row["outcome"]))
+
+
+def save_diff(run_id: str, res: dict):
+    """Keep every changed file's patch in the database, so a run can be reviewed even if its folder is gone."""
+    if not res.get("ok"):
+        return
+    with connect() as db:
+        db.execute("DELETE FROM diff_files WHERE run_id=?", (run_id,))
+        db.executemany("INSERT INTO diff_files VALUES (?,?,?,?,?,?,?,?,?)", [
+            (run_id, f["path"], f["status"], f["kind"], f["added"], f["removed"], int(bool(f.get("truncated"))),
+             f.get("patch") or "", res.get("baseline_note", "")) for f in res["files"]])
+
+
+def load_diff(run_id: str) -> list:
+    with connect() as db:
+        db.row_factory = sqlite3.Row
+        return [dict(r) for r in db.execute("SELECT * FROM diff_files WHERE run_id=? ORDER BY path", (run_id,))]
+
+
+def runs_without_diff() -> list:
+    with connect() as db:
+        return [r[0] for r in db.execute("SELECT id FROM runs WHERE status='done' AND id NOT IN "
+                                         "(SELECT DISTINCT run_id FROM diff_files)")]
 
 
 def mark_interrupted() -> int:

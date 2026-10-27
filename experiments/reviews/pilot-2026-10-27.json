@@ -1,0 +1,43 @@
+{
+ "experiment": "next-to-react-navbar",
+ "reviewer": "Claude (read every diff, 2026-10-27)",
+ "note": "Manual review of the 4 pilot pairs. The automatic verdicts came from static checks; these come from reading the code each run produced (changes.diff). Not yet checked in a browser.",
+ "reviews": [
+  {
+   "prompt_run": "20261027-020234-prompt", "report_run": "20261027-020703-report",
+   "verdict": "improved",
+   "summary": "Agreed with the automatic verdict, but for a different reason. Agent alone dropped the navbar/navbar-default classes that the site's public/assets/js/main.js reads on scroll ($('.navbar').offset().top), so its page throws a TypeError at runtime. The report run kept them. Both models were gemini-3.6-flash, so this pair is a fair comparison.",
+   "prompt_run_notes": "Put the whole donor navbar (icons, ThemeToggle, SignInButton) inline in src/component/Header.js with a new Header.css. Header is rendered from App.js, so the navbar IS on the page; the check 'The navbar is rendered' failed wrongly. Outer element is <header className=\"retro-header\">: no .navbar, so main.js breaks.",
+   "report_run_notes": "Split into Avatar, Button, SignInButton, ThemeToggle, icons files and rewrote Header.js; outer element <header className=\"navbar navbar-default retro-navbar-header\">, so main.js keeps working.",
+   "failure_categories": ["agent alone: runtime error from the site's own script (host regression not visible to the build)"],
+   "check_errors": ["'The navbar is rendered' failed for agent alone although Header.js (rendered in App.js) contains the navbar inline"]
+  },
+  {
+   "prompt_run": "20261027-021613-prompt", "report_run": "20261027-021125-report",
+   "verdict": "no change",
+   "summary": "Automatic verdict 'improved' is wrong: neither run did the task. The report run never mounted the navbar: Header.js and App.js are unchanged and the 8 new files are imported by nothing. Its answer was cut off ('answer was cut off; asking it to continue') and the continuation lost the wiring. It passed 7/7 because 'rendered' matched react-router's generic Link. Agent alone did wire it into Header.js/App.js but its build fails (SearchButton missing after the repair). The models also differed (lite vs flash+lite).",
+   "prompt_run_notes": "Rewrote Header.js and App.js, added Link, MobileNav, ThemeSwitch and 3 packages. Build fails: imports ./SearchButton which the repair answer never wrote as a file block.",
+   "report_run_notes": "Wrote Header.css, Link, Logo, MobileNav, SearchButton, ThemeSwitch, data/headerNavLinks, data/siteMetadata; did not touch Header.js or App.js. Old header still on the page; new code is dead.",
+   "failure_categories": ["report run: incomplete output (answer truncated, mount step lost)", "agent alone: build failure (missing file after repair)", "unfair pair: different models"],
+   "check_errors": ["'The navbar is rendered' passed for the report run because the donor identifier 'Link' matched react-router's Link", "'Something was added' / 'donor code present' pass for files that nothing imports"]
+  },
+  {
+   "prompt_run": "20261027-021808-prompt", "report_run": "20261027-022124-report",
+   "verdict": "worse",
+   "summary": "Automatic verdict 'worse' holds, but the scores are mostly wrong. Both runs rewrote the site's existing src/components/Navbar.js in place (still rendered by App.js), so 'rendered' and 'only one navbar' failed wrongly for both ('Navigate' from react-router counted as a second navbar). The real difference: the report run kept the donor's Tailwind classes on a Bootstrap site (no effect) and turned 'hidden md:flex' into an inline display:none, so the desktop links never show. Agent alone ported the look to plain CSS (Navbar.css). Models differed (flash vs flash+lite).",
+   "prompt_run_notes": "Rewrote Navbar.js (exports NavBar) with a 324-line Navbar.css in plain CSS. Looks like a working port; needs a browser check.",
+   "report_run_notes": "Rewrote Navbar.js with Tailwind class names plus inline styles, added framer-motion. Desktop <nav> has style display:none with no media query, so desktop users see no links.",
+   "failure_categories": ["report run: matrix error - the report's advice to express Tailwind as inline styles cannot express responsive classes (md:flex), and the agent followed it", "unfair pair: different models"],
+   "check_errors": ["'The navbar is rendered' failed for both although the rewritten Navbar.js is rendered in App.js", "'Only one navbar on the page' counted react-router's Navigate as a navbar"]
+  },
+  {
+   "prompt_run": "20261027-022446-prompt", "report_run": "20261027-022341-report",
+   "verdict": "inconclusive",
+   "summary": "Automatic verdict 'worse' is not supported by the code; both runs are flawed in different ways and the checks that separated them are wrong. Both rewrote Navbar.js in place. Agent alone copied the donor's Tailwind/headlessui markup (unstyled on this Bootstrap site, adds @headlessui/react and body-scroll-lock). The report run adapted to the site's Bootstrap classes and kept its logo and scroll colour, but repeats the inline display:none on the desktop links. Needs a browser check. Same model in both (lite).",
+   "prompt_run_notes": "Navbar.js now holds CustomLink, MobileNav, theme icons in Tailwind classes; the site has no Tailwind, so it renders unstyled.",
+   "report_run_notes": "Navbar.js adapted to Bootstrap (navbar fixed-top navbar-expand-md, sticky on scroll), new data/headerNavLinks and siteMetadata; desktop link group hidden by inline display:none. 'Donor code present' failed because the donor's component names were not kept.",
+   "failure_categories": ["agent alone: styling not ported (Tailwind classes without Tailwind)", "report run: matrix error - same inline display:none on responsive nav"],
+   "check_errors": ["'The navbar is rendered' failed for both (in-place rewrite)", "'Only one navbar on the page' counted Navigate", "'The donor's navbar code is in the result' penalises adapting the donor code instead of copying its names"]
+  }
+ ]
+}

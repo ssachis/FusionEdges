@@ -22,6 +22,7 @@ def main(argv=None):
     r.add_argument("--source", required=True, help="your site (GitHub link or folder)")
     r.add_argument("--donor", required=True, help="donor codebase (GitHub link or folder)")
     r.add_argument("--report", action="store_true", help="write a compatibility report first (tab 2)")
+    r.add_argument("--history", action="store_true", help="report + past cases from other tasks (condition E)")
     r.add_argument("--no-migration", action="store_true")
     r.add_argument("--no-style", action="store_true")
     r.add_argument("--component", help="add this component from the donor (e.g. navbar) instead of migrating")
@@ -33,11 +34,51 @@ def main(argv=None):
     s.add_argument("--donor", required=True)
     s.add_argument("--no-migration", action="store_true")
     sub.add_parser("providers")
+    e = sub.add_parser("experiment", help="run every task of an experiment file under each condition")
+    e.add_argument("file")
+    e.add_argument("--conditions", help="comma-separated: prompt,report,history")
+    e.add_argument("--repeats", type=int)
+    e.add_argument("--no-build", action="store_true")
+    ri = sub.add_parser("import-reviews", help="store manual code reviews from a JSON file in runs.db")
+    ri.add_argument("file")
+    sub.add_parser("backfill", help="store the code diff of every earlier run in runs.db")
+    rs = sub.add_parser("rescore", help="re-run the checks on finished runs (no AI calls)")
+    rs.add_argument("ids", nargs="*")
+    res = sub.add_parser("results", help="verdicts recorded so far")
+    res.add_argument("--experiment")
     a = ap.parse_args(argv)
 
     if a.cmd == "providers":
         for p in llm.status():
             print(f"{'ON ' if p['has_key'] else 'off'}  {p['name']:<11} {p['model']:<40} {'' if p['has_key'] else 'set ' + p['key_env']}")
+        return 0
+    if a.cmd == "import-reviews":
+        from . import compare, diffs
+        diffs.backfill()
+        print(f"Stored {compare.import_reviews(a.file)} review(s).")
+        return 0
+    if a.cmd == "rescore":
+        from . import rescore
+        print(f"Re-scored {rescore.rescore_all(a.ids or None)} run(s).")
+        return 0
+    if a.cmd == "backfill":
+        from . import diffs
+        diffs.backfill()
+        return 0
+    if a.cmd in ("experiment", "results"):
+        from . import compare, experiment
+        if a.cmd == "experiment":
+            spec = experiment.load(a.file)
+            rows = experiment.run_experiment(spec, conditions=a.conditions.split(",") if a.conditions else None,
+                                             repeats=a.repeats, build=not a.no_build)
+            print("\n" + experiment.table(rows))
+        else:
+            rows = [r for r in compare.all_rows() if not a.experiment or r["experiment"] == a.experiment]
+            print(experiment.table(rows))
+            for r in rows:
+                if r.get("review"):
+                    print(f"  review of {r['source'].split('/')[-1]} <- {r['donor'].split('/')[-1]}: "
+                          f"{r['review']['verdict']} (automatic said {r['verdict']}) - {r['review']['summary']}")
         return 0
     if a.cmd == "scan":
         src, don = fetch(a.source, print), fetch(a.donor, print)
@@ -45,7 +86,7 @@ def main(argv=None):
         return 0
     mig, sty = not a.no_migration, not a.no_style
     prompt = Path(a.prompt_file).read_text() if a.prompt_file else default_prompt(mig, sty, a.component or "")
-    rec = run({"mode": "report" if a.report else "prompt", "source": a.source, "donor": a.donor,
+    rec = run({"mode": "history" if a.history else "report" if a.report else "prompt", "source": a.source, "donor": a.donor,
                "migration": mig, "style": sty, "add_component": bool(a.component), "component": a.component or "",
                "edit": "agent" if a.agent else "oneshot", "prompt": prompt, "build": not a.no_build},
               log=print, stage=lambda sid, state, note="": print(f"-- {sid}: {state} {note}"))

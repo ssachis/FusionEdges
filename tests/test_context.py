@@ -738,3 +738,41 @@ class UnparseableAnswer(OneshotContextTest):
         self.assertTrue(any("no <<<FILE>>> block found" in l and "Summary" in l for l in logs))
         saved = (self.tmp / "answers.txt").read_text()
         self.assertIn("I created Header.js", saved)
+
+
+class PilotCheckBugsTest(DonorCodeCheckTest):
+    """Regression tests for the check bugs found by reading the diffs of the 2026-10-27 pilot."""
+
+    def test_in_place_rewrite_of_the_existing_header_is_rendered(self):
+        # the agent rewrote the site's own Header.js with the donor navbar; App.js already renders <Header/>
+        out = self.out({"src/component/Header.js": "import { ThemeToggle } from './ThemeToggle';\n"
+                        "export default function Header(){return <nav><ThemeToggle/></nav>}\n",
+                        "src/component/ThemeToggle.js": "export function ThemeToggle(){return null}\n"})
+        self.assertTrue(self.check(out)["checks"]["mounted"]["pass"])
+
+    def test_new_files_that_nothing_imports_are_not_rendered(self):
+        # pilot task 2: the donor files were written but Header.js / App.js were never changed
+        out = self.out({"src/component/Navbar.js": "export function Navbar(){return <nav/>}\n",
+                        "src/component/ThemeToggle.js": "export function ThemeToggle(){return null}\n"})
+        res = self.check(out)
+        self.assertFalse(res["checks"]["mounted"]["pass"])
+        self.assertIn("imported by nothing", res["checks"]["mounted"]["value"])
+
+    def test_react_router_navigate_is_not_a_second_navbar(self):
+        out = self.out({"src/component/Navbar.js": "export function Navbar(){return <nav/>}\n",
+                        "src/App.js": "import {Navbar} from './component/Navbar';\nimport {Navigate, NavLink} from 'react-router-dom';\n"
+                                      "export default function App(){return <><Navbar/><Navigate to='/'/></>}\n"})
+        self.assertTrue(self.check(out)["checks"]["single"]["pass"])
+
+    def test_losing_a_class_the_sites_script_needs_fails(self):
+        from fusionedges.checks import component_checks
+        facts = [{"kind": "host-script-coupling", "text": "The site's own scripts (public/main.js) look up elements by "
+                  "class or id: .navbar, .navbar-default. They run on page load."}]
+        app = "import {Navbar} from './component/Navbar';\nexport default function App(){return <Navbar/>}\n"
+        lost = self.out({"src/component/Navbar.js": "export function Navbar(){return <nav className=\"retro\"/>}\n", "src/App.js": app})
+        r1 = component_checks(self.source, lost, "navbar", {"ok": True}, "react-cra", donor=self.donor, facts=facts)
+        self.assertFalse(r1["checks"]["host_scripts"]["pass"])
+        kept = self.out({"src/component/Navbar.js": "export function Navbar(){return <nav className=\"navbar navbar-default retro\"/>}\n",
+                         "src/App.js": app})   # self.out reuses one folder, so score the first case before this
+        r2 = component_checks(self.source, kept, "navbar", {"ok": True}, "react-cra", donor=self.donor, facts=facts)
+        self.assertTrue(r2["checks"]["host_scripts"]["pass"])

@@ -17,7 +17,7 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import llm, paths, preview, store
+from . import compare, diffs, llm, paths, preview, store
 from .pipeline import run
 from .prompts import default_prompt
 
@@ -28,8 +28,8 @@ RUN_LOCK = threading.Lock()  # one run at a time (shared provider limits, npm in
 
 def _stages(mode):
     s = [("fetch", "Clone both repos"), ("scan", "Scan both codebases")]
-    if mode == "report":
-        s.append(("report", "Retrieve code + write compatibility report"))
+    if mode in ("report", "history"):
+        s.append(("report", "Retrieve code" + (" + past cases" if mode == "history" else "") + " + write compatibility report"))
     return s + [("agent", "AI writes the code (+ fixes build errors)"), ("check", "Build + check the result")]
 
 
@@ -142,6 +142,25 @@ class Handler(BaseHTTPRequestHandler):
         if p.startswith("/api/job/"):
             j = JOBS.get(p.rsplit("/", 1)[1])
             return self._json(j.public()) if j else self._json({"error": "unknown job"}, 404)
+        if p == "/api/comparisons":
+            rows = compare.all_rows()
+            return self._json({"rows": rows, "summary": compare.summary(rows)})
+        if p.startswith("/api/diff/"):
+            r = store.load(urllib.parse.unquote(p.rsplit("/", 1)[1]))
+            if not r:
+                return self._json({"error": "unknown run"}, 404)
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            res = diffs.for_run(r, refresh="refresh" in q)
+            if not res.get("ok"):   # project folder gone: fall back to the copy kept in runs.db
+                saved = store.load_diff(r["id"])
+                if saved:
+                    res = {"ok": True, "baseline": "db", "baseline_note": saved[0]["baseline"] + " (from runs.db)",
+                           "files": saved, "totals": {"files": len(saved), "code_files": sum(f["kind"] == "code" for f in saved),
+                           "added": sum(f["added"] for f in saved if f["kind"] == "code"),
+                           "removed": sum(f["removed"] for f in saved if f["kind"] == "code"),
+                           "new": sum(f["status"] == "added" for f in saved), "changed": sum(f["status"] == "modified" for f in saved),
+                           "deleted": sum(f["status"] == "deleted" for f in saved)}}
+            return self._json(res)
         if p.startswith("/api/run/"):
             r = store.load(p.rsplit("/", 1)[1])
             return self._json(r) if r else self._json({"error": "unknown run"}, 404)
@@ -187,12 +206,20 @@ class Handler(BaseHTTPRequestHandler):
             if not llm.configured():
                 return self._json({"error": "No AI key is set. Export GROQ_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY "
                                             "or OPENAI_API_KEY in the terminal and restart the server."}, 400)
-            params["mode"] = "report" if params.get("mode") == "report" else "prompt"
+            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history") else "prompt"
             job = Job(params["mode"])
             JOBS[job.id] = job
             busy = RUN_LOCK.locked()
             threading.Thread(target=_worker, args=(job, params), daemon=True).start()
             return self._json({"id": job.id, "queued": busy})
+        if self.path == "/api/compare":
+            try:
+                if "note" in params and params.get("id"):
+                    return self._json(compare.set_note(str(params["id"]), str(params["note"])[:4000]))
+                return self._json(compare.record(str(params.get("a", "")), str(params.get("b", "")),
+                                                 experiment=str(params.get("experiment", ""))))
+            except ValueError as e:
+                return self._json({"error": str(e)}, 400)
         if self.path == "/api/preview":
             rid = str(params.get("run_id", ""))
             folder = _under(paths.OUTPUT, f"{rid}/project")
@@ -224,6 +251,11 @@ def main():
     ap.add_argument("--port", type=int, default=8000)
     ap.add_argument("--no-open", action="store_true")
     a = ap.parse_args()
+    try:
+        from . import diffs
+        diffs.backfill()
+    except Exception as e:
+        print(f"note: could not store earlier diffs ({e})")
     try:
         n = store.mark_interrupted()
         if n:

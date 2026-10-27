@@ -1,0 +1,7 @@
+off  groq        openai/gpt-oss-120b                      set GROQ_API_KEY
+off  gemini      gemini-3.6-flash                         set GEMINI_API_KEY
+off  nvidia      meta/llama-3.3-70b-instruct              set NVIDIA_API_KEY
+off  anthropic   claude-sonnet-5-5                        set ANTHROPIC_API_KEY
+off  openai      gpt-4.1-mini                             set OPENAI_API_KEY
+off  openrouter  meta-llama/llama-3.3-70b-instruct        set OPENROUTER_API_KEY
+NO_KEYS: no AI key is visible to this Terminal. Add 'export GEMINI_API_KEY=...' to ~/.zshrc or run the command yourself.
