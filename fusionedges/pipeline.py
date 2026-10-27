@@ -19,7 +19,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import compare, diffs, memory, paths, rag, store
+from . import browser, compare, diffs, memory, paths, rag, records, store
 from .agents import fit_to_limit, report_markdown, run_edit_agent, run_oneshot, run_report_agent
 from .checks import component_checks, run_checks
 from .repos import fetch
@@ -194,13 +194,32 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         _git_commit(project, f"{diffs.BASELINE_MSG}: copy of the {rec['started_from']} "
                              f"({start_from.label}{' @ ' + start_from.commit[:7] if start_from.commit else ''})", log)
         can_build = bool(params.get("build", True)) and build_command(project)[0] is not None
+        # browser check: same for both conditions, so the report stays the only difference between them
+        use_browser = bool(component) and params.get("browser", os.environ.get("FUSIONEDGES_BROWSER", "1") != "0") \
+            and (can_build or (project / "index.html").exists())
+        base, after_build = None, None
+        if use_browser:
+            ok, why = browser.available()
+            if not ok:
+                log(f"[browser] skipped: {why}")
+                use_browser = False
+            else:
+                base = browser.baseline(source.public(), component, log) if can_build else None
+                rec["browser_baseline"] = bool(base)
+
+                def after_build(out):
+                    r = browser.check(out, component, base=base)
+                    if r.get("skipped"):
+                        log(f"[browser] not checked: {r.get('reason')}")
+                        return []
+                    return r["problems"]
         try:
             if opts["edit"] == "agent":
                 agent = run_edit_agent(prompt, source.path, donor.path, project, sc, can_build, log, report=report)
             else:
                 agent = fit_to_limit(lambda b: run_oneshot(
                     prompt, source.path, donor.path, project, sc, can_build, log, report=report,
-                    component=component, started_from=rec["started_from"], budget_chars=b), log,
+                    component=component, started_from=rec["started_from"], budget_chars=b, after_build=after_build), log,
                     start=min(fitted.get('budget') or 10**9, rag.context_budget_chars())) if component else run_oneshot(
                     prompt, source.path, donor.path, project, sc, can_build, log, report=report,
                     component=component, started_from=rec["started_from"])
@@ -224,9 +243,16 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         rec["run_script"] = run_script(project)
         rec["build"] = {k: build.get(k) for k in ("ok", "skipped", "reason")}
         rec["build_tail"] = (build.get("output") or "")[-2000:]
+        seen = None
+        if component and use_browser and build.get("ok") is not False:
+            seen = browser.check(project, component, shots=folder / "browser", base=base)
+            rec["browser"] = {k: seen.get(k) for k in ("skipped", "reason", "problems", "pass", "baseline_used")}
+            if not seen.get("skipped"):
+                records.save_browser(run_id, seen)
+                log("[browser] final check: " + ("works at desktop and phone width" if seen["pass"] else "; ".join(seen["problems"])))
         if component:
             rec["checks"] = component_checks(source.path, project, component, build, sc["source"]["framework"],
-                                               donor=donor.path, facts=sc["facts"])
+                                               donor=donor.path, facts=sc["facts"], browser=seen)
         else:
             rec["checks"] = run_checks(source.path, donor.path, project, opts["migration"], opts["style"], build,
                                        donor_style_files(donor.path, sc["donor"]) if opts["migration"] and opts["style"] else [])

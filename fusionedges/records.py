@@ -227,3 +227,21 @@ def analysis(experiment: str = "") -> dict:
         "failures": [{"side": s, "kind": k, "count": n} for (s, k), n in cats.most_common()],
         "lessons": lessons,
     }
+
+
+def save_browser(run_id: str, res: dict, checker: str = "pipeline (browser.py)"):
+    """Store a browser.check() result: one row per viewport, screenshots referenced by path."""
+    if not res or res.get("skipped"):
+        return 0
+    when = store.now_iso()
+    n = 0
+    with store.connect() as db:
+        for vp, v in (res.get("viewports") or {}).items():
+            shot = Path(v["screenshot"]) if v.get("screenshot") else None
+            db.execute("INSERT OR REPLACE INTO browser_checks VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", (
+                run_id, vp, when, checker, v.get("tag"), v.get("classes"), v.get("height"), J(v.get("links", [])),
+                len(v.get("links", [])), J([]), None, None, J(v.get("errors_load", [])), J(v.get("errors_scroll", [])),
+                _rel(shot) if shot else None, v.get("screenshot_sha256"), None,
+                "; ".join(res.get("problems", [])) or "no problems"))
+            n += 1
+    return n

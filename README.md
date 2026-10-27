@@ -196,3 +196,22 @@ python3 -m fusionedges import-browser experiments/browser/<date>          # labe
 python3 -m fusionedges record-experiment <name> --date <date> --task-file ... --writeup ... --reviews ... --browser ...
 python3 -m fusionedges export <name> --date <date>                         # -> experiments/results/<name>-<date>.json
 ```
+
+## Browser check (what a user would see)
+
+The build catches import and syntax errors, not a page that throws when you scroll, a navbar whose links are hidden
+on desktop, or a component that renders unstyled. After every build FusionEdges opens the built site in headless
+Chromium at 1280px and 390px, scrolls, and looks for: the component and its visible links, links the navbar
+contains but hides on desktop, a navbar too tall to be styled, sideways scrolling on a phone, and page errors at
+load and while scrolling. Errors the ORIGINAL site already has (built once per commit, cached in
+`examples/.browser/`) do not count.
+
+If it finds a problem, the problem goes back to the agent as a repair, the same way build errors do (same repair
+budget, same for both conditions, so the report stays the only difference). The final result is the check
+"Works in the browser (desktop + phone)", with screenshots in `output/<run>/browser/` and rows in
+`browser_checks` (runs.db).
+
+```bash
+pip install playwright && python -m playwright install chromium   # one time; without it the check is skipped
+export FUSIONEDGES_BROWSER=0                                        # turn it off
+```

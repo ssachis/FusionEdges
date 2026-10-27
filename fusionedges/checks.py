@@ -255,9 +255,10 @@ def donor_identifiers(donor: Path, component: str, source: Path) -> list:
     return sorted(n for n in names if not re.search(r"\b%s\b" % re.escape(n), own))
 
 
-CHECKS_VERSION = 3   # v2 (2026-10-27 pilot review): reachability for 'rendered', camelCase words for 'single',
+CHECKS_VERSION = 4   # v2 (2026-10-27 pilot review): reachability for 'rendered', camelCase words for 'single',
                      # adapted donor code (its distinctive strings) counts for 'donor_code'
                      # v3: the site's own scripts still find the classes/ids they look up (host-script-coupling)
+                     # v4: optional 'browser' check (browser.py) when Playwright is available
 ENTRIES = ("src/index.js", "src/index.jsx", "src/index.tsx", "src/main.jsx", "src/main.tsx", "src/main.js",
            "app/layout.tsx", "app/layout.jsx", "app/layout.js", "src/app/layout.tsx", "src/app/layout.jsx",
            "src/app/layout.js", "pages/_app.tsx", "pages/_app.jsx", "pages/_app.js", "src/pages/_app.tsx",
@@ -314,7 +315,7 @@ def donor_strings(donor: Path, component: str, source: Path) -> list:
 
 
 def component_checks(source: Path, out: Path, component: str, build: dict, framework: str,
-                     donor: Path | None = None, facts: list | None = None) -> dict:
+                     donor: Path | None = None, facts: list | None = None, browser: dict | None = None) -> dict:
     """Checks for 'add the <component> from the donor to my site'. `source` is the user's site before the change."""
     source, out = Path(source), Path(out)
     kw = (component or "").strip().lower()
@@ -441,6 +442,16 @@ def component_checks(source: Path, out: Path, component: str, build: dict, frame
         res["host_scripts"] = {"label": "The site's own scripts still find their elements",
                                "value": "all kept" if not lost else "lost " + ", ".join(lost),
                                "missing": lost, "pass": not lost}
+
+    if browser is not None:     # what a user sees: browser.check() result (None when the check was not run)
+        if browser.get("skipped"):
+            res["browser"] = {"label": "Works in the browser (desktop + phone)", "value": "not checked: " + browser.get("reason", ""),
+                              "missing": [], "pass": None}
+        else:
+            probs = browser.get("problems", [])
+            res["browser"] = {"label": "Works in the browser (desktop + phone)",
+                              "value": "no problems at 1280px and 390px" if not probs else probs[0],
+                              "missing": probs, "pass": not probs}
 
     b = build or {}
     res["build"] = {"label": "Builds", "value": "passes" if b.get("ok") else (

@@ -572,8 +572,10 @@ def files_context(retrieved: dict, roots: dict, budget_chars: int = 48000, per_f
 
 def run_oneshot(task: str, source: Path, donor: Path, output: Path, scan: dict, build_enabled: bool, log,
                 report: dict | None = None, component: str = "", started_from: str = "source",
-                max_repairs: int = 2, budget_chars: int | None = None) -> dict:
-    """One request returns all files; if the build fails, the errors go back for up to `max_repairs` fixes."""
+                max_repairs: int = 2, budget_chars: int | None = None, after_build=None) -> dict:
+    """One request returns all files; if the build fails, the errors go back for up to `max_repairs` fixes.
+    `after_build(output)` -> list of problems (the browser check): when the build passes but a user would see a
+    problem, those problems go back the same way, within the same repair budget."""
     s = Session("oneshot", log)
     roots = {"source": source, "donor": donor}
     ws = Workspace({"source": source, "donor": donor, "output": output}, writable="output",
@@ -619,6 +621,49 @@ def run_oneshot(task: str, source: Path, donor: Path, output: Path, scan: dict, 
     messages = [{"role": "user", "text": first}]
     applied = {"written": [], "deleted": [], "copied": [], "errors": []}
     summary, builds, failures, attempts = "", 0, 0, 0
+    browser_failures, browser_repairs, browser_log = 0, 0, []
+
+    def current_files(room=14000):
+        files = []
+        for p in sorted(set(applied["written"])):
+            body = read(output / p)[:min(8000, max(room, 0))]
+            if body:
+                files.append(f"===== output:{p} =====\n{body}")
+                room -= len(body)
+        return files
+
+    def after_ok(attempt):
+        """Build passed (or there is none): run the browser check. True = stop, False = repair sent."""
+        nonlocal messages, browser_failures, browser_repairs
+        if after_build is None:
+            return True
+        try:
+            probs = after_build(output) or []
+        except Exception as e:      # noqa: BLE001 - a broken check must not stop the run
+            log(f"[browser] check failed to run: {e}")
+            return True
+        browser_log.append(probs)
+        if not probs:
+            log("[browser] the page works at desktop and phone width")
+            return True
+        browser_failures += 1
+        for p_ in probs:
+            log(f"[browser] {p_}")
+        if attempt >= max_repairs:
+            log("[browser] still failing in the browser; out of repair attempts")
+            return True
+        log(f"[browser] sending what a user would see back (repair {attempt + 1}/{max_repairs})")
+        browser_repairs += 1
+        messages = [{"role": "user", "text": (
+            f"You added the {component or 'requested change'} to the OUTPUT project. It BUILDS, but when the built "
+            f"site is opened in a real browser at desktop (1280px) and phone (390px) width, a user sees these problems:\n"
+            + "\n".join(f"- {p_}" for p_ in probs) +
+            "\n\nCURRENT FILES YOU WROTE:\n" + "\n\n".join(current_files()) +
+            "\n\nFix these problems without breaking the build. Common causes: CSS classes from a styling system the "
+            "site does not use (e.g. Tailwind on a site without Tailwind), responsive classes turned into inline "
+            "display:none, or class names/ids the site's own scripts look up being removed. Output only the files "
+            "that change, in the same format, then <<<DONE>>>.")}]
+        return False
 
     def ask(msgs):
         """One answer; ask to continue if it was cut off before <<<DONE>>>."""
@@ -668,14 +713,20 @@ def run_oneshot(task: str, source: Path, donor: Path, output: Path, scan: dict, 
                 continue
             break
         if not build_enabled:
-            break
+            if after_ok(attempt):
+                break
+            continue
         res = run_build(output)
         if res.get("skipped"):
-            break
+            if after_ok(attempt):
+                break
+            continue
         builds += 1
         if res["ok"]:
             log("[oneshot] build passed")
-            break
+            if after_ok(attempt):
+                break
+            continue
         failures += 1
         if res.get("reason") == "npm install failed":
             log("[oneshot] npm install failed (network or package problem, not the code); not retrying")
@@ -703,7 +754,8 @@ def run_oneshot(task: str, source: Path, donor: Path, output: Path, scan: dict, 
               "retries": max(0, builds - 1), "files_written": sorted(set(applied["written"])),
               "files_deleted": applied["deleted"], "files_copied": applied["copied"],
               "apply_errors": applied["errors"], "tool_calls": 0,
-              "context": context_info})
+              "context": context_info, "browser_failures": browser_failures,
+              "browser_repairs": browser_repairs, "browser_log": browser_log})
     if run_error:
         t["error" if not applied["written"] else "repair_error"] = run_error[:600]
     return t
