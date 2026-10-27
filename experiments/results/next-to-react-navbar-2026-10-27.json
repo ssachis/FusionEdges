@@ -8,294 +8,17 @@
   "browser_dir": "experiments/browser/2026-10-27",
   "git_commit": "f6e2b97cd92b5fa1a90a9bbb7309eecc829d8b55",
   "note": "Pilot: 4 tasks x (A, D), 1 repeat, Gemini (mixed flash/flash-lite after quota errors)",
-  "created": "2026-10-27T14:37:51"
+  "created": "2026-10-27T14:37:51",
+  "answer": "yes",
+  "answer_reason": "It helped in 2 of 2 fair comparisons (same model in both runs).",
+  "answered_at": "2026-10-27T15:22:26",
+  "reason": "It helped in 2 of 2 fair comparisons (same model in both runs)."
  },
- "exported": "2026-10-27T14:37:51",
+ "exported": "2026-10-27T15:22:26",
  "comparisons": [
   {
-   "id": "20261027-022446-prompt__20261027-022341-report",
-   "created": "2026-10-27T12:27:57",
-   "experiment": "next-to-react-navbar",
-   "source": "soumyajit4419/Portfolio",
-   "donor": "timlrx/tailwind-nextjs-starter-blog",
-   "component": "navbar",
-   "source_framework": "react-cra",
-   "donor_framework": "next",
-   "prompt_run": "20261027-022446-prompt",
-   "report_run": "20261027-022341-report",
-   "condition": "D",
-   "prompt_score": "7/7",
-   "report_score": "7/7",
-   "prompt_passed": 7,
-   "report_passed": 7,
-   "total_checks": 7,
-   "prompt_build": 1,
-   "report_build": 1,
-   "prompt_failed": [],
-   "report_failed": [],
-   "fixed": [],
-   "broke": [],
-   "prompt_files": 3,
-   "report_files": 4,
-   "prompt_added": 181,
-   "prompt_removed": 104,
-   "report_added": 217,
-   "report_removed": 114,
-   "only_prompt": [
-    "package.json"
-   ],
-   "only_report": [
-    "src/data/headerNavLinks.js",
-    "src/data/siteMetadata.js"
-   ],
-   "prompt_tokens": 12979,
-   "report_tokens": 28780,
-   "prompt_cost": 0.01121,
-   "report_cost": 0.01952,
-   "memory_used": 0,
-   "adherence": {
-    "items": [
-     {
-      "title": "Next.js to React CRA framework mismatch",
-      "instruction": "Rewrite components to standard React JS and use react-router-dom <Link to={...}>.",
-      "report_run": {
-       "status": "addressed",
-       "passed": [
-        "react-router-dom"
-       ],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "addressed",
-       "passed": [
-        "react-router-dom"
-       ],
-       "failed": []
-      }
-     },
-     {
-      "title": "React 19 vs React 17 version mismatch",
-      "instruction": "Ensure compatible React 17 syntax (e.g., standard useRef, useState, useEffect).",
-      "report_run": {
-       "status": "addressed",
-       "passed": [
-        "useEffect",
-        "useState",
-        "useRef"
-       ],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "addressed",
-       "passed": [
-        "useEffect",
-        "useState",
-        "useRef"
-       ],
-       "failed": []
-      }
-     },
-     {
-      "title": "Tailwind CSS classes in Donor vs CRA styling system",
-      "instruction": "Convert Tailwind classes to equivalent Bootstrap classes or custom CSS rules in App.css / index.css.",
-      "report_run": {
-       "status": "not addressed",
-       "passed": [],
-       "failed": [
-        "App.css",
-        "index.css"
-       ]
-      },
-      "agent_alone": {
-       "status": "not addressed",
-       "passed": [],
-       "failed": [
-        "App.css",
-        "index.css"
-       ]
-      }
-     },
-     {
-      "title": "Path aliases (@/) not configured in CRA",
-      "instruction": "Rewrite all @/ imports to relative paths (e.g., `../../data/headerNavLinks`).",
-      "report_run": {
-       "status": "addressed",
-       "passed": [
-        "data/headerNavLinks"
-       ],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "not addressed",
-       "passed": [],
-       "failed": [
-        "data/headerNavLinks"
-       ]
-      }
-     },
-     {
-      "title": "Missing HeadlessUI, body-scroll-lock, and next-themes dependencies",
-      "instruction": "Replace HeadlessUI and next-themes/body-scroll-lock with standard React state toggles, simple dropdowns, or remove unsupported advanced features like theme switching / kbar search if unneeded.",
-      "report_run": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      }
-     }
-    ],
-    "testable": 4,
-    "addressed": 3,
-    "partial": 0,
-    "alone_addressed": 2,
-    "only_with_report": 1
-   },
-   "prompt_blast": [],
-   "report_blast": [],
-   "models": "gemini:gemini-3.5-flash-lite",
-   "verdict": "no change",
-   "note": "No change in the checks: both runs passed 7/7. Code: agent alone changed 3 files (+181 -104), with the report 4 files (+217 -114). Only agent alone wrote: package.json. Only the report run wrote: src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 4 testable report items (0 partly); agent alone did 2 of the same 4 without being told. Handled only with the report: Path aliases (@/) not configured in CRA. Tokens: 28,780 with the report vs 12,979 without (+122%).",
-   "human_note": ""
-  },
-  {
-   "id": "20261027-021808-prompt__20261027-022124-report",
-   "created": "2026-10-27T12:27:56",
-   "experiment": "next-to-react-navbar",
-   "source": "soumyajit4419/Portfolio",
-   "donor": "muhammad-fiaz/portfolio",
-   "component": "navbar",
-   "source_framework": "react-cra",
-   "donor_framework": "next",
-   "prompt_run": "20261027-021808-prompt",
-   "report_run": "20261027-022124-report",
-   "condition": "D",
-   "prompt_score": "7/7",
-   "report_score": "7/7",
-   "prompt_passed": 7,
-   "report_passed": 7,
-   "total_checks": 7,
-   "prompt_build": 1,
-   "report_build": 1,
-   "prompt_failed": [],
-   "report_failed": [],
-   "fixed": [],
-   "broke": [],
-   "prompt_files": 3,
-   "report_files": 3,
-   "prompt_added": 638,
-   "prompt_removed": 115,
-   "report_added": 152,
-   "report_removed": 106,
-   "only_prompt": [
-    "src/components/Navbar.css"
-   ],
-   "only_report": [
-    "package.json"
-   ],
-   "prompt_tokens": 37117,
-   "report_tokens": 28406,
-   "prompt_cost": 0.03294,
-   "report_cost": 0.01871,
-   "memory_used": 0,
-   "adherence": {
-    "items": [
-     {
-      "title": "Next.js APIs in React CRA project",
-      "instruction": "Remove 'use client' directives. Replace Next.js imports with react-router-dom APIs (Link, useLocation).",
-      "report_run": {
-       "status": "addressed",
-       "passed": [
-        "no Next.js",
-        "useLocation",
-        "react-router-dom",
-        "no use client"
-       ],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "addressed",
-       "passed": [
-        "no Next.js",
-        "useLocation",
-        "react-router-dom",
-        "no use client"
-       ],
-       "failed": []
-      }
-     },
-     {
-      "title": "Tailwind Utility Classes in Plain CSS Project",
-      "instruction": "Convert Tailwind classes to standard CSS styles in a dedicated stylesheet or inline styles matching SOURCE setup.",
-      "report_run": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      }
-     },
-     {
-      "title": "TypeScript and Path Aliases",
-      "instruction": "Convert files from `.tsx`/`.ts` to `.jsx`/`.js`, strip TypeScript type annotations, and convert `@/` aliases to relative path imports.",
-      "report_run": {
-       "status": "partial",
-       "passed": [
-        "no .tsx",
-        "no .ts"
-       ],
-       "failed": [
-        ".js"
-       ]
-      },
-      "agent_alone": {
-       "status": "partial",
-       "passed": [
-        "no .tsx",
-        "no .ts"
-       ],
-       "failed": [
-        ".js"
-       ]
-      }
-     },
-     {
-      "title": "Existing Navbar Component Collision",
-      "instruction": "Replace `src/components/Navbar.js` content with the adapted DONOR navbar component tree.",
-      "report_run": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      },
-      "agent_alone": {
-       "status": "unclear",
-       "passed": [],
-       "failed": []
-      }
-     }
-    ],
-    "testable": 2,
-    "addressed": 1,
-    "partial": 1,
-    "alone_addressed": 1,
-    "only_with_report": 0
-   },
-   "prompt_blast": [],
-   "report_blast": [],
-   "models": "gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash",
-   "verdict": "inconclusive",
-   "note": "Inconclusive: the runs used different models (agent alone: gemini:gemini-3.6-flash; with the report: gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash), so the difference may be the model, not the report. Checks: 7/7 with the report, 7/7 without. Code: agent alone changed 3 files (+638 -115), with the report 3 files (+152 -106). Only agent alone wrote: src/components/Navbar.css. Only the report run wrote: package.json. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 2 testable report items (1 partly); agent alone did 1 of the same 2 without being told. Tokens: 28,406 with the report vs 37,117 without (-23%).",
-   "human_note": ""
-  },
-  {
    "id": "20261027-021613-prompt__20261027-021125-report",
-   "created": "2026-10-27T12:27:56",
+   "created": "2026-10-27T15:22:00",
    "experiment": "next-to-react-navbar",
    "source": "sanajitjana/React-Portfolio",
    "donor": "timlrx/tailwind-nextjs-starter-blog",
@@ -463,11 +186,14 @@
    "models": "gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash",
    "verdict": "inconclusive",
    "note": "Inconclusive: the runs used different models (agent alone: gemini:gemini-3.5-flash-lite; with the report: gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash), so the difference may be the model, not the report. Checks: 7/8 with the report, 6/8 without. The report run fixed: Builds, The site's own scripts still find their elements. The report run newly failed: The navbar is rendered. Code: agent alone changed 7 files (+358 -83), with the report 8 files (+703 -0). Only agent alone wrote: package.json, src/App.js, src/component/Header.js. Only the report run wrote: src/component/Header.css, src/component/Logo.js, src/component/SearchButton.js, src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 4 testable report items (0 partly); agent alone did 1 of the same 4 without being told. Tokens: 40,931 with the report vs 20,468 without (+100%).",
-   "human_note": ""
+   "human_note": "",
+   "fair": "0",
+   "helped": "no",
+   "helped_basis": "review"
   },
   {
    "id": "20261027-020234-prompt__20261027-020703-report",
-   "created": "2026-10-27T08:49:09",
+   "created": "2026-10-27T15:22:00",
    "experiment": "next-to-react-navbar",
    "source": "sanajitjana/React-Portfolio",
    "donor": "muhammad-fiaz/portfolio",
@@ -520,26 +246,26 @@
        "status": "partial",
        "passed": [
         "no next/link",
-        "useLocation",
+        "Link",
         "react-router-dom",
-        "Link"
+        "useLocation"
        ],
        "failed": [
-        "useRouter",
-        "usePathname"
+        "usePathname",
+        "useRouter"
        ]
       },
       "agent_alone": {
        "status": "partial",
        "passed": [
         "no next/link",
-        "useLocation",
+        "Link",
         "react-router-dom",
-        "Link"
+        "useLocation"
        ],
        "failed": [
-        "useRouter",
-        "usePathname"
+        "usePathname",
+        "useRouter"
        ]
       }
      },
@@ -550,8 +276,8 @@
        "status": "addressed",
        "passed": [
         "no border-b-4",
-        "no shadow-retro",
-        "no top-0"
+        "no top-0",
+        "no shadow-retro"
        ],
        "failed": []
       },
@@ -559,8 +285,8 @@
        "status": "addressed",
        "passed": [
         "no border-b-4",
-        "no shadow-retro",
-        "no top-0"
+        "no top-0",
+        "no shadow-retro"
        ],
        "failed": []
       }
@@ -631,10 +357,412 @@
    "models": "gemini:gemini-3.6-flash",
    "verdict": "improved",
    "note": "Improved: with the report 8/8 checks passed, without it 7/8. The report run fixed: The site's own scripts still find their elements. Code: agent alone changed 2 files (+563 -65), with the report 7 files (+707 -64). Only the report run wrote: src/component/Avatar.js, src/component/Button.js, src/component/SignInButton.js, src/component/ThemeToggle.js, src/component/icons.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 5 testable report items (1 partly); agent alone did 1 of the same 5 without being told. Handled only with the report: Source main.js targets jQuery/DOM selectors like .navbar and .navbar-default; Keep the site's script selectors. Tokens: 41,144 with the report vs 23,445 without (+75%).",
-   "human_note": ""
+   "human_note": "",
+   "fair": "1",
+   "helped": "yes",
+   "helped_basis": "review"
+  },
+  {
+   "id": "20261027-022446-prompt__20261027-022341-report",
+   "created": "2026-10-27T15:22:00",
+   "experiment": "next-to-react-navbar",
+   "source": "soumyajit4419/Portfolio",
+   "donor": "timlrx/tailwind-nextjs-starter-blog",
+   "component": "navbar",
+   "source_framework": "react-cra",
+   "donor_framework": "next",
+   "prompt_run": "20261027-022446-prompt",
+   "report_run": "20261027-022341-report",
+   "condition": "D",
+   "prompt_score": "7/7",
+   "report_score": "7/7",
+   "prompt_passed": 7,
+   "report_passed": 7,
+   "total_checks": 7,
+   "prompt_build": 1,
+   "report_build": 1,
+   "prompt_failed": [],
+   "report_failed": [],
+   "fixed": [],
+   "broke": [],
+   "prompt_files": 3,
+   "report_files": 4,
+   "prompt_added": 181,
+   "prompt_removed": 104,
+   "report_added": 217,
+   "report_removed": 114,
+   "only_prompt": [
+    "package.json"
+   ],
+   "only_report": [
+    "src/data/headerNavLinks.js",
+    "src/data/siteMetadata.js"
+   ],
+   "prompt_tokens": 12979,
+   "report_tokens": 28780,
+   "prompt_cost": 0.01121,
+   "report_cost": 0.01952,
+   "memory_used": 0,
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js to React CRA framework mismatch",
+      "instruction": "Rewrite components to standard React JS and use react-router-dom <Link to={...}>.",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "React 19 vs React 17 version mismatch",
+      "instruction": "Ensure compatible React 17 syntax (e.g., standard useRef, useState, useEffect).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "useRef",
+        "useState",
+        "useEffect"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "useRef",
+        "useState",
+        "useEffect"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "Tailwind CSS classes in Donor vs CRA styling system",
+      "instruction": "Convert Tailwind classes to equivalent Bootstrap classes or custom CSS rules in App.css / index.css.",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "index.css",
+        "App.css"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "index.css",
+        "App.css"
+       ]
+      }
+     },
+     {
+      "title": "Path aliases (@/) not configured in CRA",
+      "instruction": "Rewrite all @/ imports to relative paths (e.g., `../../data/headerNavLinks`).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "data/headerNavLinks"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "data/headerNavLinks"
+       ]
+      }
+     },
+     {
+      "title": "Missing HeadlessUI, body-scroll-lock, and next-themes dependencies",
+      "instruction": "Replace HeadlessUI and next-themes/body-scroll-lock with standard React state toggles, simple dropdowns, or remove unsupported advanced features like theme switching / kbar search if unneeded.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     }
+    ],
+    "testable": 4,
+    "addressed": 3,
+    "partial": 0,
+    "alone_addressed": 2,
+    "only_with_report": 1
+   },
+   "prompt_blast": [],
+   "report_blast": [],
+   "models": "gemini:gemini-3.5-flash-lite",
+   "verdict": "no change",
+   "note": "No change in the checks: both runs passed 7/7. Code: agent alone changed 3 files (+181 -104), with the report 4 files (+217 -114). Only agent alone wrote: package.json. Only the report run wrote: src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 4 testable report items (0 partly); agent alone did 2 of the same 4 without being told. Handled only with the report: Path aliases (@/) not configured in CRA. Tokens: 28,780 with the report vs 12,979 without (+122%).",
+   "human_note": "",
+   "fair": "1",
+   "helped": "yes",
+   "helped_basis": "review"
+  },
+  {
+   "id": "20261027-021808-prompt__20261027-022124-report",
+   "created": "2026-10-27T15:21:59",
+   "experiment": "next-to-react-navbar",
+   "source": "soumyajit4419/Portfolio",
+   "donor": "muhammad-fiaz/portfolio",
+   "component": "navbar",
+   "source_framework": "react-cra",
+   "donor_framework": "next",
+   "prompt_run": "20261027-021808-prompt",
+   "report_run": "20261027-022124-report",
+   "condition": "D",
+   "prompt_score": "7/7",
+   "report_score": "7/7",
+   "prompt_passed": 7,
+   "report_passed": 7,
+   "total_checks": 7,
+   "prompt_build": 1,
+   "report_build": 1,
+   "prompt_failed": [],
+   "report_failed": [],
+   "fixed": [],
+   "broke": [],
+   "prompt_files": 3,
+   "report_files": 3,
+   "prompt_added": 638,
+   "prompt_removed": 115,
+   "report_added": 152,
+   "report_removed": 106,
+   "only_prompt": [
+    "src/components/Navbar.css"
+   ],
+   "only_report": [
+    "package.json"
+   ],
+   "prompt_tokens": 37117,
+   "report_tokens": 28406,
+   "prompt_cost": 0.03294,
+   "report_cost": 0.01871,
+   "memory_used": 0,
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js APIs in React CRA project",
+      "instruction": "Remove 'use client' directives. Replace Next.js imports with react-router-dom APIs (Link, useLocation).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "no Next.js",
+        "useLocation",
+        "react-router-dom",
+        "no use client"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "no Next.js",
+        "useLocation",
+        "react-router-dom",
+        "no use client"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "Tailwind Utility Classes in Plain CSS Project",
+      "instruction": "Convert Tailwind classes to standard CSS styles in a dedicated stylesheet or inline styles matching SOURCE setup.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     },
+     {
+      "title": "TypeScript and Path Aliases",
+      "instruction": "Convert files from `.tsx`/`.ts` to `.jsx`/`.js`, strip TypeScript type annotations, and convert `@/` aliases to relative path imports.",
+      "report_run": {
+       "status": "partial",
+       "passed": [
+        "no .tsx",
+        "no .ts"
+       ],
+       "failed": [
+        ".js"
+       ]
+      },
+      "agent_alone": {
+       "status": "partial",
+       "passed": [
+        "no .tsx",
+        "no .ts"
+       ],
+       "failed": [
+        ".js"
+       ]
+      }
+     },
+     {
+      "title": "Existing Navbar Component Collision",
+      "instruction": "Replace `src/components/Navbar.js` content with the adapted DONOR navbar component tree.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     }
+    ],
+    "testable": 2,
+    "addressed": 1,
+    "partial": 1,
+    "alone_addressed": 1,
+    "only_with_report": 0
+   },
+   "prompt_blast": [],
+   "report_blast": [],
+   "models": "gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash",
+   "verdict": "inconclusive",
+   "note": "Inconclusive: the runs used different models (agent alone: gemini:gemini-3.6-flash; with the report: gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash), so the difference may be the model, not the report. Checks: 7/7 with the report, 7/7 without. Code: agent alone changed 3 files (+638 -115), with the report 3 files (+152 -106). Only agent alone wrote: src/components/Navbar.css. Only the report run wrote: package.json. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 2 testable report items (1 partly); agent alone did 1 of the same 2 without being told. Tokens: 28,406 with the report vs 37,117 without (-23%).",
+   "human_note": "",
+   "fair": "0",
+   "helped": "no",
+   "helped_basis": "review"
   }
  ],
  "reviews": {
+  "20261027-021613-prompt__20261027-021125-report": [
+   {
+    "id": 2,
+    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "no change",
+    "summary": "Automatic verdict 'improved' is wrong: neither run did the task. The report run never mounted the navbar: Header.js and App.js are unchanged and the 8 new files are imported by nothing. Its answer was cut off ('answer was cut off; asking it to continue') and the continuation lost the wiring. It passed 7/7 because 'rendered' matched react-router's generic Link. Agent alone did wire it into Header.js/App.js but its build fails (SearchButton missing after the repair). The models also differed (lite vs flash+lite).",
+    "prompt_run_notes": "Rewrote Header.js and App.js, added Link, MobileNav, ThemeSwitch and 3 packages. Build fails: imports ./SearchButton which the repair answer never wrote as a file block.",
+    "report_run_notes": "Wrote Header.css, Link, Logo, MobileNav, SearchButton, ThemeSwitch, data/headerNavLinks, data/siteMetadata; did not touch Header.js or App.js. Old header still on the page; new code is dead.",
+    "failure_categories": [
+     "report run: incomplete output (answer truncated, mount step lost)",
+     "agent alone: build failure (missing file after repair)",
+     "unfair pair: different models"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' passed for the report run because the donor identifier 'Link' matched react-router's Link",
+     "'Something was added' / 'donor code present' pass for files that nothing imports"
+    ],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "mount-order",
+      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
+      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
+     },
+     {
+      "kind": "avoid",
+      "topic": "missing-file",
+      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
+      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
+     }
+    ]
+   },
+   {
+    "id": 6,
+    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "no change",
+    "summary": "Confirmed. The report run's page still shows the site's original navbar (Sanajit Jana, Home, About, Skill...); the donor navbar never reached the page. The agent-alone build failed, so there is nothing to open. Neither run did the task.",
+    "prompt_run_notes": "No build to open.",
+    "report_run_notes": "Original navbar on the page at both widths.",
+    "failure_categories": [
+     "report run: incomplete output (confirmed: original navbar still shown)",
+     "agent alone: build failure"
+    ],
+    "check_errors": [],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "mount-order",
+      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
+      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
+     },
+     {
+      "kind": "avoid",
+      "topic": "missing-file",
+      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
+      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
+     }
+    ]
+   }
+  ],
+  "20261027-020234-prompt__20261027-020703-report": [
+   {
+    "id": 1,
+    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "improved",
+    "summary": "Agreed with the automatic verdict, but for a different reason. Agent alone dropped the navbar/navbar-default classes that the site's public/assets/js/main.js reads on scroll ($('.navbar').offset().top), so its page throws a TypeError at runtime. The report run kept them. Both models were gemini-3.6-flash, so this pair is a fair comparison.",
+    "prompt_run_notes": "Put the whole donor navbar (icons, ThemeToggle, SignInButton) inline in src/component/Header.js with a new Header.css. Header is rendered from App.js, so the navbar IS on the page; the check 'The navbar is rendered' failed wrongly. Outer element is <header className=\"retro-header\">: no .navbar, so main.js breaks.",
+    "report_run_notes": "Split into Avatar, Button, SignInButton, ThemeToggle, icons files and rewrote Header.js; outer element <header className=\"navbar navbar-default retro-navbar-header\">, so main.js keeps working.",
+    "failure_categories": [
+     "agent alone: runtime error from the site's own script (host regression not visible to the build)"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' failed for agent alone although Header.js (rendered in App.js) contains the navbar inline"
+    ],
+    "lessons": [
+     {
+      "kind": "do",
+      "topic": "host-script-coupling",
+      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
+      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
+     }
+    ]
+   },
+   {
+    "id": 5,
+    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "improved",
+    "summary": "Confirmed in the browser. Both navbars render and look right at both widths, but the agent-alone page throws 'Cannot read properties of undefined (reading top)' three times on scroll (main.js looking for .navbar). The report run has no scroll errors. Two other page errors appear in every build of this site, including the run that left the original navbar, so they were there before.",
+    "prompt_run_notes": "Desktop: 8 links visible. Scroll: 3 page errors from main.js. .navbar missing.",
+    "report_run_notes": "Desktop: 8 links visible, mobile: menu button. No scroll errors. .navbar and .navbar-default present.",
+    "failure_categories": [
+     "agent alone: runtime error from the site's own script (confirmed in browser)"
+    ],
+    "check_errors": [],
+    "lessons": [
+     {
+      "kind": "do",
+      "topic": "host-script-coupling",
+      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
+      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
+     }
+    ]
+   }
+  ],
   "20261027-022446-prompt__20261027-022341-report": [
    {
     "id": 4,
@@ -747,118 +875,6 @@
       "topic": "tailwind-responsive",
       "text": "Do not express Tailwind responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have no media queries, so the element stays hidden (or shown) at every width. Put them in a CSS file with an @media rule, or use the site's own responsive classes (e.g. Bootstrap d-none d-md-flex).",
       "evidence": "Report advice 'express Tailwind as inline styles' -> <nav style={{display: 'none'}}>; desktop links never show."
-     }
-    ]
-   }
-  ],
-  "20261027-021613-prompt__20261027-021125-report": [
-   {
-    "id": 2,
-    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
-    "created": "2026-10-27T12:19:13",
-    "reviewer": "Claude (read every diff, 2026-10-27)",
-    "verdict": "no change",
-    "summary": "Automatic verdict 'improved' is wrong: neither run did the task. The report run never mounted the navbar: Header.js and App.js are unchanged and the 8 new files are imported by nothing. Its answer was cut off ('answer was cut off; asking it to continue') and the continuation lost the wiring. It passed 7/7 because 'rendered' matched react-router's generic Link. Agent alone did wire it into Header.js/App.js but its build fails (SearchButton missing after the repair). The models also differed (lite vs flash+lite).",
-    "prompt_run_notes": "Rewrote Header.js and App.js, added Link, MobileNav, ThemeSwitch and 3 packages. Build fails: imports ./SearchButton which the repair answer never wrote as a file block.",
-    "report_run_notes": "Wrote Header.css, Link, Logo, MobileNav, SearchButton, ThemeSwitch, data/headerNavLinks, data/siteMetadata; did not touch Header.js or App.js. Old header still on the page; new code is dead.",
-    "failure_categories": [
-     "report run: incomplete output (answer truncated, mount step lost)",
-     "agent alone: build failure (missing file after repair)",
-     "unfair pair: different models"
-    ],
-    "check_errors": [
-     "'The navbar is rendered' passed for the report run because the donor identifier 'Link' matched react-router's Link",
-     "'Something was added' / 'donor code present' pass for files that nothing imports"
-    ],
-    "lessons": [
-     {
-      "kind": "avoid",
-      "topic": "mount-order",
-      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
-      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
-     },
-     {
-      "kind": "avoid",
-      "topic": "missing-file",
-      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
-      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
-     }
-    ]
-   },
-   {
-    "id": 6,
-    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
-    "created": "2026-10-27T14:34:27",
-    "reviewer": "Claude (browser check, 2026-10-27)",
-    "verdict": "no change",
-    "summary": "Confirmed. The report run's page still shows the site's original navbar (Sanajit Jana, Home, About, Skill...); the donor navbar never reached the page. The agent-alone build failed, so there is nothing to open. Neither run did the task.",
-    "prompt_run_notes": "No build to open.",
-    "report_run_notes": "Original navbar on the page at both widths.",
-    "failure_categories": [
-     "report run: incomplete output (confirmed: original navbar still shown)",
-     "agent alone: build failure"
-    ],
-    "check_errors": [],
-    "lessons": [
-     {
-      "kind": "avoid",
-      "topic": "mount-order",
-      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
-      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
-     },
-     {
-      "kind": "avoid",
-      "topic": "missing-file",
-      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
-      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
-     }
-    ]
-   }
-  ],
-  "20261027-020234-prompt__20261027-020703-report": [
-   {
-    "id": 1,
-    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
-    "created": "2026-10-27T12:19:13",
-    "reviewer": "Claude (read every diff, 2026-10-27)",
-    "verdict": "improved",
-    "summary": "Agreed with the automatic verdict, but for a different reason. Agent alone dropped the navbar/navbar-default classes that the site's public/assets/js/main.js reads on scroll ($('.navbar').offset().top), so its page throws a TypeError at runtime. The report run kept them. Both models were gemini-3.6-flash, so this pair is a fair comparison.",
-    "prompt_run_notes": "Put the whole donor navbar (icons, ThemeToggle, SignInButton) inline in src/component/Header.js with a new Header.css. Header is rendered from App.js, so the navbar IS on the page; the check 'The navbar is rendered' failed wrongly. Outer element is <header className=\"retro-header\">: no .navbar, so main.js breaks.",
-    "report_run_notes": "Split into Avatar, Button, SignInButton, ThemeToggle, icons files and rewrote Header.js; outer element <header className=\"navbar navbar-default retro-navbar-header\">, so main.js keeps working.",
-    "failure_categories": [
-     "agent alone: runtime error from the site's own script (host regression not visible to the build)"
-    ],
-    "check_errors": [
-     "'The navbar is rendered' failed for agent alone although Header.js (rendered in App.js) contains the navbar inline"
-    ],
-    "lessons": [
-     {
-      "kind": "do",
-      "topic": "host-script-coupling",
-      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
-      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
-     }
-    ]
-   },
-   {
-    "id": 5,
-    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
-    "created": "2026-10-27T14:34:27",
-    "reviewer": "Claude (browser check, 2026-10-27)",
-    "verdict": "improved",
-    "summary": "Confirmed in the browser. Both navbars render and look right at both widths, but the agent-alone page throws 'Cannot read properties of undefined (reading top)' three times on scroll (main.js looking for .navbar). The report run has no scroll errors. Two other page errors appear in every build of this site, including the run that left the original navbar, so they were there before.",
-    "prompt_run_notes": "Desktop: 8 links visible. Scroll: 3 page errors from main.js. .navbar missing.",
-    "report_run_notes": "Desktop: 8 links visible, mobile: menu button. No scroll errors. .navbar and .navbar-default present.",
-    "failure_categories": [
-     "agent alone: runtime error from the site's own script (confirmed in browser)"
-    ],
-    "check_errors": [],
-    "lessons": [
-     {
-      "kind": "do",
-      "topic": "host-script-coupling",
-      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
-      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
      }
     ]
    }

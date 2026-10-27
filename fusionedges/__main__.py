@@ -52,6 +52,8 @@ def main(argv=None):
     rx.add_argument("--reviews", nargs="*", default=[])
     rx.add_argument("--browser", default="")
     rx.add_argument("--note", default="")
+    an = sub.add_parser("answer", help="did the report help? (yes / no / not yet), stored on the experiment")
+    an.add_argument("name", nargs="?", default="")
     ex = sub.add_parser("export", help="write one experiment's records to experiments/results/ (for git)")
     ex.add_argument("name")
     ex.add_argument("--date", default="")
@@ -70,9 +72,12 @@ def main(argv=None):
         diffs.backfill()
         print(f"Stored {compare.import_reviews(a.file)} review(s).")
         return 0
-    if a.cmd in ("import-browser", "record-experiment", "export"):
+    if a.cmd in ("import-browser", "record-experiment", "export", "answer"):
         from . import records
-        if a.cmd == "import-browser":
+        if a.cmd == "answer":
+            res = records.store_answer(a.name) if a.name else records.answer(records._answer_rows())
+            print(f"Did the report help? {res['answer'].upper()}. {res['reason']}")
+        elif a.cmd == "import-browser":
             records.import_browser(a.folder)
         elif a.cmd == "record-experiment":
             print(records.record_experiment(a.name, a.date, a.task_file, a.writeup, a.reviews, a.browser, a.note))

@@ -196,3 +196,40 @@ class RecordsTest(Base):
         self.assertEqual(len(data["comparisons"]), 1)
         self.assertEqual(len(data["runs"][a["id"]]["browser"]), 2)
         self.assertTrue(data["runs"][d["id"]]["diff"])
+
+
+class HelpedTest(Base):
+    def test_yes_no_is_stored_per_comparison_and_per_experiment(self):
+        from fusionedges import records
+        a = CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        c = compare.get(d["comparison"])
+        self.assertEqual((c["helped"], c["helped_basis"], c["fair"]), ("yes", "automatic", 1))   # fake agent improves
+        compare.add_review(c["id"], "Sachi", "worse", "broke the page")
+        c = compare.get(c["id"])
+        self.assertEqual((c["helped"], c["helped_basis"]), ("no", "review"))       # the review wins and is stored
+        compare.record(a["id"], d["id"])                                            # re-recording keeps the review's answer
+        self.assertEqual(compare.get(c["id"])["helped"], "no")
+        with store.connect() as db:
+            db.execute("UPDATE comparisons SET experiment='e1' WHERE id=?", (c["id"],))
+        records.record_experiment("e1", "2026-10-27")
+        with store.connect() as db:
+            ans, why = db.execute("SELECT answer, answer_reason FROM experiments WHERE name='e1'").fetchone()
+        self.assertEqual(ans, "no")
+        self.assertIn("worse", why)
+
+    def test_answer_rules(self):
+        from fusionedges.records import answer
+        self.assertEqual(answer([])["answer"], "not yet")
+        self.assertEqual(answer([{"fair": 0, "helped": "yes", "final": "improved"}])["answer"], "not yet")   # no fair pair
+        rows = [{"fair": 1, "helped": "yes", "final": "improved"}, {"fair": 1, "helped": "yes", "final": "improved"},
+                {"fair": 0, "helped": "no", "final": "worse"}]
+        self.assertEqual(answer(rows)["answer"], "yes")
+        self.assertEqual(answer([{"fair": 1, "helped": "no", "final": "no change"}])["answer"], "not clear yet")
+
+
+class FairTextTest(Base):
+    def test_fair_stored_as_text_is_read_correctly(self):
+        from fusionedges.records import answer
+        rows = [{"fair": "0", "helped": "no", "final": "worse"}, {"fair": "1", "helped": "yes", "final": "improved"}]
+        self.assertIn("1 of 1 fair comparison", answer(rows)["reason"])

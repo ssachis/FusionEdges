@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS browser_checks (
 );
 CREATE TABLE IF NOT EXISTS experiments (
   name TEXT, date TEXT, task_file TEXT, writeup TEXT, reviews TEXT, browser_dir TEXT, git_commit TEXT,
-  note TEXT, created TEXT, PRIMARY KEY (name, date)
+  note TEXT, created TEXT, answer TEXT, answer_reason TEXT, answered_at TEXT, PRIMARY KEY (name, date)
 );
 CREATE TABLE IF NOT EXISTS conflicts (
   run_id TEXT, cid TEXT, type TEXT, severity TEXT, confidence TEXT, basis TEXT, citation TEXT,
@@ -58,6 +58,10 @@ def connect():
             db.execute(f"ALTER TABLE runs ADD COLUMN {col} TEXT")
     if "lessons" not in {r[1] for r in db.execute("PRAGMA table_info(reviews)")}:   # reviews table from 27 Oct
         db.execute("ALTER TABLE reviews ADD COLUMN lessons TEXT")
+    ex_cols = {r[1] for r in db.execute("PRAGMA table_info(experiments)")}
+    for col in ("answer", "answer_reason", "answered_at"):
+        if col not in ex_cols:
+            db.execute(f"ALTER TABLE experiments ADD COLUMN {col} TEXT")
     return db
 
 

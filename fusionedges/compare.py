@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS comparisons (
   prompt_files INTEGER, report_files INTEGER, prompt_added INTEGER, prompt_removed INTEGER,
   report_added INTEGER, report_removed INTEGER, only_prompt TEXT, only_report TEXT,
   prompt_tokens INTEGER, report_tokens INTEGER, prompt_cost REAL, report_cost REAL,
-  memory_used INTEGER, adherence TEXT, prompt_blast TEXT, report_blast TEXT, models TEXT, verdict TEXT, note TEXT, human_note TEXT
+  memory_used INTEGER, adherence TEXT, prompt_blast TEXT, report_blast TEXT, models TEXT, verdict TEXT, note TEXT, human_note TEXT,
+  fair INTEGER, helped TEXT, helped_basis TEXT
 );
 """
 COLS = ["id", "created", "experiment", "source", "donor", "component", "source_framework", "donor_framework",
@@ -29,7 +30,8 @@ COLS = ["id", "created", "experiment", "source", "donor", "component", "source_f
         "prompt_build", "report_build", "prompt_failed", "report_failed", "fixed", "broke",
         "prompt_files", "report_files", "prompt_added", "prompt_removed", "report_added", "report_removed",
         "only_prompt", "only_report", "prompt_tokens", "report_tokens", "prompt_cost", "report_cost",
-        "memory_used", "adherence", "prompt_blast", "report_blast", "models", "verdict", "note", "human_note"]
+        "memory_used", "adherence", "prompt_blast", "report_blast", "models", "verdict", "note", "human_note",
+        "fair", "helped", "helped_basis"]
 JSON_COLS = {"prompt_failed", "report_failed", "fixed", "broke", "only_prompt", "only_report", "adherence",
              "prompt_blast", "report_blast"}
 
@@ -38,7 +40,7 @@ def connect():
     db = store.connect()
     db.executescript(SCHEMA)
     have = {r[1] for r in db.execute("PRAGMA table_info(comparisons)")}
-    for col in ("condition", "adherence", "prompt_blast", "report_blast"):   # tables from earlier versions
+    for col in ("condition", "adherence", "prompt_blast", "report_blast", "fair", "helped", "helped_basis"):   # older tables
         if col not in have:
             db.execute(f"ALTER TABLE comparisons ADD COLUMN {col} TEXT")
     return db
@@ -68,6 +70,16 @@ def _build(rec):
 
 def _plural(n, word):
     return f"{n} {word}{'' if n == 1 else 's'}"
+
+
+HELPED = {"improved": "yes", "worse": "no", "no change": "no", "inconclusive": "unclear"}
+
+
+def helped(verdict: str, review_verdict: str | None = None) -> tuple:
+    """Did the report help? yes / no / unclear, from the review when there is one, else the automatic verdict.
+    'no change' counts as no: the report cost tokens and changed nothing."""
+    v = review_verdict or verdict
+    return HELPED.get(v, "unclear"), ("review" if review_verdict else "automatic")
 
 
 def judge(p: dict, r: dict, dp: dict, dr: dict) -> dict:
@@ -182,6 +194,10 @@ def record(prompt_id: str, report_id: str, experiment: str = "", human_note: str
            "prompt_tokens": _tokens(p), "report_tokens": _tokens(r), "prompt_cost": _cost(p), "report_cost": _cost(r),
            "models": ", ".join(sorted(set(p.get("models", [])) | set(r.get("models", [])))),
            "human_note": human_note if human_note is not None else (old or {}).get("human_note") or "", **j}
+    mp, mr = sorted(set(p.get("models") or [])), sorted(set(r.get("models") or []))
+    row["fair"] = int(bool(mp) and mp == mr)
+    last = (reviews_for(cid) or [None])[-1] if old else None
+    row["helped"], row["helped_basis"] = helped(j["verdict"], (last or {}).get("verdict"))
     with connect() as db:
         db.execute(f"INSERT OR REPLACE INTO comparisons ({','.join(COLS)}) VALUES ({','.join('?' * len(COLS))})",
                    [json.dumps(row[c]) if c in JSON_COLS else row[c] for c in COLS])
@@ -266,6 +282,8 @@ def add_review(comparison_id: str, reviewer: str, verdict: str, summary: str, **
     if verdict not in ("improved", "no change", "worse", "inconclusive"):
         raise ValueError("verdict must be improved, no change, worse or inconclusive")
     with connect() as db:
+        h, basis = helped("", verdict)
+        db.execute("UPDATE comparisons SET helped=?, helped_basis=? WHERE id=?", (h, basis, comparison_id))
         db.execute("INSERT INTO reviews (comparison_id, created, reviewer, verdict, summary, prompt_run_notes, "
                    "report_run_notes, failure_categories, check_errors, lessons) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (comparison_id, store.now_iso(), reviewer, verdict, summary,

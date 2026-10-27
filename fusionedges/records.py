@@ -65,6 +65,43 @@ def browser_for(run_id: str) -> list:
     return rows
 
 
+def _fair(v) -> bool:
+    """comparisons.fair may come back as 1/0 or, in tables migrated with ALTER TABLE, as the text '1'/'0'."""
+    return str(v).strip().lower() in ("1", "true")
+
+
+def answer(rows: list) -> dict:
+    """The one-line answer to 'did the report help?', from the fair (same-model) comparisons only."""
+    fair = [r for r in rows if _fair(r.get("fair"))]
+    yes, no = sum(r["helped"] == "yes" for r in fair), sum(r["helped"] == "no" and r.get("final") == "worse" for r in fair)
+    same = sum(r["helped"] == "no" and r.get("final") != "worse" for r in fair)
+    pl = lambda n, w: f"{n} {w}{'' if n == 1 else 's'}"   # noqa: E731
+    if not rows:
+        return {"answer": "not yet", "reason": "No comparisons yet: run the same task with and without the report."}
+    if not fair:
+        return {"answer": "not yet", "reason": f"{pl(len(rows), 'comparison')} so far, but none used the same model in both runs, so none is a fair test."}
+    if yes > no:
+        return {"answer": "yes", "reason": f"It helped in {yes} of {pl(len(fair), 'fair comparison')} (same model in both runs)"
+                                           + (f", made {no} worse" if no else "") + (f", changed nothing in {same}" if same else "") + "."}
+    if no > yes:
+        return {"answer": "no", "reason": f"It made {no} of {pl(len(fair), 'fair comparison')} worse" + (f" and helped in {yes}" if yes else "") + "."}
+    return {"answer": "not clear yet", "reason": f"{yes} better, {no} worse, {same} unchanged across {pl(len(fair), 'fair comparison')}."}
+
+
+def _answer_rows(experiment: str = "") -> list:
+    return [{"fair": c.get("fair"), "helped": c.get("helped") or compare.helped(c["verdict"], (c.get("review") or {}).get("verdict"))[0],
+             "final": (c.get("review") or {}).get("verdict") or c["verdict"]}
+            for c in compare.all_rows() if not experiment or c["experiment"] == experiment]
+
+
+def store_answer(name: str, date: str = "") -> dict:
+    a = answer(_answer_rows(name))
+    with store.connect() as db:
+        db.execute("UPDATE experiments SET answer=?, answer_reason=?, answered_at=? WHERE name=?" + (" AND date=?" if date else ""),
+                   (a["answer"], a["reason"], store.now_iso(), name, *([date] if date else [])))
+    return a
+
+
 def record_experiment(name: str, date: str, task_file="", writeup="", reviews=(), browser_dir="", note="") -> dict:
     try:
         where = paths.HOME / "experiments" if (paths.HOME / "experiments").is_dir() else paths.HOME
@@ -72,9 +109,10 @@ def record_experiment(name: str, date: str, task_file="", writeup="", reviews=()
     except OSError:
         commit = ""
     with store.connect() as db:
-        db.execute("INSERT OR REPLACE INTO experiments VALUES (?,?,?,?,?,?,?,?,?)",
+        db.execute("INSERT OR REPLACE INTO experiments (name, date, task_file, writeup, reviews, browser_dir, git_commit, note, created) "
+                   "VALUES (?,?,?,?,?,?,?,?,?)",
                    (name, date, task_file, writeup, J(list(reviews)), browser_dir, commit, note, store.now_iso()))
-    return {"name": name, "date": date, "git_commit": commit}
+    return {"name": name, "date": date, "git_commit": commit, **store_answer(name, date)}
 
 
 def export(name: str, date: str = "", out: str = "") -> Path:
@@ -101,6 +139,8 @@ def export(name: str, date: str = "", out: str = "") -> Path:
     reviews = {c["id"]: compare.reviews_for(c["id"]) for c in comps}
     for c in comps:
         c.pop("review", None)       # the full review history is under "reviews"
+    if exp.get("name"):
+        exp.update({k: v for k, v in store_answer(name, date).items()})
     data = {"experiment": exp, "exported": store.now_iso(), "comparisons": comps, "reviews": reviews, "runs": runs}
     path = Path(out) if out else paths.HOME / "experiments" / "results" / f"{name}-{date}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -131,6 +171,9 @@ def analysis(experiment: str = "") -> dict:
         mp, mr = sorted(set(p.get("models") or [])), sorted(set(r.get("models") or []))
         rv = c.get("review") or {}
         rows.append({
+            "fair": _fair(c.get("fair")) if c.get("fair") is not None else None,
+            "helped": c.get("helped") or compare.helped(c["verdict"], rv.get("verdict"))[0],
+            "helped_basis": c.get("helped_basis"),
             "id": c["id"], "experiment": c["experiment"], "condition": c.get("condition") or "D",
             "task": f"{c['source'].split('/')[-1]} ← {c['donor'].split('/')[-1]}", "source": c["source"], "donor": c["donor"],
             "component": c["component"], "prompt_run": c["prompt_run"], "report_run": c["report_run"],
@@ -164,7 +207,12 @@ def analysis(experiment: str = "") -> dict:
     tok = [(x["tokens_alone"], x["tokens_report"]) for x in rows if x["tokens_alone"] and x["tokens_report"]]
     with store.connect() as db:
         exps = [e[0] for e in db.execute("SELECT DISTINCT experiment FROM comparisons WHERE experiment<>'' ORDER BY 1")]
+    for x in rows:
+        x["final"] = final(x)
+        if x["fair"] is None:
+            x["fair"] = x["same_model"]
     return {
+        "answer": answer(rows),
         "experiments": exps, "experiment": experiment, "rows": rows,
         "summary": {
             "pairs": len(rows), "fair_pairs": len(fair), "reviewed": sum(1 for x in rows if x["reviewed_verdict"]),

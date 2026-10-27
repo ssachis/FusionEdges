@@ -268,6 +268,12 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 .rvh{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font:700 14px var(--sans)}
 .hnote{display:flex;gap:8px;margin-top:12px;align-items:flex-start}
 .hnote textarea{min-height:60px;font-size:13.5px}
+.yesno{display:flex;gap:18px;align-items:center;text-decoration:none;color:var(--ink);background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:14px 18px;box-shadow:4px 4px 0 var(--ink)}
+.yesno:hover{background:var(--sunk)}
+.yesno b{font:700 34px/1 var(--display);flex:none}
+.yesno.improved b{color:var(--ok)}.yesno.worse b{color:var(--bad)}.yesno.inconclusive b,.yesno.nochange b{color:var(--warn)}
+.yesno span{font-size:15px}
+.yesno small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px}
 .exsum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:8px 0 12px}
 .exrow{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start;background:var(--sunk);border-radius:12px;padding:10px 12px;font-size:13.5px}
 .exrow .t b{font-weight:600}.exrow .t p{margin:4px 0 0;color:var(--muted);font-size:12.5px}
@@ -332,6 +338,9 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 
 @media (max-width:760px){
   .exsum{grid-template-columns:repeat(2,1fr)}.exrow{grid-template-columns:1fr}
+  .row2{flex-direction:column;align-items:stretch}.field.cmp{min-width:0}.seg{margin-top:4px;width:100%}
+  .seg{grid-template-columns:1fr;min-width:0}.seg button+button{border-left:0;border-top:2px solid var(--ink)}
+  .run .pill{white-space:normal;text-align:center}
   .cmphead,.pair2{grid-template-columns:1fr}
   .mtx td.side{width:auto;white-space:normal}
   .hero{grid-template-columns:1fr;gap:18px;padding-top:22px}
@@ -835,20 +844,13 @@ async function loadVerdict(a, b, treatedMode){
 }
 
 async function loadExperiments(){
-  let j; try { j = await (await fetch("/api/comparisons")).json(); } catch(e){ return; }
+  // the front page answers one question (stored in runs.db); the Analysis tab has the details
   const box = $("#experiments"); if (!box) return;
-  if (!j.rows.length) { box.innerHTML = '<span class="tag">No comparisons yet. Run the same task with and without the report (or run an experiment from the command line) and the verdict shows up here.</span>'; return; }
-  const s = j.summary;
-  box.innerHTML = `<div class="exsum">
-      <div class="stat"><b style="color:var(--ok)">${s.improved}</b><span>improved</span></div>
-      <div class="stat"><b>${s["no change"]}</b><span>no change</span></div>
-      <div class="stat"><b style="color:var(--bad)">${s.worse}</b><span>worse</span></div>
-      <div class="stat"><b style="color:var(--warn)">${s.inconclusive}</b><span>inconclusive</span></div></div>
-    <div class="hist">${j.rows.map(r => `<div class="exrow">
-      <span class="vpill ${VCLS(r.verdict)}">${esc(r.verdict)}</span>
-      <div class="t"><span class="cond">${esc(r.condition || "D")}</span>${r.review ? ` <span class="vpill ${VCLS(r.review.verdict)}" title="verdict after reading the code">reviewed: ${esc(r.review.verdict)}</span>` : ""} <b>${esc(r.component)}</b> <span class="tag">${esc(r.source)} ← ${esc(r.donor)} · ${esc(r.prompt_score || "–")} → ${esc(r.report_score || "–")}${r.experiment ? " · " + esc(r.experiment) : ""}</span>
-        <p>${esc(r.note)}</p>${r.review ? `<p class="h"><b>Review (${esc(r.review.reviewer)}):</b> ${esc(r.review.summary)}</p>` : ""}${r.human_note ? `<p class="h"><b>Note:</b> ${esc(r.human_note)}</p>` : ""}</div>
-      <a class="ghost" href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Open diff</a></div>`).join("")}</div>`;
+  let a; try { a = await (await fetch("/api/analysis")).json(); } catch(e){ return; }
+  const ans = a.answer || {answer: "not yet", reason: ""};
+  const label = {yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[ans.answer] || ans.answer;
+  const cls = {yes: "improved", no: "worse"}[ans.answer] || "inconclusive";
+  box.innerHTML = `<a class="yesno ${cls}" href="#analysis"><b>${esc(label)}</b><span>${esc(ans.reason)}<small>Pilot numbers · see the analysis →</small></span></a>`;
 }
 
 
