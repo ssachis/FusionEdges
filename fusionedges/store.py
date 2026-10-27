@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS diff_files (
 );
 CREATE TABLE IF NOT EXISTS reviews (
   id INTEGER PRIMARY KEY AUTOINCREMENT, comparison_id TEXT, created TEXT, reviewer TEXT, verdict TEXT,
-  summary TEXT, prompt_run_notes TEXT, report_run_notes TEXT, failure_categories TEXT, check_errors TEXT
+  summary TEXT, prompt_run_notes TEXT, report_run_notes TEXT, failure_categories TEXT, check_errors TEXT,
+  lessons TEXT
 );
 CREATE TABLE IF NOT EXISTS conflicts (
   run_id TEXT, cid TEXT, type TEXT, severity TEXT, confidence TEXT, basis TEXT, citation TEXT,
@@ -45,6 +46,8 @@ def connect():
     for col in ("component", "edit"):  # databases from v0.4
         if col not in have:
             db.execute(f"ALTER TABLE runs ADD COLUMN {col} TEXT")
+    if "lessons" not in {r[1] for r in db.execute("PRAGMA table_info(reviews)")}:   # reviews table from 27 Oct
+        db.execute("ALTER TABLE reviews ADD COLUMN lessons TEXT")
     return db
 
 

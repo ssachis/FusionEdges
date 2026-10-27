@@ -62,41 +62,93 @@ def cases(exclude_task=None) -> list:
     return out
 
 
+TOPIC_HINTS = {   # scanner fact kinds -> lesson topics they make relevant
+    "host-script-coupling": {"host-script-coupling"},
+    "styling-system": {"tailwind-responsive", "tailwind-without-tailwind"},
+    "framework-mismatch": {"mount-order", "missing-file"},
+    "framework-api": {"mount-order"},
+    "routing-model": {"routing"},
+}
+
+
+def review_lessons(scan: dict, component: str, task_key, k: int = 4) -> list:
+    """Lessons written in code reviews of OTHER tasks, most relevant first. Relevance: the scanner facts of this task
+    point at the lesson's topic, the frameworks match, the component matches, then text similarity."""
+    from . import compare
+    pool = compare.lessons(exclude_task=task_key)
+    if not pool:
+        return []
+    sf, df = scan["source"].get("framework"), scan["donor"].get("framework")
+    kinds = {f.get("kind") for f in scan.get("facts", [])}
+    hinted = set().union(*[TOPIC_HINTS.get(x, set()) for x in kinds]) if kinds else set()
+    facts_text = " ".join(f.get("text", "") for f in scan.get("facts", []))
+    docs = [{"tokens": _tokens(f"{l.get('topic', '')} {l['text']}")} for l in pool]
+    bm = BM25(docs)
+    order = {i: r for r, i in enumerate(bm.search(f"{component} {facts_text}", k=len(docs)))}
+    merged = {}
+    for i, l in enumerate(pool):
+        score = (3 if l.get("topic") in hinted else 0) + (2 if l["frameworks"] == f"{sf} <- {df}" else 0) \
+            + (1 if l["component"].lower() == component.lower() else 0) + (1 if l["trust"] == "human-reviewed" else 0) \
+            + (1 - order[i] / max(1, len(docs)) if i in order else 0)
+        if (l.get("topic") not in hinted and l["frameworks"] != f"{sf} <- {df}"
+                and l["component"].lower() != component.lower() and i not in order):
+            continue   # nothing connects it to this task
+        key = l["text"].strip().lower()
+        if key in merged:       # the same lesson from several reviewed runs: count it, keep the best score
+            merged[key]["seen"] += 1
+            merged[key]["score"] = max(merged[key]["score"], score)
+            merged[key]["comparisons"].append(l["comparison"])
+        else:
+            merged[key] = {**l, "seen": 1, "score": score, "comparisons": [l["comparison"]]}
+    for m in merged.values():
+        m["score"] += 0.75 * (m["seen"] - 1)      # confirmed by more reviewed runs
+    return sorted(merged.values(), key=lambda x: (-x["score"], -x["seen"]))[:k]
+
+
 def retrieve(scan: dict, component: str, source_label: str, donor_label: str, k: int = 6) -> dict:
     same_ok = os.environ.get("FUSIONEDGES_MEMORY_SAME_TASK") == "1"
-    pool = cases(None if same_ok else _task_key(source_label, donor_label, component))
+    task_key = None if same_ok else _task_key(source_label, donor_label, component)
+    pool = cases(task_key)
+    rl = review_lessons(scan, component, task_key)
     sf, df = scan["source"].get("framework"), scan["donor"].get("framework")
-    if not pool:
-        return {"runs": [], "cases": [], "lessons": [], "pool": 0, "text": ""}
-    index = BM25(pool)
-    query = " ".join([component, sf or "", df or ""] + [f["text"] for f in scan.get("facts", [])])
-    scored = []
-    for i in index.search(query, k=40):
-        c = pool[i]
-        boost = (1.5 if c["frameworks"] == f"{sf} <- {df}" else 1.0) * (1.3 if c["component"].lower() == component.lower() else 1.0)
-        boost *= {"checks-verified": 1.2, "failed": 1.0, "unverified": 0.8}[c["trust"]]
-        scored.append((boost * (40 - len(scored)), c))     # BM25 rank, re-weighted
-    scored.sort(key=lambda x: -x[0])
-    seen, picked = set(), []
-    for _, c in scored:
-        key = (c["type"], c["title"].lower()[:40])
-        if key in seen:
-            continue
-        seen.add(key)
-        picked.append(c)
-        if len(picked) >= k:
-            break
-    # aggregate lessons: checks that report-guided runs on similar frameworks still failed
-    similar = {c["run"]: c for c in pool if c["frameworks"] == f"{sf} <- {df}"}
-    fails = Counter(f for c in similar.values() for f in c["failed"])
-    lessons = [f"In {n} of {len(similar)} earlier report-guided runs on {sf} <- {df}, this check still failed: {f}."
-               for f, n in fails.most_common(3)]
-    lines = [f"- [{c['trust']}; that run: {c['verdict']}{'; still failed: ' + ', '.join(c['failed']) if c['failed'] else ''}] "
-             f"({c['frameworks']}, {c['component'] or 'task'}) {c['type']}: {c['title']}. Did: {c['adaptation']}" for c in picked]
-    text = ""
-    if picked or lessons:
-        text = ("PAST CASES (from earlier compatibility reports on OTHER repositories, with how those runs turned out). "
-                "Advisory only: use a case if the code above shows the same problem; the current code wins any disagreement. "
-                "Do not cite these as evidence.\n" + "\n".join(lines + [f"- {l}" for l in lessons]))
-    return {"runs": sorted({c["run"] for c in picked}), "cases": [{k: c[k] for k in ("run", "type", "title", "trust", "verdict")} for c in picked],
-            "lessons": lessons, "pool": len({c["run"] for c in pool}), "text": text}
+    picked, check_lessons = [], []
+    if pool:
+        index = BM25(pool)
+        query = " ".join([component, sf or "", df or ""] + [f["text"] for f in scan.get("facts", [])])
+        scored = []
+        for i in index.search(query, k=40):
+            c = pool[i]
+            boost = (1.5 if c["frameworks"] == f"{sf} <- {df}" else 1.0) * (1.3 if c["component"].lower() == component.lower() else 1.0)
+            boost *= {"checks-verified": 1.2, "failed": 1.0, "unverified": 0.8}[c["trust"]]
+            scored.append((boost * (40 - len(scored)), c))     # BM25 rank, re-weighted
+        scored.sort(key=lambda x: -x[0])
+        seen = set()
+        for _, c in scored:
+            key = (c["type"], c["title"].lower()[:40])
+            if key in seen:
+                continue
+            seen.add(key)
+            picked.append(c)
+            if len(picked) >= k:
+                break
+        similar = {c["run"]: c for c in pool if c["frameworks"] == f"{sf} <- {df}"}
+        fails = Counter(f for c in similar.values() for f in c["failed"])
+        check_lessons = [f"In {n} of {len(similar)} earlier report-guided runs on {sf} <- {df}, this check still failed: {f}."
+                         for f, n in fails.most_common(3)]
+    parts = []
+    if rl:
+        parts.append("LESSONS FROM CODE REVIEWS OF EARLIER RUNS (on OTHER repositories; each was found by reading what an agent "
+                     "actually wrote). Apply a lesson when the code above shows the same situation, and say in that conflict's "
+                     "adaptation which lesson you applied:\n" + "\n".join(
+                         f"- [{l['trust']}, {l.get('kind', 'note')}, seen in {l['seen']} reviewed run(s)] {l['text']}" for l in rl))
+    if picked or check_lessons:
+        lines = [f"- [{c['trust']}; that run: {c['verdict']}{'; still failed: ' + ', '.join(c['failed']) if c['failed'] else ''}] "
+                 f"({c['frameworks']}, {c['component'] or 'task'}) {c['type']}: {c['title']}. Did: {c['adaptation']}" for c in picked]
+        parts.append("PAST CASES (from earlier compatibility reports on OTHER repositories, with how those runs turned out). "
+                     "Advisory only: use a case if the code above shows the same problem; the current code wins any disagreement. "
+                     "Do not cite these as evidence.\n" + "\n".join(lines + [f"- {l}" for l in check_lessons]))
+    return {"runs": sorted({c["run"] for c in picked}),
+            "cases": [{k: c[k] for k in ("run", "type", "title", "trust", "verdict")} for c in picked],
+            "review_lessons": [{k: l.get(k) for k in ("text", "kind", "topic", "trust", "seen", "comparisons", "reviewer")} for l in rl],
+            "lessons": [l["text"] for l in rl] + check_lessons,      # what the coding agent is told (first 3)
+            "pool": len({c["run"] for c in pool}), "text": "\n\n".join(parts)}

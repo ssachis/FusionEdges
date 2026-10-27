@@ -115,3 +115,48 @@ class VerdictRulesTest(Base):
         compare.add_review(cid, "tester", "improved", "second look")
         self.assertEqual([r["verdict"] for r in compare.reviews_for(cid)], ["no change", "improved"])   # history kept
         self.assertEqual(compare.get(cid)["review"]["verdict"], "improved")
+
+
+class ReviewLessonsTest(Base):
+    def _task(self, source):
+        a = CompareTest._run(self, "prompt", source=source)
+        d = CompareTest._run(self, "report", source=source)
+        return d["comparison"]
+
+    def test_lessons_reach_a_later_report_on_another_task_only(self):
+        cid = self._task(HOST)
+        compare.add_review(cid, "Sachi", "worse", "inline styles hid the nav",
+                           lessons=[{"kind": "avoid", "topic": "tailwind-responsive",
+                                     "text": "Do not express Tailwind responsive classes as inline styles."}])
+        # same task: the leakage guard keeps its own lesson out
+        e_same = CompareTest._run(self, "history", auto_compare=False)
+        self.assertEqual(e_same["report"]["memory"]["review_lessons"], [])
+        # another task: the lesson is retrieved, marked human-reviewed, and reaches the report agent's prompt
+        e_other = CompareTest._run(self, "history", source=FIX / "host_react", auto_compare=False)
+        rl = e_other["report"]["memory"]["review_lessons"]
+        self.assertEqual(len(rl), 1)
+        self.assertEqual(rl[0]["trust"], "human-reviewed")
+        self.assertIn("inline styles", e_other["report"]["memory"]["lessons"][0])
+
+    def test_ai_reviews_are_labelled_as_such_and_repeats_are_merged(self):
+        lesson = {"kind": "do", "topic": "host-script-coupling", "text": "Keep the classes the site's scripts use."}
+        compare.add_review(self._task(HOST), "Claude (read every diff)", "improved", "kept classes", lessons=[lesson])
+        sc = {"source": {"framework": "next"}, "donor": {"framework": "react-vite"},
+              "facts": [{"kind": "host-script-coupling", "text": "scripts look up .navbar"}]}
+        got = memory.review_lessons(sc, "navbar", ("other/site", "other/donor", "navbar"))
+        self.assertEqual(got[0]["trust"], "AI-reviewed")
+        self.assertEqual(got[0]["seen"], 1)
+
+    def test_import_adds_lessons_to_an_existing_review(self):
+        import tempfile
+        a = CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        spec = {"reviewer": "R", "reviews": [{"prompt_run": a["id"], "report_run": d["id"], "verdict": "no change", "summary": "s"}]}
+        f = Path(tempfile.mkdtemp()) / "r.json"
+        f.write_text(json.dumps(spec))
+        self.assertEqual(compare.import_reviews(str(f)), 1)
+        spec["reviews"][0]["lessons"] = [{"text": "L"}]
+        f.write_text(json.dumps(spec))
+        self.assertEqual(compare.import_reviews(str(f)), 1)            # updated in place, not a second review
+        self.assertEqual(len(compare.reviews_for(d["comparison"])), 1)
+        self.assertEqual(compare.reviews_for(d["comparison"])[0]["lessons"], [{"text": "L"}])

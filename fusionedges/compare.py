@@ -258,7 +258,7 @@ def auto_pair(rec: dict, log=lambda m: None):
     return None
 
 
-REVIEW_JSON = ("prompt_run_notes", "report_run_notes", "failure_categories", "check_errors")
+REVIEW_JSON = ("prompt_run_notes", "report_run_notes", "failure_categories", "check_errors", "lessons")
 
 
 def add_review(comparison_id: str, reviewer: str, verdict: str, summary: str, **notes) -> dict:
@@ -267,9 +267,10 @@ def add_review(comparison_id: str, reviewer: str, verdict: str, summary: str, **
         raise ValueError("verdict must be improved, no change, worse or inconclusive")
     with connect() as db:
         db.execute("INSERT INTO reviews (comparison_id, created, reviewer, verdict, summary, prompt_run_notes, "
-                   "report_run_notes, failure_categories, check_errors) VALUES (?,?,?,?,?,?,?,?,?)",
+                   "report_run_notes, failure_categories, check_errors, lessons) VALUES (?,?,?,?,?,?,?,?,?,?)",
                    (comparison_id, store.now_iso(), reviewer, verdict, summary,
-                    *[json.dumps(notes.get(k) or ([] if k in ("failure_categories", "check_errors") else "")) for k in REVIEW_JSON]))
+                    *[json.dumps(notes.get(k) or ([] if k in ("failure_categories", "check_errors", "lessons") else ""))
+                      for k in REVIEW_JSON]))
     return reviews_for(comparison_id)[-1]
 
 
@@ -298,9 +299,34 @@ def import_reviews(path: str) -> int:
         cid = f"{r['prompt_run']}__{r['report_run']}"
         if not get(cid):
             record(r["prompt_run"], r["report_run"], experiment=spec.get("experiment", ""))
-        if any(x["summary"] == r["summary"] and x["reviewer"] == spec["reviewer"] for x in reviews_for(cid)):
+        same = [x for x in reviews_for(cid) if x["summary"] == r["summary"] and x["reviewer"] == spec["reviewer"]]
+        if same:
+            if r.get("lessons") and same[-1].get("lessons") != r["lessons"]:   # lessons added to an existing review
+                with connect() as db:
+                    db.execute("UPDATE reviews SET lessons=? WHERE id=?", (json.dumps(r["lessons"]), same[-1]["id"]))
+                n += 1
             continue
         add_review(cid, spec["reviewer"], r["verdict"], r["summary"],
                    **{k: r.get(k) for k in REVIEW_JSON})
         n += 1
     return n
+
+
+def lessons(exclude_task=None) -> list:
+    """Every lesson from the latest review of each comparison, with where it came from."""
+    out = []
+    for c in all_rows():
+        rv = c.get("review")
+        if not rv or not rv.get("lessons"):
+            continue
+        if exclude_task and (c["source"], c["donor"], (c["component"] or "").lower()) == exclude_task:
+            continue
+        human = not (rv.get("reviewer") or "").lower().startswith("claude")
+        for l in rv["lessons"]:
+            if isinstance(l, str):
+                l = {"text": l}
+            out.append({**l, "comparison": c["id"], "task": f"{c['source']} <- {c['donor']} ({c['component']})",
+                        "frameworks": f"{c['source_framework']} <- {c['donor_framework']}", "component": c["component"] or "",
+                        "review_verdict": rv["verdict"], "reviewer": rv.get("reviewer"),
+                        "trust": "human-reviewed" if human else "AI-reviewed"})
+    return out

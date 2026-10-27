@@ -486,6 +486,8 @@ function reportHtml(rec){
     ${cs.length ? `<div class="sevbar" title="conflicts by severity"><i class="h" style="width:${n("high")/tot*100}%"></i><i class="m" style="width:${n("medium")/tot*100}%"></i><i class="l" style="width:${n("low")/tot*100}%"></i></div>
     <div class="legend"><span>${n("high")} high</span><span>${n("medium")} medium</span><span>${n("low")} low</span><span>${tok(u)} tokens · ${money(u.est_cost_usd)}</span></div>` : ""}
     ${(r.donor_files||[]).length ? `<div class="files">${r.donor_files.map(d => `<span class="file">${esc(d.path)}<em>${esc(d.role||"")}</em></span>`).join("")}</div>` : ""}
+    ${r.memory && (r.memory.review_lessons || []).length ? `<div class="mount" style="background:var(--warn-soft)"><b>Learned from earlier runs</b> (code reviews of other repos, ${r.memory.pool} earlier report runs searched; this task's own runs excluded)
+      ${r.memory.review_lessons.map(l => `<div class="tag" style="color:var(--ink);margin-top:6px"><span class="cond">${esc(l.trust)}</span> ${esc(l.kind === "avoid" ? "Avoid:" : "Do:")} ${esc(l.text)} <span class="tag">(seen in ${l.seen} reviewed run${l.seen > 1 ? "s" : ""})</span></div>`).join("")}</div>` : ""}
     ${r.mount && r.mount.file ? `<div class="mount"><b>Mounts in</b> <span class="mono">${esc(r.mount.file)}</span>${r.mount.replaces ? ` and replaces <span class="mono">${esc(r.mount.replaces)}</span>` : ""}</div>` : ""}
     <div class="conf">${conf || '<span class="tag">No conflicts found.</span>'}</div>
     <div class="actions"><a class="ghost" href="/output/${id}/report.md" target="_blank">report.md</a><a class="ghost" href="/output/${id}/report.json" target="_blank">report.json</a></div></section>`;

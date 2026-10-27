@@ -165,8 +165,10 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
             mem = None
             if mode == "history":   # condition E: the report also sees past cases from OTHER tasks
                 mem = memory.retrieve(sc, component, source.label, donor.label)
-                log(f"[memory] {len(mem['cases'])} past cases from {len(mem['runs'])} of {mem['pool']} earlier report runs "
-                    f"(this task's own runs excluded); {len(mem['lessons'])} lessons")
+                log(f"[memory] {len(mem['review_lessons'])} lessons from code reviews, {len(mem['cases'])} past cases from "
+                    f"{len(mem['runs'])} of {mem['pool']} earlier report runs (this task's own runs excluded)")
+                for l in mem["review_lessons"]:
+                    log(f"[memory]   {l['trust']}: {l['text'][:140]}")
             mt = (mem or {}).get("text", "")
             if component:
                 report, report_usage = fit_to_limit(lambda b: run_report_agent(
@@ -174,7 +176,7 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
             else:
                 report, report_usage = run_report_agent(prompt, source.path, donor.path, sc, log, component=component, memory_text=mt)
             if mem is not None:
-                report["memory"] = {k: mem[k] for k in ("runs", "cases", "lessons", "pool")}
+                report["memory"] = {k: mem[k] for k in ("runs", "cases", "review_lessons", "lessons", "pool")}
             (folder / "report.json").write_text(json.dumps(report, indent=1))
             (folder / "report.md").write_text(report_markdown(report))
             rec["report"], rec["report_usage"] = report, report_usage
