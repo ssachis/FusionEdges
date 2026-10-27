@@ -26,6 +26,16 @@ CREATE TABLE IF NOT EXISTS reviews (
   summary TEXT, prompt_run_notes TEXT, report_run_notes TEXT, failure_categories TEXT, check_errors TEXT,
   lessons TEXT
 );
+CREATE TABLE IF NOT EXISTS browser_checks (
+  run_id TEXT, viewport TEXT, checked_at TEXT, checker TEXT, navbar_tag TEXT, navbar_classes TEXT,
+  navbar_height INTEGER, visible_links TEXT, link_count INTEGER, inline_hidden TEXT,
+  has_navbar_class INTEGER, has_navbar_default INTEGER, load_errors TEXT, scroll_errors TEXT,
+  screenshot TEXT, screenshot_sha256 TEXT, source TEXT, note TEXT, PRIMARY KEY (run_id, viewport, checked_at)
+);
+CREATE TABLE IF NOT EXISTS experiments (
+  name TEXT, date TEXT, task_file TEXT, writeup TEXT, reviews TEXT, browser_dir TEXT, git_commit TEXT,
+  note TEXT, created TEXT, PRIMARY KEY (name, date)
+);
 CREATE TABLE IF NOT EXISTS conflicts (
   run_id TEXT, cid TEXT, type TEXT, severity TEXT, confidence TEXT, basis TEXT, citation TEXT,
   title TEXT, impact TEXT, adaptation TEXT, evidence TEXT, source_framework TEXT, donor_framework TEXT,

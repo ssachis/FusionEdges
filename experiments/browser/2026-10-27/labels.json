@@ -1,0 +1,12 @@
+{
+ "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+ "checked_at": "2026-10-27T10:40:00",
+ "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike).",
+ "labels": {
+  "T1-alone": "20261027-020234-prompt", "T1-report": "20261027-020703-report",
+  "T2-report": "20261027-021125-report",
+  "T3-alone": "20261027-021808-prompt", "T3-report": "20261027-022124-report",
+  "T4-alone": "20261027-022446-prompt", "T4-report": "20261027-022341-report"
+ },
+ "not_checked": {"20261027-021613-prompt": "build failed, nothing to open"}
+}

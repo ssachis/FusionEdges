@@ -182,3 +182,17 @@ The scanner now reads those scripts, keeps the selectors the component's source 
 `host-script-coupling` fact. The report always passes it to the coding agent ("Keep: ... .navbar, .navbar-default").
 Agent-alone runs do not get it, so the report stays the only difference between the two conditions.
 # FusionEdges
+
+## Experiment records
+
+Everything you will count or compare lives in `output/runs.db`: runs, every changed file's patch (`diff_files`),
+verdicts (`comparisons`), code and browser reviews with lessons (`reviews`), browser results (`browser_checks`) and
+experiments (`experiments`). Narrative write-ups and screenshots stay as files under `experiments/` (in git); the
+database stores their paths (and a SHA-256 for each screenshot). `output/` is not in git, so after an experiment:
+
+```bash
+python3 -m fusionedges import-reviews experiments/reviews/<file>.json
+python3 -m fusionedges import-browser experiments/browser/<date>          # labels.json + results.json
+python3 -m fusionedges record-experiment <name> --date <date> --task-file ... --writeup ... --reviews ... --browser ...
+python3 -m fusionedges export <name> --date <date>                         # -> experiments/results/<name>-<date>.json
+```

@@ -161,6 +161,9 @@ class Handler(BaseHTTPRequestHandler):
                            "new": sum(f["status"] == "added" for f in saved), "changed": sum(f["status"] == "modified" for f in saved),
                            "deleted": sum(f["status"] == "deleted" for f in saved)}}
             return self._json(res)
+        if p.startswith("/api/browser/"):
+            from . import records
+            return self._json({"checks": records.browser_for(urllib.parse.unquote(p.rsplit("/", 1)[1]))})
         if p.startswith("/api/run/"):
             r = store.load(p.rsplit("/", 1)[1])
             return self._json(r) if r else self._json({"error": "unknown run"}, 404)
@@ -173,6 +176,9 @@ class Handler(BaseHTTPRequestHandler):
                     return self._send(b"", "text/plain", 301, {"location": p + "/"})
                 return self._send(_listing(p, t), "text/html; charset=utf-8")
             return self._file(t, download=t.suffix == ".zip")
+        if p.startswith("/experiments/"):   # screenshots and write-ups kept in git
+            t = _under(paths.HOME / "experiments", p[len("/experiments/"):])
+            return self.send_error(403) if t is None else self._file(t)
         if p.startswith("/site/"):  # static HTML output, served as a website
             parts = p.split("/", 3)
             if len(parts) < 3:

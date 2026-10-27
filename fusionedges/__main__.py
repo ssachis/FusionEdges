@@ -42,6 +42,19 @@ def main(argv=None):
     ri = sub.add_parser("import-reviews", help="store manual code reviews from a JSON file in runs.db")
     ri.add_argument("file")
     sub.add_parser("backfill", help="store the code diff of every earlier run in runs.db")
+    ib = sub.add_parser("import-browser", help="store a browser check (labels.json + results.json) in runs.db")
+    ib.add_argument("folder")
+    rx = sub.add_parser("record-experiment", help="register an experiment and where its records live")
+    rx.add_argument("name")
+    rx.add_argument("--date", required=True)
+    rx.add_argument("--task-file", default="")
+    rx.add_argument("--writeup", default="")
+    rx.add_argument("--reviews", nargs="*", default=[])
+    rx.add_argument("--browser", default="")
+    rx.add_argument("--note", default="")
+    ex = sub.add_parser("export", help="write one experiment's records to experiments/results/ (for git)")
+    ex.add_argument("name")
+    ex.add_argument("--date", default="")
     rs = sub.add_parser("rescore", help="re-run the checks on finished runs (no AI calls)")
     rs.add_argument("ids", nargs="*")
     res = sub.add_parser("results", help="verdicts recorded so far")
@@ -56,6 +69,15 @@ def main(argv=None):
         from . import compare, diffs
         diffs.backfill()
         print(f"Stored {compare.import_reviews(a.file)} review(s).")
+        return 0
+    if a.cmd in ("import-browser", "record-experiment", "export"):
+        from . import records
+        if a.cmd == "import-browser":
+            records.import_browser(a.folder)
+        elif a.cmd == "record-experiment":
+            print(records.record_experiment(a.name, a.date, a.task_file, a.writeup, a.reviews, a.browser, a.note))
+        else:
+            print(f"Wrote {records.export(a.name, a.date)}")
         return 0
     if a.cmd == "rescore":
         from . import rescore

@@ -1,8 +1,166 @@
 {
- "experiment": "next-to-react-navbar",
- "exported": "2026-10-27",
- "checks_version": 3,
+ "experiment": {
+  "name": "next-to-react-navbar",
+  "date": "2026-10-27",
+  "task_file": "experiments/next-to-react-navbar.json",
+  "writeup": "experiments/pilot-2026-10-27.md",
+  "reviews": "[\"experiments/reviews/pilot-2026-10-27.json\", \"experiments/reviews/browser-2026-10-27.json\"]",
+  "browser_dir": "experiments/browser/2026-10-27",
+  "git_commit": "f6e2b97cd92b5fa1a90a9bbb7309eecc829d8b55",
+  "note": "Pilot: 4 tasks x (A, D), 1 repeat, Gemini (mixed flash/flash-lite after quota errors)",
+  "created": "2026-10-27T14:37:51"
+ },
+ "exported": "2026-10-27T14:37:51",
  "comparisons": [
+  {
+   "id": "20261027-022446-prompt__20261027-022341-report",
+   "created": "2026-10-27T12:27:57",
+   "experiment": "next-to-react-navbar",
+   "source": "soumyajit4419/Portfolio",
+   "donor": "timlrx/tailwind-nextjs-starter-blog",
+   "component": "navbar",
+   "source_framework": "react-cra",
+   "donor_framework": "next",
+   "prompt_run": "20261027-022446-prompt",
+   "report_run": "20261027-022341-report",
+   "condition": "D",
+   "prompt_score": "7/7",
+   "report_score": "7/7",
+   "prompt_passed": 7,
+   "report_passed": 7,
+   "total_checks": 7,
+   "prompt_build": 1,
+   "report_build": 1,
+   "prompt_failed": [],
+   "report_failed": [],
+   "fixed": [],
+   "broke": [],
+   "prompt_files": 3,
+   "report_files": 4,
+   "prompt_added": 181,
+   "prompt_removed": 104,
+   "report_added": 217,
+   "report_removed": 114,
+   "only_prompt": [
+    "package.json"
+   ],
+   "only_report": [
+    "src/data/headerNavLinks.js",
+    "src/data/siteMetadata.js"
+   ],
+   "prompt_tokens": 12979,
+   "report_tokens": 28780,
+   "prompt_cost": 0.01121,
+   "report_cost": 0.01952,
+   "memory_used": 0,
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js to React CRA framework mismatch",
+      "instruction": "Rewrite components to standard React JS and use react-router-dom <Link to={...}>.",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "React 19 vs React 17 version mismatch",
+      "instruction": "Ensure compatible React 17 syntax (e.g., standard useRef, useState, useEffect).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "useEffect",
+        "useState",
+        "useRef"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "useEffect",
+        "useState",
+        "useRef"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "Tailwind CSS classes in Donor vs CRA styling system",
+      "instruction": "Convert Tailwind classes to equivalent Bootstrap classes or custom CSS rules in App.css / index.css.",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "App.css",
+        "index.css"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "App.css",
+        "index.css"
+       ]
+      }
+     },
+     {
+      "title": "Path aliases (@/) not configured in CRA",
+      "instruction": "Rewrite all @/ imports to relative paths (e.g., `../../data/headerNavLinks`).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "data/headerNavLinks"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "data/headerNavLinks"
+       ]
+      }
+     },
+     {
+      "title": "Missing HeadlessUI, body-scroll-lock, and next-themes dependencies",
+      "instruction": "Replace HeadlessUI and next-themes/body-scroll-lock with standard React state toggles, simple dropdowns, or remove unsupported advanced features like theme switching / kbar search if unneeded.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     }
+    ],
+    "testable": 4,
+    "addressed": 3,
+    "partial": 0,
+    "alone_addressed": 2,
+    "only_with_report": 1
+   },
+   "prompt_blast": [],
+   "report_blast": [],
+   "models": "gemini:gemini-3.5-flash-lite",
+   "verdict": "no change",
+   "note": "No change in the checks: both runs passed 7/7. Code: agent alone changed 3 files (+181 -104), with the report 4 files (+217 -114). Only agent alone wrote: package.json. Only the report run wrote: src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 4 testable report items (0 partly); agent alone did 2 of the same 4 without being told. Handled only with the report: Path aliases (@/) not configured in CRA. Tokens: 28,780 with the report vs 12,979 without (+122%).",
+   "human_note": ""
+  },
   {
    "id": "20261027-021808-prompt__20261027-022124-report",
    "created": "2026-10-27T12:27:56",
@@ -22,26 +180,114 @@
    "total_checks": 7,
    "prompt_build": 1,
    "report_build": 1,
-   "prompt_failed": "[]",
-   "report_failed": "[]",
-   "fixed": "[]",
-   "broke": "[]",
+   "prompt_failed": [],
+   "report_failed": [],
+   "fixed": [],
+   "broke": [],
    "prompt_files": 3,
    "report_files": 3,
    "prompt_added": 638,
    "prompt_removed": 115,
    "report_added": 152,
    "report_removed": 106,
-   "only_prompt": "[\"src/components/Navbar.css\"]",
-   "only_report": "[\"package.json\"]",
+   "only_prompt": [
+    "src/components/Navbar.css"
+   ],
+   "only_report": [
+    "package.json"
+   ],
    "prompt_tokens": 37117,
    "report_tokens": 28406,
    "prompt_cost": 0.03294,
    "report_cost": 0.01871,
    "memory_used": 0,
-   "adherence": "{\"items\": [{\"title\": \"Next.js APIs in React CRA project\", \"instruction\": \"Remove 'use client' directives. Replace Next.js imports with react-router-dom APIs (Link, useLocation).\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"no Next.js\", \"useLocation\", \"react-router-dom\", \"no use client\"], \"failed\": []}, \"agent_alone\": {\"status\": \"addressed\", \"passed\": [\"no Next.js\", \"useLocation\", \"react-router-dom\", \"no use client\"], \"failed\": []}}, {\"title\": \"Tailwind Utility Classes in Plain CSS Project\", \"instruction\": \"Convert Tailwind classes to standard CSS styles in a dedicated stylesheet or inline styles matching SOURCE setup.\", \"report_run\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}, \"agent_alone\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}}, {\"title\": \"TypeScript and Path Aliases\", \"instruction\": \"Convert files from `.tsx`/`.ts` to `.jsx`/`.js`, strip TypeScript type annotations, and convert `@/` aliases to relative path imports.\", \"report_run\": {\"status\": \"partial\", \"passed\": [\"no .tsx\", \"no .ts\"], \"failed\": [\".js\"]}, \"agent_alone\": {\"status\": \"partial\", \"passed\": [\"no .tsx\", \"no .ts\"], \"failed\": [\".js\"]}}, {\"title\": \"Existing Navbar Component Collision\", \"instruction\": \"Replace `src/components/Navbar.js` content with the adapted DONOR navbar component tree.\", \"report_run\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}, \"agent_alone\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}}], \"testable\": 2, \"addressed\": 1, \"partial\": 1, \"alone_addressed\": 1, \"only_with_report\": 0}",
-   "prompt_blast": "[]",
-   "report_blast": "[]",
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js APIs in React CRA project",
+      "instruction": "Remove 'use client' directives. Replace Next.js imports with react-router-dom APIs (Link, useLocation).",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "no Next.js",
+        "useLocation",
+        "react-router-dom",
+        "no use client"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "no Next.js",
+        "useLocation",
+        "react-router-dom",
+        "no use client"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "Tailwind Utility Classes in Plain CSS Project",
+      "instruction": "Convert Tailwind classes to standard CSS styles in a dedicated stylesheet or inline styles matching SOURCE setup.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     },
+     {
+      "title": "TypeScript and Path Aliases",
+      "instruction": "Convert files from `.tsx`/`.ts` to `.jsx`/`.js`, strip TypeScript type annotations, and convert `@/` aliases to relative path imports.",
+      "report_run": {
+       "status": "partial",
+       "passed": [
+        "no .tsx",
+        "no .ts"
+       ],
+       "failed": [
+        ".js"
+       ]
+      },
+      "agent_alone": {
+       "status": "partial",
+       "passed": [
+        "no .tsx",
+        "no .ts"
+       ],
+       "failed": [
+        ".js"
+       ]
+      }
+     },
+     {
+      "title": "Existing Navbar Component Collision",
+      "instruction": "Replace `src/components/Navbar.js` content with the adapted DONOR navbar component tree.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     }
+    ],
+    "testable": 2,
+    "addressed": 1,
+    "partial": 1,
+    "alone_addressed": 1,
+    "only_with_report": 0
+   },
+   "prompt_blast": [],
+   "report_blast": [],
    "models": "gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash",
    "verdict": "inconclusive",
    "note": "Inconclusive: the runs used different models (agent alone: gemini:gemini-3.6-flash; with the report: gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash), so the difference may be the model, not the report. Checks: 7/7 with the report, 7/7 without. Code: agent alone changed 3 files (+638 -115), with the report 3 files (+152 -106). Only agent alone wrote: src/components/Navbar.css. Only the report run wrote: package.json. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 2 testable report items (1 partly); agent alone did 1 of the same 2 without being told. Tokens: 28,406 with the report vs 37,117 without (-23%).",
@@ -66,26 +312,154 @@
    "total_checks": 8,
    "prompt_build": 0,
    "report_build": 1,
-   "prompt_failed": "[\"Builds\", \"The site's own scripts still find their elements\"]",
-   "report_failed": "[\"The navbar is rendered\"]",
-   "fixed": "[\"Builds\", \"The site's own scripts still find their elements\"]",
-   "broke": "[\"The navbar is rendered\"]",
+   "prompt_failed": [
+    "Builds",
+    "The site's own scripts still find their elements"
+   ],
+   "report_failed": [
+    "The navbar is rendered"
+   ],
+   "fixed": [
+    "Builds",
+    "The site's own scripts still find their elements"
+   ],
+   "broke": [
+    "The navbar is rendered"
+   ],
    "prompt_files": 7,
    "report_files": 8,
    "prompt_added": 358,
    "prompt_removed": 83,
    "report_added": 703,
    "report_removed": 0,
-   "only_prompt": "[\"package.json\", \"src/App.js\", \"src/component/Header.js\"]",
-   "only_report": "[\"src/component/Header.css\", \"src/component/Logo.js\", \"src/component/SearchButton.js\", \"src/data/headerNavLinks.js\", \"src/data/siteMetadata.js\"]",
+   "only_prompt": [
+    "package.json",
+    "src/App.js",
+    "src/component/Header.js"
+   ],
+   "only_report": [
+    "src/component/Header.css",
+    "src/component/Logo.js",
+    "src/component/SearchButton.js",
+    "src/data/headerNavLinks.js",
+    "src/data/siteMetadata.js"
+   ],
    "prompt_tokens": 20468,
    "report_tokens": 40931,
    "prompt_cost": 0.01863,
    "report_cost": 0.03148,
    "memory_used": 0,
-   "adherence": "{\"items\": [{\"title\": \"Next.js to React CRA framework mismatch\", \"instruction\": \"Rewrite imports to use standard React patterns and react-router-dom Link.\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"react-router-dom\"], \"failed\": []}, \"agent_alone\": {\"status\": \"addressed\", \"passed\": [\"react-router-dom\"], \"failed\": []}}, {\"title\": \"Tailwind CSS styling system missing in source\", \"instruction\": \"Install Tailwind CSS in the source repository or convert Tailwind utility classes to standard CSS / CSS modules matching the source.\", \"report_run\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}, \"agent_alone\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}}, {\"title\": \"Host scripts look up specific navbar classes/ids\", \"instruction\": \"Ensure the replacement header component includes the CSS classes .navbar and .navbar-default where expected by legacy host scripts.\", \"report_run\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}}, {\"title\": \"Path aliases @/ not configured in source\", \"instruction\": \"Rewrite all @/ imports to relative paths (e.g., ../data/siteMetadata).\", \"report_run\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"data/siteMetadata\"]}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"data/siteMetadata\"]}}, {\"title\": \"TypeScript vs JavaScript mismatch\", \"instruction\": \"Convert all donor files to plain JavaScript (.js or .jsx) and strip out TypeScript type annotations.\", \"report_run\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}, \"agent_alone\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}}, {\"title\": \"Keep the site's script selectors\", \"instruction\": \"Keep classes 'navbar' 'navbar-default'\", \"report_run\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}}], \"testable\": 4, \"addressed\": 1, \"partial\": 0, \"alone_addressed\": 1, \"only_with_report\": 0}",
-   "prompt_blast": "[]",
-   "report_blast": "[]",
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js to React CRA framework mismatch",
+      "instruction": "Rewrite imports to use standard React patterns and react-router-dom Link.",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "react-router-dom"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "Tailwind CSS styling system missing in source",
+      "instruction": "Install Tailwind CSS in the source repository or convert Tailwind utility classes to standard CSS / CSS modules matching the source.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     },
+     {
+      "title": "Host scripts look up specific navbar classes/ids",
+      "instruction": "Ensure the replacement header component includes the CSS classes .navbar and .navbar-default where expected by legacy host scripts.",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      }
+     },
+     {
+      "title": "Path aliases @/ not configured in source",
+      "instruction": "Rewrite all @/ imports to relative paths (e.g., ../data/siteMetadata).",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "data/siteMetadata"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "data/siteMetadata"
+       ]
+      }
+     },
+     {
+      "title": "TypeScript vs JavaScript mismatch",
+      "instruction": "Convert all donor files to plain JavaScript (.js or .jsx) and strip out TypeScript type annotations.",
+      "report_run": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "unclear",
+       "passed": [],
+       "failed": []
+      }
+     },
+     {
+      "title": "Keep the site's script selectors",
+      "instruction": "Keep classes 'navbar' 'navbar-default'",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      }
+     }
+    ],
+    "testable": 4,
+    "addressed": 1,
+    "partial": 0,
+    "alone_addressed": 1,
+    "only_with_report": 0
+   },
+   "prompt_blast": [],
+   "report_blast": [],
    "models": "gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash",
    "verdict": "inconclusive",
    "note": "Inconclusive: the runs used different models (agent alone: gemini:gemini-3.5-flash-lite; with the report: gemini:gemini-3.5-flash-lite, gemini:gemini-3.6-flash), so the difference may be the model, not the report. Checks: 7/8 with the report, 6/8 without. The report run fixed: Builds, The site's own scripts still find their elements. The report run newly failed: The navbar is rendered. Code: agent alone changed 7 files (+358 -83), with the report 8 files (+703 -0). Only agent alone wrote: package.json, src/App.js, src/component/Header.js. Only the report run wrote: src/component/Header.css, src/component/Logo.js, src/component/SearchButton.js, src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 4 testable report items (0 partly); agent alone did 1 of the same 4 without being told. Tokens: 40,931 with the report vs 20,468 without (+100%).",
@@ -93,7 +467,7 @@
   },
   {
    "id": "20261027-020234-prompt__20261027-020703-report",
-   "created": "2026-10-27T12:27:57",
+   "created": "2026-10-27T08:49:09",
    "experiment": "next-to-react-navbar",
    "source": "sanajitjana/React-Portfolio",
    "donor": "muhammad-fiaz/portfolio",
@@ -110,126 +484,386 @@
    "total_checks": 8,
    "prompt_build": 1,
    "report_build": 1,
-   "prompt_failed": "[\"The site's own scripts still find their elements\"]",
-   "report_failed": "[]",
-   "fixed": "[\"The site's own scripts still find their elements\"]",
-   "broke": "[]",
+   "prompt_failed": [
+    "The site's own scripts still find their elements"
+   ],
+   "report_failed": [],
+   "fixed": [
+    "The site's own scripts still find their elements"
+   ],
+   "broke": [],
    "prompt_files": 2,
    "report_files": 7,
    "prompt_added": 563,
    "prompt_removed": 65,
    "report_added": 707,
    "report_removed": 64,
-   "only_prompt": "[]",
-   "only_report": "[\"src/component/Avatar.js\", \"src/component/Button.js\", \"src/component/SignInButton.js\", \"src/component/ThemeToggle.js\", \"src/component/icons.js\"]",
+   "only_prompt": [],
+   "only_report": [
+    "src/component/Avatar.js",
+    "src/component/Button.js",
+    "src/component/SignInButton.js",
+    "src/component/ThemeToggle.js",
+    "src/component/icons.js"
+   ],
    "prompt_tokens": 23445,
    "report_tokens": 41144,
    "prompt_cost": 0.01964,
    "report_cost": 0.03244,
    "memory_used": 0,
-   "adherence": "{\"items\": [{\"title\": \"Next.js App Router navigation APIs are incompatible with Create React App and React Router 5\", \"instruction\": \"Replace `next/link` with `Link` from `react-router-dom`, `usePathname()` with `useLocation().pathname` from `react-router-dom`, and `useRouter()` with `useHistory()`.\", \"report_run\": {\"status\": \"partial\", \"passed\": [\"no next/link\", \"Link\", \"react-router-dom\", \"useLocation\"], \"failed\": [\"usePathname\", \"useRouter\"]}, \"agent_alone\": {\"status\": \"partial\", \"passed\": [\"no next/link\", \"Link\", \"react-router-dom\", \"useLocation\"], \"failed\": [\"usePathname\", \"useRouter\"]}}, {\"title\": \"Donor uses Tailwind CSS utility classes which are not configured in Source\", \"instruction\": \"Convert Tailwind classes (border-b-4, shadow-retro, flex, top-0, etc.) into CSS classes in a dedicated navbar stylesheet imported into the component.\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"no shadow-retro\", \"no border-b-4\", \"no top-0\"], \"failed\": []}, \"agent_alone\": {\"status\": \"addressed\", \"passed\": [\"no shadow-retro\", \"no border-b-4\", \"no top-0\"], \"failed\": []}}, {\"title\": \"TypeScript syntax and path aliases (@/) cannot be parsed directly in source JS files\", \"instruction\": \"Strip TypeScript annotations and convert files to `.jsx`/`.js`. Convert `@/` aliases to standard relative paths.\", \"report_run\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\".js\"]}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\".js\"]}}, {\"title\": \"Source main.js targets jQuery/DOM selectors like .navbar and .navbar-default\", \"instruction\": \"Retain key legacy selector classes like `navbar` and `navbar-default` on the outer element of the new navbar.\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"navbar-default\"], \"failed\": []}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}}, {\"title\": \"Keep the site's script selectors\", \"instruction\": \"Keep classes 'navbar' 'navbar-default'\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"navbar-default\"], \"failed\": []}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"navbar-default\"]}}], \"testable\": 5, \"addressed\": 3, \"partial\": 1, \"alone_addressed\": 1, \"only_with_report\": 2}",
-   "prompt_blast": "[]",
-   "report_blast": "[]",
+   "adherence": {
+    "items": [
+     {
+      "title": "Next.js App Router navigation APIs are incompatible with Create React App and React Router 5",
+      "instruction": "Replace `next/link` with `Link` from `react-router-dom`, `usePathname()` with `useLocation().pathname` from `react-router-dom`, and `useRouter()` with `useHistory()`.",
+      "report_run": {
+       "status": "partial",
+       "passed": [
+        "no next/link",
+        "useLocation",
+        "react-router-dom",
+        "Link"
+       ],
+       "failed": [
+        "useRouter",
+        "usePathname"
+       ]
+      },
+      "agent_alone": {
+       "status": "partial",
+       "passed": [
+        "no next/link",
+        "useLocation",
+        "react-router-dom",
+        "Link"
+       ],
+       "failed": [
+        "useRouter",
+        "usePathname"
+       ]
+      }
+     },
+     {
+      "title": "Donor uses Tailwind CSS utility classes which are not configured in Source",
+      "instruction": "Convert Tailwind classes (border-b-4, shadow-retro, flex, top-0, etc.) into CSS classes in a dedicated navbar stylesheet imported into the component.",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "no border-b-4",
+        "no shadow-retro",
+        "no top-0"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "addressed",
+       "passed": [
+        "no border-b-4",
+        "no shadow-retro",
+        "no top-0"
+       ],
+       "failed": []
+      }
+     },
+     {
+      "title": "TypeScript syntax and path aliases (@/) cannot be parsed directly in source JS files",
+      "instruction": "Strip TypeScript annotations and convert files to `.jsx`/`.js`. Convert `@/` aliases to standard relative paths.",
+      "report_run": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        ".js"
+       ]
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        ".js"
+       ]
+      }
+     },
+     {
+      "title": "Source main.js targets jQuery/DOM selectors like .navbar and .navbar-default",
+      "instruction": "Retain key legacy selector classes like `navbar` and `navbar-default` on the outer element of the new navbar.",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "navbar-default"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      }
+     },
+     {
+      "title": "Keep the site's script selectors",
+      "instruction": "Keep classes 'navbar' 'navbar-default'",
+      "report_run": {
+       "status": "addressed",
+       "passed": [
+        "navbar-default"
+       ],
+       "failed": []
+      },
+      "agent_alone": {
+       "status": "not addressed",
+       "passed": [],
+       "failed": [
+        "navbar-default"
+       ]
+      }
+     }
+    ],
+    "testable": 5,
+    "addressed": 3,
+    "partial": 1,
+    "alone_addressed": 1,
+    "only_with_report": 2
+   },
+   "prompt_blast": [],
+   "report_blast": [],
    "models": "gemini:gemini-3.6-flash",
    "verdict": "improved",
    "note": "Improved: with the report 8/8 checks passed, without it 7/8. The report run fixed: The site's own scripts still find their elements. Code: agent alone changed 2 files (+563 -65), with the report 7 files (+707 -64). Only the report run wrote: src/component/Avatar.js, src/component/Button.js, src/component/SignInButton.js, src/component/ThemeToggle.js, src/component/icons.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 5 testable report items (1 partly); agent alone did 1 of the same 5 without being told. Handled only with the report: Source main.js targets jQuery/DOM selectors like .navbar and .navbar-default; Keep the site's script selectors. Tokens: 41,144 with the report vs 23,445 without (+75%).",
    "human_note": ""
-  },
-  {
-   "id": "20261027-022446-prompt__20261027-022341-report",
-   "created": "2026-10-27T12:27:57",
-   "experiment": "next-to-react-navbar",
-   "source": "soumyajit4419/Portfolio",
-   "donor": "timlrx/tailwind-nextjs-starter-blog",
-   "component": "navbar",
-   "source_framework": "react-cra",
-   "donor_framework": "next",
-   "prompt_run": "20261027-022446-prompt",
-   "report_run": "20261027-022341-report",
-   "condition": "D",
-   "prompt_score": "7/7",
-   "report_score": "7/7",
-   "prompt_passed": 7,
-   "report_passed": 7,
-   "total_checks": 7,
-   "prompt_build": 1,
-   "report_build": 1,
-   "prompt_failed": "[]",
-   "report_failed": "[]",
-   "fixed": "[]",
-   "broke": "[]",
-   "prompt_files": 3,
-   "report_files": 4,
-   "prompt_added": 181,
-   "prompt_removed": 104,
-   "report_added": 217,
-   "report_removed": 114,
-   "only_prompt": "[\"package.json\"]",
-   "only_report": "[\"src/data/headerNavLinks.js\", \"src/data/siteMetadata.js\"]",
-   "prompt_tokens": 12979,
-   "report_tokens": 28780,
-   "prompt_cost": 0.01121,
-   "report_cost": 0.01952,
-   "memory_used": 0,
-   "adherence": "{\"items\": [{\"title\": \"Next.js to React CRA framework mismatch\", \"instruction\": \"Rewrite components to standard React JS and use react-router-dom <Link to={...}>.\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"react-router-dom\"], \"failed\": []}, \"agent_alone\": {\"status\": \"addressed\", \"passed\": [\"react-router-dom\"], \"failed\": []}}, {\"title\": \"React 19 vs React 17 version mismatch\", \"instruction\": \"Ensure compatible React 17 syntax (e.g., standard useRef, useState, useEffect).\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"useEffect\", \"useState\", \"useRef\"], \"failed\": []}, \"agent_alone\": {\"status\": \"addressed\", \"passed\": [\"useEffect\", \"useState\", \"useRef\"], \"failed\": []}}, {\"title\": \"Tailwind CSS classes in Donor vs CRA styling system\", \"instruction\": \"Convert Tailwind classes to equivalent Bootstrap classes or custom CSS rules in App.css / index.css.\", \"report_run\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"App.css\", \"index.css\"]}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"App.css\", \"index.css\"]}}, {\"title\": \"Path aliases (@/) not configured in CRA\", \"instruction\": \"Rewrite all @/ imports to relative paths (e.g., `../../data/headerNavLinks`).\", \"report_run\": {\"status\": \"addressed\", \"passed\": [\"data/headerNavLinks\"], \"failed\": []}, \"agent_alone\": {\"status\": \"not addressed\", \"passed\": [], \"failed\": [\"data/headerNavLinks\"]}}, {\"title\": \"Missing HeadlessUI, body-scroll-lock, and next-themes dependencies\", \"instruction\": \"Replace HeadlessUI and next-themes/body-scroll-lock with standard React state toggles, simple dropdowns, or remove unsupported advanced features like theme switching / kbar search if unneeded.\", \"report_run\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}, \"agent_alone\": {\"status\": \"unclear\", \"passed\": [], \"failed\": []}}], \"testable\": 4, \"addressed\": 3, \"partial\": 0, \"alone_addressed\": 2, \"only_with_report\": 1}",
-   "prompt_blast": "[]",
-   "report_blast": "[]",
-   "models": "gemini:gemini-3.5-flash-lite",
-   "verdict": "no change",
-   "note": "No change in the checks: both runs passed 7/7. Code: agent alone changed 3 files (+181 -104), with the report 4 files (+217 -114). Only agent alone wrote: package.json. Only the report run wrote: src/data/headerNavLinks.js, src/data/siteMetadata.js. Report adherence (read from the diff, automatic): the agent fully acted on 3 of 4 testable report items (0 partly); agent alone did 2 of the same 4 without being told. Handled only with the report: Path aliases (@/) not configured in CRA. Tokens: 28,780 with the report vs 12,979 without (+122%).",
-   "human_note": ""
   }
  ],
- "reviews": [
-  {
-   "id": 1,
-   "comparison_id": "20261027-020234-prompt__20261027-020703-report",
-   "created": "2026-10-27T12:19:13",
-   "reviewer": "Claude (read every diff, 2026-10-27)",
-   "verdict": "improved",
-   "summary": "Agreed with the automatic verdict, but for a different reason. Agent alone dropped the navbar/navbar-default classes that the site's public/assets/js/main.js reads on scroll ($('.navbar').offset().top), so its page throws a TypeError at runtime. The report run kept them. Both models were gemini-3.6-flash, so this pair is a fair comparison.",
-   "prompt_run_notes": "\"Put the whole donor navbar (icons, ThemeToggle, SignInButton) inline in src/component/Header.js with a new Header.css. Header is rendered from App.js, so the navbar IS on the page; the check 'The navbar is rendered' failed wrongly. Outer element is <header className=\\\"retro-header\\\">: no .navbar, so main.js breaks.\"",
-   "report_run_notes": "\"Split into Avatar, Button, SignInButton, ThemeToggle, icons files and rewrote Header.js; outer element <header className=\\\"navbar navbar-default retro-navbar-header\\\">, so main.js keeps working.\"",
-   "failure_categories": "[\"agent alone: runtime error from the site's own script (host regression not visible to the build)\"]",
-   "check_errors": "[\"'The navbar is rendered' failed for agent alone although Header.js (rendered in App.js) contains the navbar inline\"]"
-  },
-  {
-   "id": 2,
-   "comparison_id": "20261027-021613-prompt__20261027-021125-report",
-   "created": "2026-10-27T12:19:13",
-   "reviewer": "Claude (read every diff, 2026-10-27)",
-   "verdict": "no change",
-   "summary": "Automatic verdict 'improved' is wrong: neither run did the task. The report run never mounted the navbar: Header.js and App.js are unchanged and the 8 new files are imported by nothing. Its answer was cut off ('answer was cut off; asking it to continue') and the continuation lost the wiring. It passed 7/7 because 'rendered' matched react-router's generic Link. Agent alone did wire it into Header.js/App.js but its build fails (SearchButton missing after the repair). The models also differed (lite vs flash+lite).",
-   "prompt_run_notes": "\"Rewrote Header.js and App.js, added Link, MobileNav, ThemeSwitch and 3 packages. Build fails: imports ./SearchButton which the repair answer never wrote as a file block.\"",
-   "report_run_notes": "\"Wrote Header.css, Link, Logo, MobileNav, SearchButton, ThemeSwitch, data/headerNavLinks, data/siteMetadata; did not touch Header.js or App.js. Old header still on the page; new code is dead.\"",
-   "failure_categories": "[\"report run: incomplete output (answer truncated, mount step lost)\", \"agent alone: build failure (missing file after repair)\", \"unfair pair: different models\"]",
-   "check_errors": "[\"'The navbar is rendered' passed for the report run because the donor identifier 'Link' matched react-router's Link\", \"'Something was added' / 'donor code present' pass for files that nothing imports\"]"
-  },
-  {
-   "id": 3,
-   "comparison_id": "20261027-021808-prompt__20261027-022124-report",
-   "created": "2026-10-27T12:19:13",
-   "reviewer": "Claude (read every diff, 2026-10-27)",
-   "verdict": "worse",
-   "summary": "Automatic verdict 'worse' holds, but the scores are mostly wrong. Both runs rewrote the site's existing src/components/Navbar.js in place (still rendered by App.js), so 'rendered' and 'only one navbar' failed wrongly for both ('Navigate' from react-router counted as a second navbar). The real difference: the report run kept the donor's Tailwind classes on a Bootstrap site (no effect) and turned 'hidden md:flex' into an inline display:none, so the desktop links never show. Agent alone ported the look to plain CSS (Navbar.css). Models differed (flash vs flash+lite).",
-   "prompt_run_notes": "\"Rewrote Navbar.js (exports NavBar) with a 324-line Navbar.css in plain CSS. Looks like a working port; needs a browser check.\"",
-   "report_run_notes": "\"Rewrote Navbar.js with Tailwind class names plus inline styles, added framer-motion. Desktop <nav> has style display:none with no media query, so desktop users see no links.\"",
-   "failure_categories": "[\"report run: matrix error - the report's advice to express Tailwind as inline styles cannot express responsive classes (md:flex), and the agent followed it\", \"unfair pair: different models\"]",
-   "check_errors": "[\"'The navbar is rendered' failed for both although the rewritten Navbar.js is rendered in App.js\", \"'Only one navbar on the page' counted react-router's Navigate as a navbar\"]"
-  },
-  {
-   "id": 4,
-   "comparison_id": "20261027-022446-prompt__20261027-022341-report",
-   "created": "2026-10-27T12:19:13",
-   "reviewer": "Claude (read every diff, 2026-10-27)",
-   "verdict": "inconclusive",
-   "summary": "Automatic verdict 'worse' is not supported by the code; both runs are flawed in different ways and the checks that separated them are wrong. Both rewrote Navbar.js in place. Agent alone copied the donor's Tailwind/headlessui markup (unstyled on this Bootstrap site, adds @headlessui/react and body-scroll-lock). The report run adapted to the site's Bootstrap classes and kept its logo and scroll colour, but repeats the inline display:none on the desktop links. Needs a browser check. Same model in both (lite).",
-   "prompt_run_notes": "\"Navbar.js now holds CustomLink, MobileNav, theme icons in Tailwind classes; the site has no Tailwind, so it renders unstyled.\"",
-   "report_run_notes": "\"Navbar.js adapted to Bootstrap (navbar fixed-top navbar-expand-md, sticky on scroll), new data/headerNavLinks and siteMetadata; desktop link group hidden by inline display:none. 'Donor code present' failed because the donor's component names were not kept.\"",
-   "failure_categories": "[\"agent alone: styling not ported (Tailwind classes without Tailwind)\", \"report run: matrix error - same inline display:none on responsive nav\"]",
-   "check_errors": "[\"'The navbar is rendered' failed for both (in-place rewrite)\", \"'Only one navbar on the page' counted Navigate\", \"'The donor's navbar code is in the result' penalises adapting the donor code instead of copying its names\"]"
-  }
- ],
+ "reviews": {
+  "20261027-022446-prompt__20261027-022341-report": [
+   {
+    "id": 4,
+    "comparison_id": "20261027-022446-prompt__20261027-022341-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "inconclusive",
+    "summary": "Automatic verdict 'worse' is not supported by the code; both runs are flawed in different ways and the checks that separated them are wrong. Both rewrote Navbar.js in place. Agent alone copied the donor's Tailwind/headlessui markup (unstyled on this Bootstrap site, adds @headlessui/react and body-scroll-lock). The report run adapted to the site's Bootstrap classes and kept its logo and scroll colour, but repeats the inline display:none on the desktop links. Needs a browser check. Same model in both (lite).",
+    "prompt_run_notes": "Navbar.js now holds CustomLink, MobileNav, theme icons in Tailwind classes; the site has no Tailwind, so it renders unstyled.",
+    "report_run_notes": "Navbar.js adapted to Bootstrap (navbar fixed-top navbar-expand-md, sticky on scroll), new data/headerNavLinks and siteMetadata; desktop link group hidden by inline display:none. 'Donor code present' failed because the donor's component names were not kept.",
+    "failure_categories": [
+     "agent alone: styling not ported (Tailwind classes without Tailwind)",
+     "report run: matrix error - same inline display:none on responsive nav"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' failed for both (in-place rewrite)",
+     "'Only one navbar on the page' counted Navigate",
+     "'The donor's navbar code is in the result' penalises adapting the donor code instead of copying its names"
+    ],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "tailwind-without-tailwind",
+      "text": "On a site without Tailwind, Tailwind class names do nothing. Port the look to the site's own styling system (its Bootstrap classes or a CSS file) instead of copying the donor's class names.",
+      "evidence": "Agent alone kept the donor's Tailwind/headlessui markup on a Bootstrap site: navbar renders unstyled."
+     },
+     {
+      "kind": "avoid",
+      "topic": "tailwind-responsive",
+      "text": "Do not express Tailwind responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have no media queries, so the element stays hidden (or shown) at every width. Put them in a CSS file with an @media rule, or use the site's own responsive classes (e.g. Bootstrap d-none d-md-flex).",
+      "evidence": "Report run repeated the inline display:none on the desktop link group."
+     }
+    ]
+   },
+   {
+    "id": 8,
+    "comparison_id": "20261027-022446-prompt__20261027-022341-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "improved",
+    "summary": "Corrects the code-reading review (which said inconclusive). With the report the navbar works at both widths: desktop shows About, Projects, Resume, Blogs and the star button; mobile shows the logo and a menu button. The inline display:none I flagged is overridden by Bootstrap's d-md-flex (it uses !important). The agent-alone navbar is broken: unstyled blue links, an empty box, 212px tall, no collapse on mobile, because it kept Tailwind classes on a site without Tailwind. Same model in both runs.",
+    "prompt_run_notes": "Unstyled: default blue underlined links centred, empty white box, header 212px tall; same at both widths.",
+    "report_run_notes": "Styled in the site's Bootstrap look; 4 links + star on desktop, menu button on mobile.",
+    "failure_categories": [
+     "agent alone: styling not ported (confirmed: unstyled navbar)"
+    ],
+    "check_errors": [
+     "code-reading review wrongly predicted hidden desktop links; the browser shows Bootstrap's !important class wins"
+    ],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "tailwind-without-tailwind",
+      "text": "On a site without Tailwind, Tailwind class names do nothing. Port the look to the site's own styling system (its Bootstrap classes or a CSS file) instead of copying the donor's class names.",
+      "evidence": "Agent alone kept the donor's Tailwind/headlessui markup on a Bootstrap site: navbar renders unstyled."
+     },
+     {
+      "kind": "do",
+      "topic": "tailwind-responsive",
+      "text": "On a Bootstrap site, express the donor's responsive Tailwind classes with Bootstrap's own display classes (d-none d-md-flex, d-md-none): they work at every width and override inline styles.",
+      "evidence": "Report run used d-none d-md-flex; the browser shows the desktop links visible and a menu button on mobile."
+     }
+    ]
+   }
+  ],
+  "20261027-021808-prompt__20261027-022124-report": [
+   {
+    "id": 3,
+    "comparison_id": "20261027-021808-prompt__20261027-022124-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "worse",
+    "summary": "Automatic verdict 'worse' holds, but the scores are mostly wrong. Both runs rewrote the site's existing src/components/Navbar.js in place (still rendered by App.js), so 'rendered' and 'only one navbar' failed wrongly for both ('Navigate' from react-router counted as a second navbar). The real difference: the report run kept the donor's Tailwind classes on a Bootstrap site (no effect) and turned 'hidden md:flex' into an inline display:none, so the desktop links never show. Agent alone ported the look to plain CSS (Navbar.css). Models differed (flash vs flash+lite).",
+    "prompt_run_notes": "Rewrote Navbar.js (exports NavBar) with a 324-line Navbar.css in plain CSS. Looks like a working port; needs a browser check.",
+    "report_run_notes": "Rewrote Navbar.js with Tailwind class names plus inline styles, added framer-motion. Desktop <nav> has style display:none with no media query, so desktop users see no links.",
+    "failure_categories": [
+     "report run: matrix error - the report's advice to express Tailwind as inline styles cannot express responsive classes (md:flex), and the agent followed it",
+     "unfair pair: different models"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' failed for both although the rewritten Navbar.js is rendered in App.js",
+     "'Only one navbar on the page' counted react-router's Navigate as a navbar"
+    ],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "tailwind-responsive",
+      "text": "Do not express Tailwind responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have no media queries, so the element stays hidden (or shown) at every width. Put them in a CSS file with an @media rule, or use the site's own responsive classes (e.g. Bootstrap d-none d-md-flex).",
+      "evidence": "Report advice 'express Tailwind as inline styles' -> <nav style={{display: 'none'}}>; desktop links never show."
+     }
+    ]
+   },
+   {
+    "id": 7,
+    "comparison_id": "20261027-021808-prompt__20261027-022124-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "worse",
+    "summary": "Confirmed. With the report, desktop shows only a logo, a Star button and a menu button: the 5 nav links are hidden by the inline display:none (Tailwind's md:flex does nothing without Tailwind). The agent-alone navbar works at both widths (8 links on desktop, menu button on mobile). Note the runs used different models.",
+    "prompt_run_notes": "Desktop: 8 links, mobile: menu button. No page errors.",
+    "report_run_notes": "Desktop: 3 controls, nav with 5 links hidden. Same on mobile.",
+    "failure_categories": [
+     "report run: matrix error - inline-style advice hid the responsive nav (confirmed in browser)",
+     "unfair pair: different models"
+    ],
+    "check_errors": [],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "tailwind-responsive",
+      "text": "Do not express Tailwind responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have no media queries, so the element stays hidden (or shown) at every width. Put them in a CSS file with an @media rule, or use the site's own responsive classes (e.g. Bootstrap d-none d-md-flex).",
+      "evidence": "Report advice 'express Tailwind as inline styles' -> <nav style={{display: 'none'}}>; desktop links never show."
+     }
+    ]
+   }
+  ],
+  "20261027-021613-prompt__20261027-021125-report": [
+   {
+    "id": 2,
+    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "no change",
+    "summary": "Automatic verdict 'improved' is wrong: neither run did the task. The report run never mounted the navbar: Header.js and App.js are unchanged and the 8 new files are imported by nothing. Its answer was cut off ('answer was cut off; asking it to continue') and the continuation lost the wiring. It passed 7/7 because 'rendered' matched react-router's generic Link. Agent alone did wire it into Header.js/App.js but its build fails (SearchButton missing after the repair). The models also differed (lite vs flash+lite).",
+    "prompt_run_notes": "Rewrote Header.js and App.js, added Link, MobileNav, ThemeSwitch and 3 packages. Build fails: imports ./SearchButton which the repair answer never wrote as a file block.",
+    "report_run_notes": "Wrote Header.css, Link, Logo, MobileNav, SearchButton, ThemeSwitch, data/headerNavLinks, data/siteMetadata; did not touch Header.js or App.js. Old header still on the page; new code is dead.",
+    "failure_categories": [
+     "report run: incomplete output (answer truncated, mount step lost)",
+     "agent alone: build failure (missing file after repair)",
+     "unfair pair: different models"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' passed for the report run because the donor identifier 'Link' matched react-router's Link",
+     "'Something was added' / 'donor code present' pass for files that nothing imports"
+    ],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "mount-order",
+      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
+      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
+     },
+     {
+      "kind": "avoid",
+      "topic": "missing-file",
+      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
+      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
+     }
+    ]
+   },
+   {
+    "id": 6,
+    "comparison_id": "20261027-021613-prompt__20261027-021125-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "no change",
+    "summary": "Confirmed. The report run's page still shows the site's original navbar (Sanajit Jana, Home, About, Skill...); the donor navbar never reached the page. The agent-alone build failed, so there is nothing to open. Neither run did the task.",
+    "prompt_run_notes": "No build to open.",
+    "report_run_notes": "Original navbar on the page at both widths.",
+    "failure_categories": [
+     "report run: incomplete output (confirmed: original navbar still shown)",
+     "agent alone: build failure"
+    ],
+    "check_errors": [],
+    "lessons": [
+     {
+      "kind": "avoid",
+      "topic": "mount-order",
+      "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
+      "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
+     },
+     {
+      "kind": "avoid",
+      "topic": "missing-file",
+      "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
+      "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
+     }
+    ]
+   }
+  ],
+  "20261027-020234-prompt__20261027-020703-report": [
+   {
+    "id": 1,
+    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
+    "created": "2026-10-27T12:19:13",
+    "reviewer": "Claude (read every diff, 2026-10-27)",
+    "verdict": "improved",
+    "summary": "Agreed with the automatic verdict, but for a different reason. Agent alone dropped the navbar/navbar-default classes that the site's public/assets/js/main.js reads on scroll ($('.navbar').offset().top), so its page throws a TypeError at runtime. The report run kept them. Both models were gemini-3.6-flash, so this pair is a fair comparison.",
+    "prompt_run_notes": "Put the whole donor navbar (icons, ThemeToggle, SignInButton) inline in src/component/Header.js with a new Header.css. Header is rendered from App.js, so the navbar IS on the page; the check 'The navbar is rendered' failed wrongly. Outer element is <header className=\"retro-header\">: no .navbar, so main.js breaks.",
+    "report_run_notes": "Split into Avatar, Button, SignInButton, ThemeToggle, icons files and rewrote Header.js; outer element <header className=\"navbar navbar-default retro-navbar-header\">, so main.js keeps working.",
+    "failure_categories": [
+     "agent alone: runtime error from the site's own script (host regression not visible to the build)"
+    ],
+    "check_errors": [
+     "'The navbar is rendered' failed for agent alone although Header.js (rendered in App.js) contains the navbar inline"
+    ],
+    "lessons": [
+     {
+      "kind": "do",
+      "topic": "host-script-coupling",
+      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
+      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
+     }
+    ]
+   },
+   {
+    "id": 5,
+    "comparison_id": "20261027-020234-prompt__20261027-020703-report",
+    "created": "2026-10-27T14:34:27",
+    "reviewer": "Claude (browser check, 2026-10-27)",
+    "verdict": "improved",
+    "summary": "Confirmed in the browser. Both navbars render and look right at both widths, but the agent-alone page throws 'Cannot read properties of undefined (reading top)' three times on scroll (main.js looking for .navbar). The report run has no scroll errors. Two other page errors appear in every build of this site, including the run that left the original navbar, so they were there before.",
+    "prompt_run_notes": "Desktop: 8 links visible. Scroll: 3 page errors from main.js. .navbar missing.",
+    "report_run_notes": "Desktop: 8 links visible, mobile: menu button. No scroll errors. .navbar and .navbar-default present.",
+    "failure_categories": [
+     "agent alone: runtime error from the site's own script (confirmed in browser)"
+    ],
+    "check_errors": [],
+    "lessons": [
+     {
+      "kind": "do",
+      "topic": "host-script-coupling",
+      "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
+      "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
+     }
+    ]
+   }
+  ]
+ },
  "runs": {
   "20261027-020234-prompt": {
    "id": "20261027-020234-prompt",
@@ -500,6 +1134,77 @@
      "removed": 65,
      "truncated": 0,
      "patch": "--- a/src/component/Header.js\n+++ b/src/component/Header.js\n@@ -1,72 +1,302 @@\n-import React from \"react\";\n+import React, { useState, useEffect, useCallback } from \"react\";\n+import { Link, useLocation } from \"react-router-dom\";\n+import \"./Header.css\";\n+\n+function GithubIcon({ size = 16 }) {\n+  return (\n+    <svg\n+      width={size}\n+      height={size}\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      style={{ marginRight: \"8px\" }}\n+    >\n+      <path d=\"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4\" />\n+      <path d=\"M9 18c-4.51 2-5-2-7-2\" />\n+    </svg>\n+  );\n+}\n+\n+function LogOutIcon({ size = 16 }) {\n+  return (\n+    <svg\n+      width={size}\n+      height={size}\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      style={{ marginRight: \"8px\" }}\n+    >\n+      <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />\n+      <polyline points=\"16 17 21 12 16 7\" />\n+      <line x1=\"21\" y1=\"12\" x2=\"9\" y2=\"12\" />\n+    </svg>\n+  );\n+}\n+\n+function MenuIcon({ size = 20 }) {\n+  return (\n+    <svg\n+      width={size}\n+      height={size}\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\" />\n+    </svg>\n+  );\n+}\n+\n+function SunIcon({ size = 20 }) {\n+  return (\n+    <svg\n+      width={size}\n+      height={size}\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <circle cx=\"12\" cy=\"12\" r=\"4\" />\n+      <path d=\"M12 2v2\" />\n+      <path d=\"M12 20v2\" />\n+      <path d=\"m4.93 4.93 1.41 1.41\" />\n+      <path d=\"m17.66 17.66 1.41 1.41\" />\n+      <path d=\"M2 12h2\" />\n+      <path d=\"M20 12h2\" />\n+      <path d=\"m6.34 17.66-1.41 1.41\" />\n+      <path d=\"m18.07 4.93-1.41 1.41\" />\n+    </svg>\n+  );\n+}\n+\n+function MoonIcon({ size = 20 }) {\n+  return (\n+    <svg\n+      width={size}\n+      height={size}\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\" />\n+    </svg>\n+  );\n+}\n+\n+const navItems = [\n+  { href: \"/\", label: \"Home\" },\n+  { href: \"#\", label: \"About\" },\n+  { href: \"#\", label: \"Projects\" },\n+  { href: \"#\", label: \"Blog\" },\n+  { href: \"#\", label: \"Contact\" },\n+];\n+\n+function ThemeToggle() {\n+  const [theme, setTheme] = useState(\"light\");\n+  const [mounted, setMounted] = useState(false);\n+\n+  useEffect(() => {\n+    setMounted(true);\n+    const savedTheme = localStorage.getItem(\"theme\") || \"light\";\n+    setTheme(savedTheme);\n+    if (savedTheme === \"dark\") {\n+      document.documentElement.classList.add(\"dark\");\n+    } else {\n+      document.documentElement.classList.remove(\"dark\");\n+    }\n+  }, []);\n+\n+  const toggleTheme = useCallback(() => {\n+    const nextTheme = theme === \"dark\" ? \"light\" : \"dark\";\n+    setTheme(nextTheme);\n+    localStorage.setItem(\"theme\", nextTheme);\n+    if (nextTheme === \"dark\") {\n+      document.documentElement.classList.add(\"dark\");\n+    } else {\n+      document.documentElement.classList.remove(\"dark\");\n+    }\n+  }, [theme]);\n+\n+  if (!mounted) {\n+    return (\n+      <button\n+        type=\"button\"\n+        aria-label=\"Toggle theme\"\n+        className=\"retro-theme-toggle\"\n+      />\n+    );\n+  }\n+\n+  return (\n+    <button\n+      type=\"button\"\n+      onClick={toggleTheme}\n+      className=\"retro-theme-toggle\"\n+      aria-label=\"Toggle theme\"\n+    >\n+      {theme === \"dark\" ? <SunIcon /> : <MoonIcon />}\n+    </button>\n+  );\n+}\n+\n+function SignInButton({ className = \"\" }) {\n+  const [user, setUser] = useState(null);\n+\n+  const handleSignIn = () => {\n+    setUser({\n+      name: \"Muhammad Fiaz\",\n+      email: \"contact@muhammadfiaz.com\",\n+    });\n+  };\n+\n+  const handleSignOut = () => {\n+    setUser(null);\n+  };\n+\n+  if (user) {\n+    const initialsSource = user.name || user.email || \"MF\";\n+    const initials = initialsSource\n+      .split(/\\s+/)\n+      .filter(Boolean)\n+      .slice(0, 2)\n+      .map((part) => part[0]?.toUpperCase() ?? \"\")\n+      .join(\"\");\n+\n+    return (\n+      <div style={{ display: \"flex\", alignItems: \"center\", gap: \"8px\" }}>\n+        <div className=\"retro-avatar\" title={user.name}>\n+          <span>{initials || \"MF\"}</span>\n+        </div>\n+        <button\n+          type=\"button\"\n+          onClick={handleSignOut}\n+          className={`retro-btn retro-btn-secondary ${className}`}\n+        >\n+          <LogOutIcon />\n+          Sign Out\n+        </button>\n+      </div>\n+    );\n+  }\n+\n+  return (\n+    <button\n+      type=\"button\"\n+      onClick={handleSignIn}\n+      className={`retro-btn retro-btn-primary ${className}`}\n+    >\n+      <GithubIcon />\n+      Sign In\n+    </button>\n+  );\n+}\n \n function Header() {\n-  return (\n-    <React.StrictMode>\n-      <div className=\"menubar\">\n-        <div className=\"menubar-content\">\n-          <nav className=\"navbar navbar-default navbar-fixed-top\">\n-            <div className=\"container\">\n-              <div className=\"row\">\n-                <div className=\"col-md-3 col-sm-3\">\n-                  <div className=\"site-title\">\n-                    <a href=\"/#home\" style={{ textDecoration: \"none\" }}>\n-                      <h3>Sanajit Jana</h3>\n-                    </a>\n-                  </div>\n-                </div>\n-                <div className=\"navbar-header\">\n-                  <button\n-                    type=\"button\"\n-                    className=\"navbar-toggle collapsed\"\n-                    data-toggle=\"collapse\"\n-                    data-target=\"#bs-example-navbar-collapse-1\"\n-                    aria-expanded=\"false\"\n-                  >\n-                    <span className=\"sr-only\">Toggle navigation</span>\n-                    <span className=\"icon-bar\"></span>\n-                    <span className=\"icon-bar\"></span>\n-                    <span className=\"icon-bar\"></span>\n-                  </button>\n-                </div>\n-                <div className=\"col-md-9 col-sm-9 navbar-style\">\n-                  <div\n-                    className=\"collapse navbar-collapse\"\n-                    id=\"bs-example-navbar-collapse-1\"\n-                  >\n-                    <ul className=\"nav navbar-nav\">\n-                      <li>\n-                        <a href=\"/#home\" className=\"active\">\n-                          Home\n-                        </a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#about\">About</a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#skill\">Skill</a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#resume\">Education</a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#service\">Service</a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#blog\">Blog</a>\n-                      </li>\n-                      <li>\n-                        <a href=\"/#contact\">Contact</a>\n-                      </li>\n-                    </ul>\n-                  </div>\n-                </div>\n-              </div>\n-            </div>\n-          </nav>\n+  const location = useLocation();\n+  const pathname = location ? location.pathname : \"/\";\n+  const [open, setOpen] = useState(false);\n+\n+  return (\n+    <header className=\"retro-header\">\n+      <div className=\"retro-container\">\n+        <Link to=\"/\" className=\"retro-logo\">\n+          ~/ Muhammad Fiaz\n+        </Link>\n+\n+        <nav className=\"retro-nav-desktop\">\n+          {navItems.map((item) => {\n+            const isActive = pathname === item.href;\n+            const isHash = item.href.startsWith(\"#\");\n+            return isHash ? (\n+              <a\n+                key={item.label}\n+                href={item.href}\n+                className={`retro-nav-item ${isActive ? \"active\" : \"\"}`}\n+              >\n+                {item.label}\n+              </a>\n+            ) : (\n+              <Link\n+                key={item.label}\n+                to={item.href}\n+                className={`retro-nav-item ${isActive ? \"active\" : \"\"}`}\n+              >\n+                {item.label}\n+              </Link>\n+            );\n+          })}\n+        </nav>\n+\n+        <div className=\"retro-actions\">\n+          <div className=\"retro-signin-desktop\">\n+            <SignInButton />\n+          </div>\n+          <ThemeToggle />\n+          <button\n+            type=\"button\"\n+            className=\"retro-btn retro-btn-secondary retro-btn-icon retro-mobile-toggle\"\n+            onClick={() => setOpen((v) => !v)}\n+            aria-label=\"Open menu\"\n+          >\n+            <MenuIcon />\n+          </button>\n         </div>\n       </div>\n-    </React.StrictMode>\n+\n+      {open && (\n+        <div className=\"retro-mobile-menu\">\n+          <div className=\"retro-mobile-grid\">\n+            <SignInButton />\n+            {navItems.map((item) => {\n+              const isActive = pathname === item.href;\n+              const isHash = item.href.startsWith(\"#\");\n+              return isHash ? (\n+                <a\n+                  key={item.label}\n+                  href={item.href}\n+                  onClick={() => setOpen(false)}\n+                  className={`retro-mobile-nav-item ${\n+                    isActive ? \"active\" : \"\"\n+                  }`}\n+                >\n+                  {item.label}\n+                </a>\n+              ) : (\n+                <Link\n+                  key={item.label}\n+                  to={item.href}\n+                  onClick={() => setOpen(false)}\n+                  className={`retro-mobile-nav-item ${\n+                    isActive ? \"active\" : \"\"\n+                  }`}\n+                >\n+                  {item.label}\n+                </Link>\n+              );\n+            })}\n+          </div>\n+        </div>\n+      )}\n+    </header>\n   );\n }\n "
+    }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-020234-prompt",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "retro-header",
+     "navbar_height": 84,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "HOME",
+      "ABOUT",
+      "PROJECTS",
+      "BLOG",
+      "CONTACT",
+      "SIGN IN",
+      "Toggle theme"
+     ],
+     "link_count": 8,
+     "inline_hidden": [],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [
+      "pageerror: Cannot read properties of undefined (reading 'top')",
+      "pageerror: Cannot read properties of undefined (reading 'top')",
+      "pageerror: Cannot read properties of undefined (reading 'top')"
+     ],
+     "screenshot": "experiments/browser/2026-10-27/T1-alone-desktop.png",
+     "screenshot_sha256": "c8eded188c52d05e1d458937de9315f909d6f42249ad989d53407776d98848cb",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-020234-prompt",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "retro-header",
+     "navbar_height": 84,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "Toggle theme",
+      "Open menu"
+     ],
+     "link_count": 3,
+     "inline_hidden": [],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [
+      "pageerror: Cannot read properties of undefined (reading 'top')",
+      "pageerror: Cannot read properties of undefined (reading 'top')",
+      "pageerror: Cannot read properties of undefined (reading 'top')"
+     ],
+     "screenshot": "experiments/browser/2026-10-27/T1-alone-mobile.png",
+     "screenshot_sha256": "85cc5b88d7576f22149e77251041b4c7fc65c0a6dd0586f059786ed76791984b",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
     }
    ]
   },
@@ -1313,6 +2018,69 @@
      "removed": 0,
      "truncated": 0,
      "patch": "--- /dev/null\n+++ b/src/component/icons.js\n@@ -0,0 +1,123 @@\n+import React from \"react\";\n+\n+export function Menu({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\" />\n+    </svg>\n+  );\n+}\n+\n+export function X({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <path d=\"M18 6 6 18\" />\n+      <path d=\"m6 6 12 12\" />\n+    </svg>\n+  );\n+}\n+\n+export function Github({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <path d=\"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4\" />\n+      <path d=\"M9 18c-4.51 2-5-2-7-2\" />\n+    </svg>\n+  );\n+}\n+\n+export function LogOut({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />\n+      <polyline points=\"16 17 21 12 16 7\" />\n+      <line x1=\"21\" x2=\"9\" y1=\"12\" y2=\"12\" />\n+    </svg>\n+  );\n+}\n+\n+export function Sun({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <circle cx=\"12\" cy=\"12\" r=\"4\" />\n+      <path d=\"M12 2v2\" />\n+      <path d=\"M12 20v2\" />\n+      <path d=\"m4.93 4.93 1.41 1.41\" />\n+      <path d=\"m17.66 17.66 1.41 1.41\" />\n+      <path d=\"M2 12h2\" />\n+      <path d=\"M20 12h2\" />\n+      <path d=\"m6.34 17.66-1.41 1.41\" />\n+      <path d=\"m19.07 4.93-1.41 1.41\" />\n+    </svg>\n+  );\n+}\n+\n+export function Moon({ className = \"retro-icon\", ...props }) {\n+  return (\n+    <svg\n+      xmlns=\"http://www.w3.org/2000/svg\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+      className={className}\n+      {...props}\n+    >\n+      <path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\" />\n+    </svg>\n+  );\n+}"
+    }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-020703-report",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "navbar navbar-default retro-navbar-header",
+     "navbar_height": 75,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "HOME",
+      "ABOUT",
+      "PROJECTS",
+      "BLOG",
+      "CONTACT",
+      "SIGN IN",
+      "Toggle theme"
+     ],
+     "link_count": 8,
+     "inline_hidden": [],
+     "has_navbar_class": 1,
+     "has_navbar_default": 1,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T1-report-desktop.png",
+     "screenshot_sha256": "5ca72af8688df676ed7c88bec911311c086fbd6176b009ed69df376eccf09960",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-020703-report",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "navbar navbar-default retro-navbar-header",
+     "navbar_height": 75,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "Toggle theme",
+      "Open menu"
+     ],
+     "link_count": 3,
+     "inline_hidden": [],
+     "has_navbar_class": 1,
+     "has_navbar_default": 1,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T1-report-mobile.png",
+     "screenshot_sha256": "5e0e6fa32125cc6ee31d9a97b832ed77d7a70248a7cd0b24219183016050f273",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
     }
    ]
   },
@@ -2292,6 +3060,68 @@
      "truncated": 0,
      "patch": "--- /dev/null\n+++ b/src/data/siteMetadata.js\n@@ -0,0 +1,14 @@\n+const siteMetadata = {\n+  title: 'Next.js Starter Blog',\n+  author: 'Tails Azimuth',\n+  headerTitle: 'TailwindBlog',\n+  description: 'A blog created with Next.js and Tailwind.css',\n+  language: 'en-us',\n+  theme: 'system',\n+  stickyNav: false,\n+  search: {\n+    provider: 'kbar',\n+  },\n+};\n+\n+module.exports = siteMetadata;"
     }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-021125-report",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "nav",
+     "navbar_classes": "navbar navbar-default navbar-fixed-top",
+     "navbar_height": 75,
+     "visible_links": [
+      "Sanajit Jana",
+      "Home",
+      "About",
+      "Skill",
+      "Education",
+      "Service",
+      "Blog",
+      "Contact"
+     ],
+     "link_count": 8,
+     "inline_hidden": [],
+     "has_navbar_class": 1,
+     "has_navbar_default": 1,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T2-report-desktop.png",
+     "screenshot_sha256": "dcf8594334f9f942597969ab5641c30ed3d9c82061450f8f5eda58d7712692cd",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-021125-report",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "nav",
+     "navbar_classes": "navbar navbar-default navbar-fixed-top",
+     "navbar_height": 75,
+     "visible_links": [
+      "Sanajit Jana",
+      "Toggle navigation"
+     ],
+     "link_count": 2,
+     "inline_hidden": [],
+     "has_navbar_class": 1,
+     "has_navbar_default": 1,
+     "load_errors": [
+      "pageerror: Unexpected token '<'",
+      "pageerror: Cannot read properties of null (reading 'setAttribute')",
+      "pageerror: Unexpected token '<'"
+     ],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T2-report-mobile.png",
+     "screenshot_sha256": "be4116b59c38b5d426142303350f4aff1a2cec27fd2c879e7230cc95319ab8c9",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    }
    ]
   },
   "20261027-021613-prompt": {
@@ -2646,7 +3476,8 @@
      "truncated": 0,
      "patch": "--- /dev/null\n+++ b/src/component/ThemeSwitch.js\n@@ -0,0 +1,147 @@\n+import React, { Fragment, useEffect, useState } from 'react'\n+import { useTheme } from 'next-themes'\n+import { Menu, Transition } from '@headlessui/react'\n+\n+const Sun = () => (\n+  <svg\n+    xmlns=\"http://www.w3.org/2000/svg\"\n+    viewBox=\"0 0 20 20\"\n+    fill=\"currentColor\"\n+    className=\"group:hover:text-gray-100 h-6 w-6\"\n+  >\n+    <path\n+      fillRule=\"evenodd\"\n+      d=\"M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1_1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z\"\n+      clipRule=\"evenodd\"\n+    />\n+  </svg>\n+)\n+\n+const Moon = () => (\n+  <svg\n+    xmlns=\"http://www.w3.org/2000/svg\"\n+    viewBox=\"0 0 20 20\"\n+    fill=\"currentColor\"\n+    className=\"group:hover:text-gray-100 h-6 w-6\"\n+  >\n+    <path d=\"M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z\" />\n+  </svg>\n+)\n+\n+const Monitor = () => (\n+  <svg\n+    xmlns=\"http://www.w3.org/2000/svg\"\n+    viewBox=\"0 0 20 20\"\n+    fill=\"none\"\n+    stroke=\"currentColor\"\n+    strokeWidth=\"2\"\n+    strokeLinecap=\"round\"\n+    strokeLinejoin=\"round\"\n+    className=\"group:hover:text-gray-100 h-6 w-6\"\n+  >\n+    <rect x=\"3\" y=\"3\" width=\"14\" height=\"10\" rx=\"2\" ry=\"2\"></rect>\n+    <line x1=\"7\" y1=\"17\" x2=\"13\" y2=\"17\"></line>\n+    <line x1=\"10\" y1=\"13\" x2=\"10\" y2=\"17\"></line>\n+  </svg>\n+)\n+\n+const Blank = () => <svg className=\"h-6 w-6\" />\n+\n+const ThemeSwitch = () => {\n+  const [mounted, setMounted] = useState(false)\n+  const { theme, setTheme, resolvedTheme } = useTheme()\n+\n+  useEffect(() => setMounted(true), [])\n+\n+  return (\n+    <div className=\"flex items-center\">\n+      <Menu as=\"div\" className=\"relative inline-block text-left\">\n+        <div className=\"hover:text-primary-500 dark:hover:text-primary-400 flex items-center justify-center\">\n+          <Menu.Button aria-label=\"Theme switcher\">\n+            {mounted ? resolvedTheme === 'dark' ? <Moon /> : <Sun /> : <Blank />}\n+          </Menu.Button>\n+        </div>\n+        <Transition\n+          as={Fragment}\n+          enter=\"transition ease-out duration-100\"\n+          enterFrom=\"transform opacity-0 scale-95\"\n+          enterTo=\"transform opacity-100 scale-100\"\n+          leave=\"transition ease-in duration-75\"\n+          leaveFrom=\"transform opacity-100 scale-100\"\n+          leaveTo=\"transform opacity-0 scale-95\"\n+        >\n+          <Menu.Items className=\"ring-opacity-5 absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black focus:outline-none dark:bg-gray-800\">\n+            <div className=\"p-1\">\n+              <Menu.Item>\n+                {({ active }) => (\n+                  <button\n+                    onClick={() => setTheme('light')}\n+                    className={`${active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-gray-100'} group flex w-full items-center rounded-md px-2 py-2 text-sm`}\n+                  >\n+                    <div className=\"mr-2\">\n+                      <Sun />\n+                    </div>\n+                    Light\n+                  </button>\n+                )}\n+              </Menu.Item>\n+              <Menu.Item>\n+                {({ active }) => (\n+                  <button\n+                    onClick={() => setTheme('dark')}\n+                    className={`${active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-gray-100'} group flex w-full items-center rounded-md px-2 py-2 text-sm`}\n+                  >\n+                    <div className=\"mr-2\">\n+                      <Moon />\n+                    </div>\n+                    Dark\n+                  </button>\n+                )}\n+              </Menu.Item>\n+              <Menu.Item>\n+                {({ active }) => (\n+                  <button\n+                    onClick={() => setTheme('system')}\n+                    className={`${active ? 'bg-blue-600 text-white' : 'text-gray-900 dark:text-gray-100'} group flex w-full items-center rounded-md px-2 py-2 text-sm`}\n+                  >\n+                    <div className=\"mr-2\">\n+                      <Monitor />\n+                    </div>\n+                    System\n+                  </button>\n+                )}\n+              </Menu.Item>\n+            </div>\n+          </Menu.Items>\n+        </Transition>\n+      </Menu>\n+    </div>\n+  )\n+}\n+\n+export default ThemeSwitch\n+<<<END>></<<FILE src/component/SearchButton.js>>>\n+import React from 'react'\n+\n+const SearchButton = () => {\n+  return (\n+    <button aria-label=\"Search\" onClick={() => alert('Search feature coming soon!')} className=\"flex items-center\">\n+      <svg\n+        xmlns=\"http://www.w3.org/2000/svg\"\n+        fill=\"none\"\n+        viewBox=\"0 0 24 24\"\n+        strokeWidth={1.5}\n+        stroke=\"currentColor\"\n+        className=\"hover:text-primary-500 dark:hover:text-primary-400 h-6 w-6 text-gray-900 dark:text-gray-100\"\n+      >\n+        <path\n+          strokeLinecap=\"round\"\n+          strokeLinejoin=\"round\"\n+          d=\"M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z\"\n+        />\n+      </svg>\n+    </button>\n+  )\n+}\n+\n+export default SearchButton"
     }
-   ]
+   ],
+   "browser": []
   },
   "20261027-021808-prompt": {
    "id": "20261027-021808-prompt",
@@ -2920,6 +3751,61 @@
      "removed": 115,
      "truncated": 0,
      "patch": "--- a/src/components/Navbar.js\n+++ b/src/components/Navbar.js\n@@ -1,121 +1,320 @@\n-import React, { useState } from \"react\";\n-import Navbar from \"react-bootstrap/Navbar\";\n-import Nav from \"react-bootstrap/Nav\";\n-import Container from \"react-bootstrap/Container\";\n-import logo from \"../Assets/logo.png\";\n-import Button from \"react-bootstrap/Button\";\n-import { Link } from \"react-router-dom\";\n-import { CgGitFork } from \"react-icons/cg\";\n-import { ImBlog } from \"react-icons/im\";\n-import {\n-  AiFillStar,\n-  AiOutlineHome,\n-  AiOutlineFundProjectionScreen,\n-  AiOutlineUser,\n-} from \"react-icons/ai\";\n-\n-import { CgFileDocument } from \"react-icons/cg\";\n+import React, { useState, useEffect } from \"react\";\n+import { Link, useLocation } from \"react-router-dom\";\n+import \"./Navbar.css\";\n+\n+const navItems = [\n+  { href: \"/\", label: \"Home\" },\n+  { href: \"/about\", label: \"About\" },\n+  { href: \"/project\", label: \"Projects\" },\n+  { href: \"#\", label: \"Blog\" },\n+  { href: \"#\", label: \"Contact\" },\n+];\n+\n+function MenuIcon({ className = \"\" }) {\n+  return (\n+    <svg\n+      className={className}\n+      width=\"20\"\n+      height=\"20\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2.5\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <line x1=\"4\" x2=\"20\" y1=\"12\" y2=\"12\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"6\" y2=\"6\" />\n+      <line x1=\"4\" x2=\"20\" y1=\"18\" y2=\"18\" />\n+    </svg>\n+  );\n+}\n+\n+function GithubIcon({ className = \"\" }) {\n+  return (\n+    <svg\n+      className={className}\n+      width=\"16\"\n+      height=\"16\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2.5\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <path d=\"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4\" />\n+      <path d=\"M9 18c-4.51 2-5-2-7-2\" />\n+    </svg>\n+  );\n+}\n+\n+function LogOutIcon({ className = \"\" }) {\n+  return (\n+    <svg\n+      className={className}\n+      width=\"16\"\n+      height=\"16\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2.5\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <path d=\"M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4\" />\n+      <polyline points=\"16 17 21 12 16 7\" />\n+      <line x1=\"21\" x2=\"9\" y1=\"12\" y2=\"12\" />\n+    </svg>\n+  );\n+}\n+\n+function SunIcon({ className = \"\" }) {\n+  return (\n+    <svg\n+      className={className}\n+      width=\"20\"\n+      height=\"20\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2.5\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <circle cx=\"12\" cy=\"12\" r=\"4\" />\n+      <path d=\"M12 2v2\" />\n+      <path d=\"M12 20v2\" />\n+      <path d=\"m4.93 4.93 1.41 1.41\" />\n+      <path d=\"m17.66 17.66 1.41 1.41\" />\n+      <path d=\"M2 12h2\" />\n+      <path d=\"M20 12h2\" />\n+      <path d=\"m6.34 17.66-1.41 1.41\" />\n+      <path d=\"m19.07 4.93-1.41 1.41\" />\n+    </svg>\n+  );\n+}\n+\n+function MoonIcon({ className = \"\" }) {\n+  return (\n+    <svg\n+      className={className}\n+      width=\"20\"\n+      height=\"20\"\n+      viewBox=\"0 0 24 24\"\n+      fill=\"none\"\n+      stroke=\"currentColor\"\n+      strokeWidth=\"2.5\"\n+      strokeLinecap=\"round\"\n+      strokeLinejoin=\"round\"\n+    >\n+      <path d=\"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z\" />\n+    </svg>\n+  );\n+}\n+\n+function ThemeToggle({ className = \"\" }) {\n+  const [isDark, setIsDark] = useState(false);\n+  const [mounted, setMounted] = useState(false);\n+\n+  useEffect(() => {\n+    setMounted(true);\n+    const savedTheme = localStorage.getItem(\"theme\");\n+    if (savedTheme === \"dark\") {\n+      setIsDark(true);\n+      document.documentElement.classList.add(\"dark\");\n+    } else if (savedTheme === \"light\") {\n+      setIsDark(false);\n+      document.documentElement.classList.remove(\"dark\");\n+    } else {\n+      const prefersDark = window.matchMedia(\"(prefers-color-scheme: dark)\").matches;\n+      setIsDark(prefersDark);\n+      if (prefersDark) {\n+        document.documentElement.classList.add(\"dark\");\n+      }\n+    }\n+  }, []);\n+\n+  const toggleTheme = () => {\n+    const nextDark = !isDark;\n+    setIsDark(nextDark);\n+    if (nextDark) {\n+      document.documentElement.classList.add(\"dark\");\n+      localStorage.setItem(\"theme\", \"dark\");\n+    } else {\n+      document.documentElement.classList.remove(\"dark\");\n+      localStorage.setItem(\"theme\", \"light\");\n+    }\n+  };\n+\n+  if (!mounted) {\n+    return <button type=\"button\" aria-label=\"Toggle theme\" className={`retro-theme-toggle ${className}`} />;\n+  }\n+\n+  return (\n+    <button\n+      type=\"button\"\n+      onClick={toggleTheme}\n+      className={`retro-theme-toggle ${className}`}\n+      aria-label=\"Toggle theme\"\n+    >\n+      {isDark ? <SunIcon /> : <MoonIcon />}\n+      <span className=\"sr-only\">Toggle theme</span>\n+    </button>\n+  );\n+}\n+\n+function SignInButton({ isMobile = false }) {\n+  const [user, setUser] = useState(null);\n+\n+  const handleSignIn = () => {\n+    setUser({\n+      name: \"Muhammad Fiaz\",\n+      email: \"contact@muhammadfiaz.com\",\n+      image: null,\n+    });\n+  };\n+\n+  const handleSignOut = () => {\n+    setUser(null);\n+  };\n+\n+  if (user) {\n+    const initialsSource = user.name?.trim() || user.email?.trim() || \"U\";\n+    const initials = initialsSource.substring(0, 2).toUpperCase();\n+\n+    return (\n+      <div className=\"retro-user-container\">\n+        <div className=\"retro-avatar\" title={user.name || user.email}>\n+          {user.image ? (\n+            <img src={user.image} alt={user.name || \"User\"} className=\"retro-avatar-img\" />\n+          ) : (\n+            <span className=\"retro-avatar-fallback\">{initials}</span>\n+          )}\n+        </div>\n+        <button\n+          type=\"button\"\n+          onClick={handleSignOut}\n+          className={`retro-btn retro-btn-secondary ${\n+            isMobile ? \"retro-signin-btn-mobile\" : \"retro-signin-btn-desktop\"\n+          }`}\n+          title=\"Sign Out\"\n+        >\n+          <LogOutIcon />\n+          <span className=\"sr-only\">Sign Out</span>\n+        </button>\n+      </div>\n+    );\n+  }\n+\n+  return (\n+    <button\n+      type=\"button\"\n+      onClick={handleSignIn}\n+      className={`retro-btn retro-btn-default ${\n+        isMobile ? \"retro-signin-btn-mobile\" : \"retro-signin-btn-desktop\"\n+      }`}\n+    >\n+      <GithubIcon style={{ marginRight: \"6px\" }} />\n+      Sign In\n+    </button>\n+  );\n+}\n \n function NavBar() {\n-  const [expand, updateExpanded] = useState(false);\n-  const [navColour, updateNavbar] = useState(false);\n-\n-  function scrollHandler() {\n-    if (window.scrollY >= 20) {\n-      updateNavbar(true);\n-    } else {\n-      updateNavbar(false);\n-    }\n-  }\n-\n-  window.addEventListener(\"scroll\", scrollHandler);\n-\n-  return (\n-    <Navbar\n-      expanded={expand}\n-      fixed=\"top\"\n-      expand=\"md\"\n-      className={navColour ? \"sticky\" : \"navbar\"}\n-    >\n-      <Container>\n-        <Navbar.Brand href=\"/\" className=\"d-flex\">\n-          <img src={logo} className=\"img-fluid logo\" alt=\"brand\" />\n-        </Navbar.Brand>\n-        <Navbar.Toggle\n-          aria-controls=\"responsive-navbar-nav\"\n-          onClick={() => {\n-            updateExpanded(expand ? false : \"expanded\");\n-          }}\n-        >\n-          <span></span>\n-          <span></span>\n-          <span></span>\n-        </Navbar.Toggle>\n-        <Navbar.Collapse id=\"responsive-navbar-nav\">\n-          <Nav className=\"ms-auto\" defaultActiveKey=\"#home\">\n-            <Nav.Item>\n-              <Nav.Link as={Link} to=\"/\" onClick={() => updateExpanded(false)}>\n-                <AiOutlineHome style={{ marginBottom: \"2px\" }} /> Home\n-              </Nav.Link>\n-            </Nav.Item>\n-\n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/about\"\n-                onClick={() => updateExpanded(false)}\n+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);\n+  const location = useLocation();\n+\n+  const toggleMobileMenu = () => {\n+    setMobileMenuOpen((prev) => !prev);\n+  };\n+\n+  return (\n+    <header className=\"retro-header\">\n+      <div className=\"retro-navbar-container\">\n+        <Link to=\"/\" className=\"retro-brand\">\n+          MF\n+        </Link>\n+\n+        <nav className=\"retro-desktop-nav\">\n+          {navItems.map((item) => {\n+            const isActive = location.pathname === item.href;\n+            if (item.href.startsWith(\"/\")) {\n+              return (\n+                <Link\n+                  key={item.href + item.label}\n+                  to={item.href}\n+                  className={`retro-nav-item ${isActive ? \"active\" : \"\"}`}\n+                >\n+                  {item.label}\n+                </Link>\n+              );\n+            }\n+            return (\n+              <a\n+                key={item.href + item.label}\n+                href={item.href}\n+                className=\"retro-nav-item\"\n               >\n-                <AiOutlineUser style={{ marginBottom: \"2px\" }} /> About\n-              </Nav.Link>\n-            </Nav.Item>\n-\n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/project\"\n-                onClick={() => updateExpanded(false)}\n-              >\n-                <AiOutlineFundProjectionScreen\n-                  style={{ marginBottom: \"2px\" }}\n-                />{\" \"}\n-                Projects\n-              </Nav.Link>\n-            </Nav.Item>\n-\n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/resume\"\n-                onClick={() => updateExpanded(false)}\n-              >\n-                <CgFileDocument style={{ marginBottom: \"2px\" }} /> Resume\n-              </Nav.Link>\n-            </Nav.Item>\n-\n-            <Nav.Item>\n-              <Nav.Link\n-                href=\"https://soumyajitblogs.vercel.app/\"\n-                target=\"_blank\"\n-                rel=\"noreferrer\"\n-              >\n-                <ImBlog style={{ marginBottom: \"2px\" }} /> Blogs\n-              </Nav.Link>\n-            </Nav.Item>\n-\n-            <Nav.Item className=\"fork-btn\">\n-              <Button\n-                href=\"https://github.com/soumyajit4419/Portfolio\"\n-                target=\"_blank\"\n-                className=\"fork-btn-inner\"\n-              >\n-                <CgGitFork style={{ fontSize: \"1.2em\" }} />{\" \"}\n-                <AiFillStar style={{ fontSize: \"1.1em\" }} />\n-              </Button>\n-            </Nav.Item>\n-          </Nav>\n-        </Navbar.Collapse>\n-      </Container>\n-    </Navbar>\n+                {item.label}\n+              </a>\n+            );\n+          })}\n+        </nav>\n+\n+        <div className=\"retro-actions\">\n+          <ThemeToggle />\n+\n+          <div className=\"retro-desktop-signin\">\n+            <SignInButton isMobile={false} />\n+          </div>\n+\n+          <button\n+            type=\"button\"\n+            onClick={toggleMobileMenu}\n+            className=\"retro-theme-toggle retro-menu-toggle\"\n+            aria-label=\"Toggle mobile menu\"\n+          >\n+            <MenuIcon />\n+          </button>\n+        </div>\n+      </div>\n+\n+      {mobileMenuOpen && (\n+        <div className=\"retro-mobile-menu\">\n+          <nav className=\"retro-mobile-grid\">\n+            {navItems.map((item) => {\n+              const isActive = location.pathname === item.href;\n+              if (item.href.startsWith(\"/\")) {\n+                return (\n+                  <Link\n+                    key={item.href + item.label}\n+                    to={item.href}\n+                    onClick={() => setMobileMenuOpen(false)}\n+                    className={`retro-mobile-nav-item ${isActive ? \"active\" : \"\"}`}\n+                  >\n+                    {item.label}\n+                  </Link>\n+                );\n+              }\n+              return (\n+                <a\n+                  key={item.href + item.label}\n+                  href={item.href}\n+                  onClick={() => setMobileMenuOpen(false)}\n+                  className=\"retro-mobile-nav-item\"\n+                >\n+                  {item.label}\n+                </a>\n+              );\n+            })}\n+            <div style={{ marginTop: \"8px\" }}>\n+              <SignInButton isMobile={true} />\n+            </div>\n+          </nav>\n+        </div>\n+      )}\n+    </header>\n   );\n }\n "
+    }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-021808-prompt",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "retro-header",
+     "navbar_height": 84,
+     "visible_links": [
+      "MF",
+      "HOME",
+      "ABOUT",
+      "PROJECTS",
+      "BLOG",
+      "CONTACT",
+      "Toggle theme",
+      "SIGN IN"
+     ],
+     "link_count": 8,
+     "inline_hidden": [],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T3-alone-desktop.png",
+     "screenshot_sha256": "4a5e70efcb96552dd08c73306649b157a880d445d78bf757bf2faac777a6c1d6",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-021808-prompt",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "retro-header",
+     "navbar_height": 84,
+     "visible_links": [
+      "MF",
+      "Toggle theme",
+      "Toggle mobile menu"
+     ],
+     "link_count": 3,
+     "inline_hidden": [],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T3-alone-mobile.png",
+     "screenshot_sha256": "f017896be3cfb25bc2acfd9ef9d8a37093b37efc18adf2caf60a2782e80ccb9f",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
     }
    ]
   },
@@ -3666,6 +4552,60 @@
      "removed": 106,
      "truncated": 0,
      "patch": "--- a/src/components/Navbar.js\n+++ b/src/components/Navbar.js\n@@ -1,122 +1,167 @@\n import React, { useState } from \"react\";\n-import Navbar from \"react-bootstrap/Navbar\";\n-import Nav from \"react-bootstrap/Nav\";\n-import Container from \"react-bootstrap/Container\";\n-import logo from \"../Assets/logo.png\";\n-import Button from \"react-bootstrap/Button\";\n-import { Link } from \"react-router-dom\";\n+import { Link, useLocation } from \"react-router-dom\";\n+import { AnimatePresence, motion } from \"framer-motion\";\n+import { AiOutlineHome, AiOutlineUser, AiOutlineFundProjectionScreen, AiOutlineFileText } from \"react-icons/ai\";\n+import { ImBlog } from \"react-icons/im\";\n import { CgGitFork } from \"react-icons/cg\";\n-import { ImBlog } from \"react-icons/im\";\n-import {\n-  AiFillStar,\n-  AiOutlineHome,\n-  AiOutlineFundProjectionScreen,\n-  AiOutlineUser,\n-} from \"react-icons/ai\";\n+import { AiFillStar } from \"react-icons/ai\";\n \n-import { CgFileDocument } from \"react-icons/cg\";\n+const navItems = [\n+  { href: \"/\", label: \"Home\", icon: AiOutlineHome },\n+  { href: \"/about\", label: \"About\", icon: AiOutlineUser },\n+  { href: \"/project\", label: \"Projects\", icon: AiOutlineFundProjectionScreen },\n+  { href: \"/resume\", label: \"Resume\", icon: AiOutlineFileText },\n+  { href: \"https://soumyajitblogs.vercel.app/\", label: \"Blog\", icon: ImBlog, external: true },\n+];\n \n-function NavBar() {\n-  const [expand, updateExpanded] = useState(false);\n-  const [navColour, updateNavbar] = useState(false);\n-\n-  function scrollHandler() {\n-    if (window.scrollY >= 20) {\n-      updateNavbar(true);\n-    } else {\n-      updateNavbar(false);\n-    }\n-  }\n-\n-  window.addEventListener(\"scroll\", scrollHandler);\n+export function Navbar() {\n+  const location = useLocation();\n+  const pathname = location.pathname;\n+  const [open, setOpen] = useState(false);\n \n   return (\n-    <Navbar\n-      expanded={expand}\n-      fixed=\"top\"\n-      expand=\"md\"\n-      className={navColour ? \"sticky\" : \"navbar\"}\n-    >\n-      <Container>\n-        <Navbar.Brand href=\"/\" className=\"d-flex\">\n-          <img src={logo} className=\"img-fluid logo\" alt=\"brand\" />\n-        </Navbar.Brand>\n-        <Navbar.Toggle\n-          aria-controls=\"responsive-navbar-nav\"\n-          onClick={() => {\n-            updateExpanded(expand ? false : \"expanded\");\n-          }}\n+    <header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur\" style={{ position: \"fixed\", top: 0, zIndex: 1050, width: \"100%\", backgroundColor: \"rgb(22, 18, 36)\", borderBottom: \"4px solid #000\" }}>\n+      <div className=\"mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-4\" style={{ display: \"flex\", height: \"80px\", maxWidth: \"1200px\", margin: \"0 auto\", alignItems: \"center\", justifyContent: \"between\", padding: \"0 1rem\" }}>\n+        <Link\n+          to=\"/\"\n+          className=\"border-4 border-black bg-accent px-3 py-2 text-sm font-black text-accent-foreground tracking-wide shadow-retro sm:text-base\"\n+          style={{ border: \"4px solid black\", backgroundColor: \"#654ea3\", color: \"#fff\", padding: \"8px 12px\", textDecoration: \"none\", fontWeight: \"900\", boxShadow: \"4px 4px 0px 0px #000\" }}\n         >\n-          <span></span>\n-          <span></span>\n-          <span></span>\n-        </Navbar.Toggle>\n-        <Navbar.Collapse id=\"responsive-navbar-nav\">\n-          <Nav className=\"ms-auto\" defaultActiveKey=\"#home\">\n-            <Nav.Item>\n-              <Nav.Link as={Link} to=\"/\" onClick={() => updateExpanded(false)}>\n-                <AiOutlineHome style={{ marginBottom: \"2px\" }} /> Home\n-              </Nav.Link>\n-            </Nav.Item>\n+          ~/ Muhammad Fiaz\n+        </Link>\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/about\"\n-                onClick={() => updateExpanded(false)}\n+        <nav className=\"hidden items-center gap-2 md:flex\" style={{ display: \"none\", alignItems: \"center\", gap: \"8px\" }}>\n+          {navItems.map((item) => {\n+            const isActive = pathname === item.href;\n+            const className = `border-4 border-black px-3 py-2 text-sm font-black uppercase tracking-wide transition ${\n+              isActive ? \"bg-primary text-white\" : \"bg-dark text-white\"\n+            }`;\n+            const style = {\n+              border: \"4px solid black\",\n+              padding: \"8px 12px\",\n+              fontSize: \"14px\",\n+              fontWeight: \"900\",\n+              textTransform: \"uppercase\",\n+              textDecoration: \"none\",\n+              backgroundColor: isActive ? \"#c770f0\" : \"#2b1055\",\n+              color: \"#fff\",\n+              boxShadow: \"4px 4px 0px 0px #000\",\n+              display: \"inline-flex\",\n+              alignItems: \"center\",\n+              gap: \"6px\"\n+            };\n+\n+            if (item.external) {\n+              return (\n+                <a\n+                  key={item.href}\n+                  href={item.href}\n+                  target=\"_blank\"\n+                  rel=\"noreferrer\"\n+                  className={className}\n+                  style={style}\n+                >\n+                  <item.icon style={{ marginBottom: \"2px\" }} /> {item.label}\n+                </a>\n+              );\n+            }\n+\n+            return (\n+              <Link\n+                key={item.href}\n+                to={item.href}\n+                className={className}\n+                style={style}\n               >\n-                <AiOutlineUser style={{ marginBottom: \"2px\" }} /> About\n-              </Nav.Link>\n-            </Nav.Item>\n+                <item.icon style={{ marginBottom: \"2px\" }} /> {item.label}\n+              </Link>\n+            );\n+          })}\n+        </nav>\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/project\"\n-                onClick={() => updateExpanded(false)}\n-              >\n-                <AiOutlineFundProjectionScreen\n-                  style={{ marginBottom: \"2px\" }}\n-                />{\" \"}\n-                Projects\n-              </Nav.Link>\n-            </Nav.Item>\n+        <div className=\"flex items-center gap-2\" style={{ display: \"flex\", alignItems: \"center\", gap: \"8px\" }}>\n+          <a\n+            href=\"https://github.com/soumyajit4419/Portfolio\"\n+            target=\"_blank\"\n+            rel=\"noreferrer\"\n+            className=\"border-4 border-black bg-primary px-3 py-2 font-black shadow-retro\"\n+            style={{ border: \"4px solid black\", backgroundColor: \"#c770f0\", color: \"#fff\", padding: \"8px 14px\", textDecoration: \"none\", fontWeight: \"900\", boxShadow: \"4px 4px 0px 0px #000\", display: \"inline-flex\", alignItems: \"center\", gap: \"6px\" }}\n+          >\n+            <CgGitFork style={{ fontSize: \"1.2em\" }} /> <AiFillStar style={{ fontSize: \"1.1em\" }} /> Star\n+          </a>\n+          <button\n+            type=\"button\"\n+            className=\"md:hidden\"\n+            onClick={() => setOpen((v) => !v)}\n+            aria-label=\"Open menu\"\n+            style={{ border: \"4px solid black\", backgroundColor: \"#2b1055\", color: \"#fff\", width: \"44px\", height: \"44px\", display: \"flex\", alignItems: \"center\", justifyContent: \"center\", cursor: \"pointer\", boxShadow: \"4px 4px 0px 0px #000\" }}\n+          >\n+            <span style={{ fontSize: \"20px\", fontWeight: \"bold\" }}>{open ? \"\u2715\" : \"\u2630\"}</span>\n+          </button>\n+        </div>\n+      </div>\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/resume\"\n-                onClick={() => updateExpanded(false)}\n-              >\n-                <CgFileDocument style={{ marginBottom: \"2px\" }} /> Resume\n-              </Nav.Link>\n-            </Nav.Item>\n+      <AnimatePresence>\n+        {open && (\n+          <motion.div\n+            initial={{ opacity: 0, y: -10 }}\n+            animate={{ opacity: 1, y: 0 }}\n+            exit={{ opacity: 0, y: -10 }}\n+            className=\"border-t-4 border-black bg-dark p-4 md:hidden\"\n+            style={{ borderTop: \"4px solid black\", backgroundColor: \"rgb(22, 18, 36)\", padding: \"16px\" }}\n+          >\n+            <div className=\"grid gap-2\" style={{ display: \"flex\", flexDirection: \"column\", gap: \"8px\" }}>\n+              {navItems.map((item) => {\n+                const isActive = pathname === item.href;\n+                const style = {\n+                  border: \"4px solid black\",\n+                  padding: \"10px\",\n+                  textAlign: \"center\",\n+                  fontSize: \"14px\",\n+                  fontWeight: \"900\",\n+                  textTransform: \"uppercase\",\n+                  textDecoration: \"none\",\n+                  backgroundColor: isActive ? \"#c770f0\" : \"#2b1055\",\n+                  color: \"#fff\",\n+                  boxShadow: \"4px 4px 0px 0px #000\",\n+                  display: \"flex\",\n+                  alignItems: \"center\",\n+                  justifyContent: \"center\",\n+                  gap: \"8px\"\n+                };\n \n-            <Nav.Item>\n-              <Nav.Link\n-                href=\"https://soumyajitblogs.vercel.app/\"\n-                target=\"_blank\"\n-                rel=\"noreferrer\"\n-              >\n-                <ImBlog style={{ marginBottom: \"2px\" }} /> Blogs\n-              </Nav.Link>\n-            </Nav.Item>\n+                if (item.external) {\n+                  return (\n+                    <a\n+                      key={item.href}\n+                      href={item.href}\n+                      target=\"_blank\"\n+                      rel=\"noreferrer\"\n+                      onClick={() => setOpen(false)}\n+                      style={style}\n+                    >\n+                      <item.icon style={{ marginBottom: \"2px\" }} /> {item.label}\n+                    </a>\n+                  );\n+                }\n \n-            <Nav.Item className=\"fork-btn\">\n-              <Button\n-                href=\"https://github.com/soumyajit4419/Portfolio\"\n-                target=\"_blank\"\n-                className=\"fork-btn-inner\"\n-              >\n-                <CgGitFork style={{ fontSize: \"1.2em\" }} />{\" \"}\n-                <AiFillStar style={{ fontSize: \"1.1em\" }} />\n-              </Button>\n-            </Nav.Item>\n-          </Nav>\n-        </Navbar.Collapse>\n-      </Container>\n-    </Navbar>\n+                return (\n+                  <Link\n+                    key={item.href}\n+                    to={item.href}\n+                    onClick={() => setOpen(false)}\n+                    style={style}\n+                  >\n+                    <item.icon style={{ marginBottom: \"2px\" }} /> {item.label}\n+                  </Link>\n+                );\n+              })}\n+            </div>\n+          </motion.div>\n+        )}\n+      </AnimatePresence>\n+    </header>\n   );\n }\n \n-export default NavBar;\n+export default Navbar;"
+    }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-022124-report",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "navbar_height": 84,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "Star",
+      "\u2630"
+     ],
+     "link_count": 3,
+     "inline_hidden": [
+      "nav.hidden.items-center.gap-2 (5 links)"
+     ],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T3-report-desktop.png",
+     "screenshot_sha256": "31ab94b354619beeb0dadfcbb920bd5447a60a97aa89a430acdecaea8574272c",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-022124-report",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "navbar_height": 84,
+     "visible_links": [
+      "~/ Muhammad Fiaz",
+      "Star",
+      "\u2630"
+     ],
+     "link_count": 3,
+     "inline_hidden": [
+      "nav.hidden.items-center.gap-2 (5 links)"
+     ],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T3-report-mobile.png",
+     "screenshot_sha256": "46681b54c765ed8e59e3116b5894de0a4db39ac5c792c192f7399e0c1507d9ee",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
     }
    ]
   },
@@ -4517,6 +5457,61 @@
      "truncated": 0,
      "patch": "--- /dev/null\n+++ b/src/data/siteMetadata.js\n@@ -0,0 +1,13 @@\n+const siteMetadata = {\n+  title: 'Portfolio',\n+  author: 'Soumyajit Behera',\n+  headerTitle: 'Portfolio',\n+  description: 'Personal Portfolio Website created with React',\n+  language: 'en-us',\n+  theme: 'system',\n+  siteUrl: 'https://soumyajit.tech',\n+  siteRepo: 'https://github.com/soumyajit4419/Portfolio',\n+  stickyNav: true,\n+}\n+\n+module.exports = siteMetadata"
     }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-022341-report",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "navbar fixed-top navbar-expand-md ",
+     "navbar_height": 60,
+     "visible_links": [
+      "Portfolio",
+      "About",
+      "Projects",
+      "Resume",
+      "Blogs"
+     ],
+     "link_count": 5,
+     "inline_hidden": [
+      "div.d-none.d-md-flex.align-items-center (4 links)"
+     ],
+     "has_navbar_class": 1,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T4-report-desktop.png",
+     "screenshot_sha256": "c49b6ba608c0477b5b2029a3cbe8793ee7ff2b59a6ed4c6d75e53cfb35e192ba",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-022341-report",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "navbar fixed-top navbar-expand-md ",
+     "navbar_height": 72,
+     "visible_links": [
+      "Portfolio",
+      "Toggle Menu"
+     ],
+     "link_count": 2,
+     "inline_hidden": [
+      "div.d-none.d-md-flex.align-items-center (4 links)"
+     ],
+     "has_navbar_class": 1,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T4-report-mobile.png",
+     "screenshot_sha256": "f51488aed221ebb5442aa59df5e00200f9db039fd6e0c6e84c2dc22134a28bc3",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    }
    ]
   },
   "20261027-022446-prompt": {
@@ -4790,6 +5785,68 @@
      "removed": 104,
      "truncated": 0,
      "patch": "--- a/src/components/Navbar.js\n+++ b/src/components/Navbar.js\n@@ -1,122 +1,197 @@\n-import React, { useState } from \"react\";\n-import Navbar from \"react-bootstrap/Navbar\";\n-import Nav from \"react-bootstrap/Nav\";\n-import Container from \"react-bootstrap/Container\";\n+import React, { useState, useEffect, useRef } from \"react\";\n+import { Link, useLocation } from \"react-router-dom\";\n+import { Dialog, Transition } from \"@headlessui/react\";\n+import { disableBodyScroll, enableBodyScroll, clearAllBodyScrollLocks } from \"body-scroll-lock\";\n+import { Fragment } from \"react\";\n import logo from \"../Assets/logo.png\";\n-import Button from \"react-bootstrap/Button\";\n-import { Link } from \"react-router-dom\";\n-import { CgGitFork } from \"react-icons/cg\";\n-import { ImBlog } from \"react-icons/im\";\n-import {\n-  AiFillStar,\n-  AiOutlineHome,\n-  AiOutlineFundProjectionScreen,\n-  AiOutlineUser,\n-} from \"react-icons/ai\";\n \n-import { CgFileDocument } from \"react-icons/cg\";\n+const headerNavLinks = [\n+  { href: \"/\", title: \"Home\" },\n+  { href: \"/project\", title: \"Projects\" },\n+  { href: \"/about\", title: \"About\" },\n+  { href: \"/resume\", title: \"Resume\" },\n+  { href: \"https://soumyajitblogs.vercel.app/\", title: \"Blogs\" },\n+];\n \n-function NavBar() {\n-  const [expand, updateExpanded] = useState(false);\n-  const [navColour, updateNavbar] = useState(false);\n+const Sun = () => (\n+  <svg\n+    xmlns=\"http://www.w3.org/2000/svg\"\n+    viewBox=\"0 0 20 20\"\n+    fill=\"currentColor\"\n+    className=\"h-6 w-6 text-gray-200\"\n+  >\n+    <path\n+      fillRule=\"evenodd\"\n+      d=\"M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z\"\n+      clipRule=\"evenodd\"\n+    />\n+  </svg>\n+);\n \n-  function scrollHandler() {\n-    if (window.scrollY >= 20) {\n-      updateNavbar(true);\n-    } else {\n-      updateNavbar(false);\n-    }\n+const CustomLink = ({ href, ...rest }) => {\n+  const isInternalLink = href && href.startsWith(\"/\");\n+  const isAnchorLink = href && href.startsWith(\"#\");\n+\n+  if (isInternalLink) {\n+    return <Link className=\"break-words\" to={href} {...rest} />;\n   }\n \n-  window.addEventListener(\"scroll\", scrollHandler);\n+  if (isAnchorLink) {\n+    return <a className=\"break-words\" href={href} {...rest} />;\n+  }\n \n   return (\n-    <Navbar\n-      expanded={expand}\n-      fixed=\"top\"\n-      expand=\"md\"\n-      className={navColour ? \"sticky\" : \"navbar\"}\n-    >\n-      <Container>\n-        <Navbar.Brand href=\"/\" className=\"d-flex\">\n-          <img src={logo} className=\"img-fluid logo\" alt=\"brand\" />\n-        </Navbar.Brand>\n-        <Navbar.Toggle\n-          aria-controls=\"responsive-navbar-nav\"\n-          onClick={() => {\n-            updateExpanded(expand ? false : \"expanded\");\n-          }}\n+    <a className=\"break-words\" target=\"_blank\" rel=\"noopener noreferrer\" href={href} {...rest} />\n+  );\n+};\n+\n+const MobileNav = () => {\n+  const [navShow, setNavShow] = useState(false);\n+  const navRef = useRef(null);\n+\n+  const onToggleNav = () => {\n+    setNavShow((status) => {\n+      if (status) {\n+        enableBodyScroll(navRef.current);\n+      } else {\n+        disableBodyScroll(navRef.current);\n+      }\n+      return !status;\n+    });\n+  };\n+\n+  useEffect(() => {\n+    return clearAllBodyScrollLocks;\n+  }, []);\n+\n+  return (\n+    <>\n+      <button aria-label=\"Toggle Menu\" onClick={onToggleNav} className=\"sm:hidden p-2 text-gray-200\">\n+        <svg\n+          xmlns=\"http://www.w3.org/2000/svg\"\n+          viewBox=\"0 0 20 20\"\n+          fill=\"currentColor\"\n+          className=\"h-8 w-8 text-gray-200 hover:text-primary-400\"\n         >\n-          <span></span>\n-          <span></span>\n-          <span></span>\n-        </Navbar.Toggle>\n-        <Navbar.Collapse id=\"responsive-navbar-nav\">\n-          <Nav className=\"ms-auto\" defaultActiveKey=\"#home\">\n-            <Nav.Item>\n-              <Nav.Link as={Link} to=\"/\" onClick={() => updateExpanded(false)}>\n-                <AiOutlineHome style={{ marginBottom: \"2px\" }} /> Home\n-              </Nav.Link>\n-            </Nav.Item>\n+          <path\n+            fillRule=\"evenodd\"\n+            d=\"M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z\"\n+            clipRule=\"evenodd\"\n+          />\n+        </svg>\n+      </button>\n+      <Transition appear show={navShow} as={Fragment} unmount={false}>\n+        <Dialog as=\"div\" onClose={onToggleNav} unmount={false} className=\"relative z-50\">\n+          <Transition.Child\n+            as={Fragment}\n+            enter=\"ease-out duration-300\"\n+            enterFrom=\"opacity-0\"\n+            enterTo=\"opacity-100\"\n+            leave=\"ease-in duration-200\"\n+            leaveFrom=\"opacity-100\"\n+            leaveTo=\"opacity-0\"\n+            unmount={false}\n+          >\n+            <div className=\"fixed inset-0 bg-black/50\" />\n+          </Transition.Child>\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/about\"\n-                onClick={() => updateExpanded(false)}\n+          <Transition.Child\n+            as={Fragment}\n+            enter=\"transition ease-in-out duration-300 transform\"\n+            enterFrom=\"translate-x-full opacity-0\"\n+            enterTo=\"translate-x-0 opacity-95\"\n+            leave=\"transition ease-in duration-200 transform\"\n+            leaveFrom=\"translate-x-0 opacity-95\"\n+            leaveTo=\"translate-x-full opacity-0\"\n+            unmount={false}\n+          >\n+            <Dialog.Panel className=\"fixed top-0 left-0 h-full w-full bg-gray-900/98 text-gray-100 duration-300\">\n+              <nav\n+                ref={navRef}\n+                className=\"mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pt-2 pl-12 text-left\"\n               >\n-                <AiOutlineUser style={{ marginBottom: \"2px\" }} /> About\n-              </Nav.Link>\n-            </Nav.Item>\n+                {headerNavLinks.map((link) => (\n+                  <CustomLink\n+                    key={link.title}\n+                    href={link.href}\n+                    className=\"mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-gray-100 hover:text-primary-400\"\n+                    onClick={onToggleNav}\n+                  >\n+                    {link.title}\n+                  </CustomLink>\n+                ))}\n+              </nav>\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/project\"\n-                onClick={() => updateExpanded(false)}\n+              <button\n+                className=\"fixed top-7 right-4 z-50 h-16 w-16 p-4 text-gray-100 hover:text-primary-400\"\n+                aria-label=\"Toggle Menu\"\n+                onClick={onToggleNav}\n               >\n-                <AiOutlineFundProjectionScreen\n-                  style={{ marginBottom: \"2px\" }}\n-                />{\" \"}\n-                Projects\n-              </Nav.Link>\n-            </Nav.Item>\n+                <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" fill=\"currentColor\">\n+                  <path\n+                    fillRule=\"evenodd\"\n+                    d=\"M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z\"\n+                    clipRule=\"evenodd\"\n+                  />\n+                </svg>\n+              </button>\n+            </Dialog.Panel>\n+          </Transition.Child>\n+        </Dialog>\n+      </Transition>\n+    </>\n+  );\n+};\n \n-            <Nav.Item>\n-              <Nav.Link\n-                as={Link}\n-                to=\"/resume\"\n-                onClick={() => updateExpanded(false)}\n-              >\n-                <CgFileDocument style={{ marginBottom: \"2px\" }} /> Resume\n-              </Nav.Link>\n-            </Nav.Item>\n+const Header = () => {\n+  const [sticky, setSticky] = useState(false);\n \n-            <Nav.Item>\n-              <Nav.Link\n-                href=\"https://soumyajitblogs.vercel.app/\"\n-                target=\"_blank\"\n-                rel=\"noreferrer\"\n-              >\n-                <ImBlog style={{ marginBottom: \"2px\" }} /> Blogs\n-              </Nav.Link>\n-            </Nav.Item>\n+  useEffect(() => {\n+    const scrollHandler = () => {\n+      if (window.scrollY >= 20) {\n+        setSticky(true);\n+      } else {\n+        setSticky(false);\n+      }\n+    };\n+    window.addEventListener(\"scroll\", scrollHandler);\n+    return () => window.removeEventListener(\"scroll\", scrollHandler);\n+  }, []);\n \n-            <Nav.Item className=\"fork-btn\">\n-              <Button\n-                href=\"https://github.com/soumyajit4419/Portfolio\"\n-                target=\"_blank\"\n-                className=\"fork-btn-inner\"\n-              >\n-                <CgGitFork style={{ fontSize: \"1.2em\" }} />{\" \"}\n-                <AiFillStar style={{ fontSize: \"1.1em\" }} />\n-              </Button>\n-            </Nav.Item>\n-          </Nav>\n-        </Navbar.Collapse>\n-      </Container>\n-    </Navbar>\n+  let headerClass =\n+    \"flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300\";\n+  if (sticky) {\n+    headerClass += \" sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md shadow-lg\";\n+  }\n+\n+  return (\n+    <header className={headerClass}>\n+      <CustomLink href=\"/\" aria-label=\"Portfolio\">\n+        <div className=\"flex items-center justify-between\">\n+          <div className=\"mr-3 w-10 md:w-12\">\n+            <img src={logo} alt=\"brand\" className=\"img-fluid logo\" />\n+          </div>\n+          <div className=\"hidden h-6 text-2xl font-semibold sm:block text-white\">\n+            Portfolio\n+          </div>\n+        </div>\n+      </CustomLink>\n+      <div className=\"flex items-center space-x-4 leading-5 sm:-mr-6 sm:space-x-6\">\n+        <div className=\"no-scrollbar hidden max-w-40 items-center gap-x-4 overflow-x-auto sm:flex md:max-w-72 lg:max-w-96\">\n+          {headerNavLinks.map((link) => (\n+            <CustomLink\n+              key={link.title}\n+              href={link.href}\n+              className=\"m-1 font-medium text-gray-200 hover:text-primary-400\"\n+            >\n+              {link.title}\n+            </CustomLink>\n+          ))}\n+        </div>\n+        <MobileNav />\n+      </div>\n+    </header>\n   );\n-}\n+};\n \n-export default NavBar;\n+export default Header;"
+    }
+   ],
+   "browser": [
+    {
+     "run_id": "20261027-022446-prompt",
+     "viewport": "desktop",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "navbar_height": 212,
+     "visible_links": [
+      "Portfolio",
+      "Home",
+      "Projects",
+      "About",
+      "Resume",
+      "Blogs",
+      "Toggle Menu"
+     ],
+     "link_count": 7,
+     "inline_hidden": [
+      "div. (0 links)"
+     ],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T4-alone-desktop.png",
+     "screenshot_sha256": "07511f75e95dcf946ef6b6b941c52b08c61b1f1c66cd29f2952ace17de83e830",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
+    },
+    {
+     "run_id": "20261027-022446-prompt",
+     "viewport": "mobile",
+     "checked_at": "2026-10-27T10:40:00",
+     "checker": "Claude, Playwright Chromium (check.js), outside the pipeline",
+     "navbar_tag": "header",
+     "navbar_classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "navbar_height": 212,
+     "visible_links": [
+      "Portfolio",
+      "Home",
+      "Projects",
+      "About",
+      "Resume",
+      "Blogs",
+      "Toggle Menu"
+     ],
+     "link_count": 7,
+     "inline_hidden": [
+      "div. (0 links)"
+     ],
+     "has_navbar_class": 0,
+     "has_navbar_default": 0,
+     "load_errors": [],
+     "scroll_errors": [],
+     "screenshot": "experiments/browser/2026-10-27/T4-alone-mobile.png",
+     "screenshot_sha256": "53b8afbe11389faff24bed75c3ac332e522ef1ad31dba246f01972cbc402ca30",
+     "source": "experiments/browser/2026-10-27/results.json",
+     "note": "Built results served from project/build; external CDNs were not reachable from the checking machine (affects every run alike)."
     }
    ]
   }

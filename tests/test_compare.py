@@ -160,3 +160,39 @@ class ReviewLessonsTest(Base):
         self.assertEqual(compare.import_reviews(str(f)), 1)            # updated in place, not a second review
         self.assertEqual(len(compare.reviews_for(d["comparison"])), 1)
         self.assertEqual(compare.reviews_for(d["comparison"])[0]["lessons"], [{"text": "L"}])
+
+
+class RecordsTest(Base):
+    def test_browser_checks_experiment_and_export(self):
+        from fusionedges import paths, records
+        a = CompareTest._run(self, "prompt")
+        d = CompareTest._run(self, "report")
+        compare.record(a["id"], d["id"], experiment="exp1")
+        bdir = paths.HOME / "experiments" / "browser" / "x"
+        bdir.mkdir(parents=True)
+        (bdir / "labels.json").write_text(json.dumps({"checked_at": "2026-10-27T10:40:00", "checker": "t",
+                                                     "labels": {"A": a["id"], "D": d["id"]}}))
+        nav = {"navbar": {"tag": "header", "classes": "x", "height": 80}, "visibleLinks": ["Home", "About"],
+               "inlineHidden": [], "hasNavbarClass": False, "hasNavbarDefault": False}
+        res = {lab: {vp: {"atLoad": nav, "afterScroll": nav,
+                          "errors": {"load": ["console: Failed to load resource: net::ERR_X", "pageerror: boom"],
+                                     "scroll": ["pageerror: top"] if lab == "A" else []}}
+                     for vp in ("desktop", "mobile")} for lab in ("A", "D")}
+        (bdir / "results.json").write_text(json.dumps(res))
+        (bdir / "A-desktop.png").write_bytes(b"png")
+        self.assertEqual(records.import_browser(str(bdir), log=lambda m: None), 4)
+        rows = records.browser_for(a["id"])
+        self.assertEqual(len(rows), 2)
+        desk = [r for r in rows if r["viewport"] == "desktop"][0]
+        self.assertEqual(desk["link_count"], 2)
+        self.assertEqual(desk["scroll_errors"], ["pageerror: top"])
+        self.assertEqual(desk["load_errors"], ["pageerror: boom"])          # the checker's own network noise is dropped
+        self.assertEqual(desk["screenshot"], "experiments/browser/x/A-desktop.png")
+        self.assertEqual(len(desk["screenshot_sha256"]), 64)
+        records.record_experiment("exp1", "2026-10-27", writeup="experiments/x.md")
+        out = records.export("exp1", "2026-10-27")
+        data = json.loads(out.read_text())
+        self.assertEqual(data["experiment"]["writeup"], "experiments/x.md")
+        self.assertEqual(len(data["comparisons"]), 1)
+        self.assertEqual(len(data["runs"][a["id"]]["browser"]), 2)
+        self.assertTrue(data["runs"][d["id"]]["diff"])

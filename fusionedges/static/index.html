@@ -666,8 +666,20 @@ async function renderCompare(idA, idB){
   let [ra, rb] = await Promise.all([getRun(idA), getRun(idB)]);
   if (ra.mode !== "prompt" && rb.mode === "prompt") [ra, rb] = [rb, ra];   // agent alone on the left
   const [da, db] = await Promise.all([getDiff(ra.id), getDiff(rb.id)]);
+  const [ba, bb] = await Promise.all([ra.id, rb.id].map(id => fetch("/api/browser/" + encodeURIComponent(id)).then(r => r.json()).catch(() => ({checks: []}))));
   const cls = r => r.mode !== "prompt" ? "rep" : "alone";
-  const col = (r, d) => {
+  const browserLine = b => {
+    const cs = (b && b.checks) || [];
+    if (!cs.length) return "not checked";
+    const last = cs[cs.length - 1].checked_at, now = cs.filter(c => c.checked_at === last);
+    return now.map(c => {
+      const errs = c.scroll_errors.length;
+      return `${c.viewport === "mobile" ? "phone" : "desktop"}: ${c.link_count} link${c.link_count === 1 ? "" : "s"}` +
+        (errs ? ` · <span class="minus">${errs} error${errs > 1 ? "s" : ""} on scroll</span>` : "") +
+        (c.screenshot ? ` · <a href="/${esc(c.screenshot)}" target="_blank">screenshot</a>` : "");
+    }).join("<br>");
+  };
+  const col = (r, d, b) => {
     const c = r.checks || {}, [w, k] = OUTCOME[c.outcome] || [c.outcome || r.status, "meh"], a = r.agent || {};
     const tokens = num(a) + num(r.report_usage), cost = (a.est_cost_usd || 0) + ((r.report_usage || {}).est_cost_usd || 0);
     return `<div class="cmpcol ${cls(r)}"><h3>${modeName(r.mode)} <span class="pill ${k}">${esc(w)}${c.score ? " · " + esc(c.score) : ""}</span></h3>
@@ -678,6 +690,7 @@ async function renderCompare(idA, idB){
         <span>Tokens</span><b>${tokens.toLocaleString()} · ${money(cost)}</b>
         <span>Build</span><b>${r.build ? (r.build.ok ? "passes" : r.build.skipped ? "skipped" : "fails") : "–"}${a.retries ? ` after ${a.retries} repair${a.retries > 1 ? "s" : ""}` : ""}</b>
         <span>Model</span><b>${esc((r.models || []).join(", ") || "–")}</b>
+        <span>Browser</span><b style="font-weight:500">${browserLine(b)}</b>
       </div></div>`;
   };
   const failed = [ra, rb].filter(r => r.checks).map(r => Object.values(r.checks.checks).filter(x => x.pass === false).map(x => x.label));
@@ -688,7 +701,7 @@ async function renderCompare(idA, idB){
   $("#result").innerHTML = `<section class="panel"><h2>With vs without the report</h2>
     <p class="tag" style="margin:-6px 0 14px">${esc(ra.options.component ? "Add the " + ra.options.component : "Run")} · ${esc(ra.source.label || ra.source.spec)} ← ${esc(ra.donor.label || ra.donor.spec)}${ra.mode === rb.mode ? " · <b>both runs are " + esc(modeName(ra.mode)) + "</b>" : ""}</p>
     <div id="verdictbox"></div>
-    <div class="cmphead">${col(ra, da)}${col(rb, db)}</div>
+    <div class="cmphead">${col(ra, da, ba)}${col(rb, db, bb)}</div>
     ${failed.some(f => f.length) ? `<div class="cmphead">${failed.map(f => `<div class="tag">${f.length ? "Failed: " + f.map(esc).join(", ") : "No failed checks"}</div>`).join("")}</div>` : ""}
     <div class="keyline"><span>${rows.length} files in total · ${shared} touched by both · ${rows.length - shared} by only one (yellow edge)</span><span>Click a file to see both diffs.</span></div>
     <table class="mtx"><thead><tr><th>File</th><th>${modeName(ra.mode)}</th><th>${modeName(rb.mode)}</th></tr></thead>
