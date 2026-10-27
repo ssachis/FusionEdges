@@ -452,8 +452,6 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 
   <div id="result"></div>
 
-  <h2 class="sec" id="askhead">Did the report help?</h2>
-  <div id="experiments"><span class="tag">Loading…</span></div>
 
   <h2 class="sec">Recent runs</h2>
   <div id="history" class="hist"><span class="tag">None yet.</span></div>
@@ -603,6 +601,7 @@ function render(rec){
       <div><h3>${esc(word)}</h3><p>${what} from ${esc(rec.donor.label || rec.donor.spec)} (${esc(rec.donor_framework||"?")}) into ${esc(rec.source.label || rec.source.spec)} (${esc(rec.source_framework||"?")})</p></div>
       ${c ? `<div class="score">${esc(c.score)}<small>checks passed</small></div>` : ""}</div>
     ${rec.error ? `<div class="err">${esc(rec.error)}</div>` : ""}
+    <div id="askbox"></div>
     <div class="actions">
       <a class="ghost main" href="/output/${id}/project/" target="_blank" rel="noopener">Open the new project</a>
       <button class="ghost" onclick="runIt('${esc(rec.id)}', this)">▶ Run it</button>
@@ -626,6 +625,7 @@ function render(rec){
   <section class="panel" id="changes"><h2>Code changes</h2><span class="tag">Working out what the agent changed…</span></section>
   ${reportHtml(rec)}`;
   loadChanges(rec);
+  askAboutRun(rec);
 }
 
 async function runIt(rid, btn){
@@ -861,20 +861,26 @@ async function loadVerdict(a, b, treatedMode){
   loadExperiments();
 }
 
-async function loadExperiments(){
-  // front page: just ask. The overall answer lives on the Analysis tab.
-  const box = $("#experiments"); if (!box) return;
+async function loadExperiments(){ /* the question now appears on a finished run, see askAboutRun */ }
+
+/* After a run: if it has a counterpart (same task, other condition), ask whether the report helped */
+async function askAboutRun(rec){
+  const box = $("#askbox"); if (!box || !rec || rec.status !== "done") return;
   let a; try { a = await (await fetch("/api/analysis")).json(); } catch(e){ return; }
-  const next = (a.waiting || [])[0], row = next && a.rows.find(r => r.id === next.id);
-  box.closest("section, div").querySelectorAll("#askhead").forEach(h => h.classList.toggle("hidden", !row));
-  if (!row) { box.innerHTML = ""; return; }
-  box.innerHTML = `<div class="train"><div class="fb" data-id="${esc(row.id)}">
-    <div class="fbt"><b>${esc(row.task)}</b> · ${esc(row.component || "")} <a href="#compare=${encodeURIComponent(row.prompt_run)},${encodeURIComponent(row.report_run)}">see the diffs</a>
-      <span class="tag" style="float:right">${a.waiting.length} to answer</span></div>
+  const row = a.rows.find(r => r.prompt_run === rec.id || r.report_run === rec.id);
+  if ($("#askbox") !== box) return;
+  if (!row) {
+    box.innerHTML = `<p class="tag" style="margin:12px 0 0">To find out whether the report helps, run the same task in the ${rec.mode === "prompt" ? "Agent + report" : "Agent alone"} tab too.</p>`;
+    return;
+  }
+  const said = row.your_answer ? ` <span class="tag">You said <b>${esc(row.your_answer)}</b> · change it:</span>` : "";
+  box.innerHTML = `<div class="train" style="margin-top:14px"><div class="fb" data-id="${esc(row.id)}">
+    <div class="fbq">Did the report help here?${said}</div>
+    <div class="fbt"><a href="#compare=${encodeURIComponent(row.prompt_run)},${encodeURIComponent(row.report_run)}">Compare it with the ${rec.mode === "prompt" ? "report" : "agent-alone"} run →</a></div>
     <div class="fbrow"><button type="button" class="fbbtn yes" data-h="yes">👍 Yes</button><button type="button" class="fbbtn no" data-h="no">👎 No</button>
       <input type="text" class="fbnote" placeholder="Optional: why?" aria-label="Why (optional)"></div>
     <input type="checkbox" class="fblesson" hidden></div></div>`;
-  wireFeedback(box, loadExperiments);
+  wireFeedback(box, () => askAboutRun(rec));
 }
 
 /* Yes / No on one comparison: stored in runs.db (feedback), outranks the automatic and reviewed verdicts */
