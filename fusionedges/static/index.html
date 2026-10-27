@@ -452,7 +452,7 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 
   <div id="result"></div>
 
-  <h2 class="sec">Did the report help?</h2>
+  <h2 class="sec" id="askhead">Did the report help?</h2>
   <div id="experiments"><span class="tag">Loading…</span></div>
 
   <h2 class="sec">Recent runs</h2>
@@ -862,16 +862,18 @@ async function loadVerdict(a, b, treatedMode){
 }
 
 async function loadExperiments(){
-  // the front page answers one question (stored in runs.db) and asks you to help label the next comparison
+  // front page: just ask. The overall answer lives on the Analysis tab.
   const box = $("#experiments"); if (!box) return;
   let a; try { a = await (await fetch("/api/analysis")).json(); } catch(e){ return; }
-  const ans = a.answer || {answer: "not yet", reason: ""};
-  const label = {yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[ans.answer] || ans.answer;
-  const cls = {yes: "improved", no: "worse"}[ans.answer] || "inconclusive";
   const next = (a.waiting || [])[0], row = next && a.rows.find(r => r.id === next.id);
-  box.innerHTML = `<div class="yesno ${cls}"><b>${esc(label)}</b><span>${esc(ans.reason)}<small>Pilot numbers · <a href="#analysis">see the analysis →</a></small></span></div>
-    ${row ? `<div class="train">${feedbackForm(row, `Help train it (${a.waiting.length} waiting): did the report help here?`)}</div>`
-          : a.rows.length ? '<p class="tag" style="margin:8px 2px 0">You have answered every comparison. Thanks — each answer trains the next report.</p>' : ""}`;
+  box.closest("section, div").querySelectorAll("#askhead").forEach(h => h.classList.toggle("hidden", !row));
+  if (!row) { box.innerHTML = ""; return; }
+  box.innerHTML = `<div class="train"><div class="fb" data-id="${esc(row.id)}">
+    <div class="fbt"><b>${esc(row.task)}</b> · ${esc(row.component || "")} <a href="#compare=${encodeURIComponent(row.prompt_run)},${encodeURIComponent(row.report_run)}">see the diffs</a>
+      <span class="tag" style="float:right">${a.waiting.length} to answer</span></div>
+    <div class="fbrow"><button type="button" class="fbbtn yes" data-h="yes">👍 Yes</button><button type="button" class="fbbtn no" data-h="no">👎 No</button>
+      <input type="text" class="fbnote" placeholder="Optional: why?" aria-label="Why (optional)"></div>
+    <input type="checkbox" class="fblesson" hidden></div></div>`;
   wireFeedback(box, loadExperiments);
 }
 
@@ -934,6 +936,7 @@ async function loadAnalysis(exp){
   const exps = `<select id="anExp" aria-label="Experiment"><option value="">All experiments</option>${a.experiments.map(e => `<option ${e === a.experiment ? "selected" : ""}>${esc(e)}</option>`).join("")}</select>`;
   box.innerHTML = `
     <div class="an-head"><h2>Did the report help?</h2>${exps}</div>
+    ${a.answer ? `<div class="yesno ${{yes: "improved", no: "worse"}[a.answer.answer] || "inconclusive"}" style="margin:10px 0 6px"><b>${esc({yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[a.answer.answer] || a.answer.answer)}</b><span>${esc(a.answer.reason)}<small>Pilot numbers. Your answers on the Transfer page count first.</small></span></div>` : ""}
     <p class="tag" style="margin:0">Agent alone (A) vs agent with the compatibility report (D) on the same task. Verdicts after reading the code and checking the page in a browser, where available.</p>
     <div class="tiles">
       <div class="tile"><span>Same-model pairs improved</span><b style="color:var(--ok)">${fairImp} / ${s.fair_pairs}</b><small>the only fair comparisons</small></div>
