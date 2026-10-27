@@ -1,0 +1,103 @@
+{
+ "experiment": "next-to-react-navbar",
+ "reviewer": "Claude (browser check, 2026-10-27)",
+ "note": "Second review after opening every built result in Chromium at 1280px and 390px, scrolling, and recording visible navbar links and page errors (experiments/browser/2026-10-27). Supersedes the code-reading review where they differ; that one is kept as history.",
+ "reviews": [
+  {
+   "prompt_run": "20261027-020234-prompt",
+   "report_run": "20261027-020703-report",
+   "verdict": "improved",
+   "summary": "Confirmed in the browser. Both navbars render and look right at both widths, but the agent-alone page throws 'Cannot read properties of undefined (reading top)' three times on scroll (main.js looking for .navbar). The report run has no scroll errors. Two other page errors appear in every build of this site, including the run that left the original navbar, so they were there before.",
+   "prompt_run_notes": "Desktop: 8 links visible. Scroll: 3 page errors from main.js. .navbar missing.",
+   "report_run_notes": "Desktop: 8 links visible, mobile: menu button. No scroll errors. .navbar and .navbar-default present.",
+   "failure_categories": [
+    "agent alone: runtime error from the site's own script (confirmed in browser)"
+   ],
+   "check_errors": [],
+   "lessons": [
+    {
+     "kind": "do",
+     "topic": "host-script-coupling",
+     "text": "When the site's own scripts (public/*.js, jQuery) look up the old navbar by class or id (e.g. .navbar, .navbar-default), put those classes on the new navbar's outer element. Without being told, the agent drops them and the page throws at runtime; the build does not notice.",
+     "evidence": "Agent alone replaced <nav class=\"navbar navbar-default\"> with <header class=\"retro-header\">; main.js calls $('.navbar').offset().top on scroll."
+    }
+   ]
+  },
+  {
+   "prompt_run": "20261027-021613-prompt",
+   "report_run": "20261027-021125-report",
+   "verdict": "no change",
+   "summary": "Confirmed. The report run's page still shows the site's original navbar (Sanajit Jana, Home, About, Skill...); the donor navbar never reached the page. The agent-alone build failed, so there is nothing to open. Neither run did the task.",
+   "prompt_run_notes": "No build to open.",
+   "report_run_notes": "Original navbar on the page at both widths.",
+   "failure_categories": [
+    "report run: incomplete output (confirmed: original navbar still shown)",
+    "agent alone: build failure"
+   ],
+   "check_errors": [],
+   "lessons": [
+    {
+     "kind": "avoid",
+     "topic": "mount-order",
+     "text": "List the mount change first: edit the file that renders the old navbar (Header.js / App.js / layout) before writing helper files. A long answer can be cut off, and then the new files are imported by nothing while the build still passes.",
+     "evidence": "Report run wrote 8 new files, answer cut off, Header.js and App.js never changed."
+    },
+    {
+     "kind": "avoid",
+     "topic": "missing-file",
+     "text": "Every local file the new navbar imports must be written in the same answer; a build repair that adds an import must also add the file.",
+     "evidence": "Agent alone imported ./SearchButton but never wrote it; build failed after the repair."
+    }
+   ]
+  },
+  {
+   "prompt_run": "20261027-021808-prompt",
+   "report_run": "20261027-022124-report",
+   "verdict": "worse",
+   "summary": "Confirmed. With the report, desktop shows only a logo, a Star button and a menu button: the 5 nav links are hidden by the inline display:none (Tailwind's md:flex does nothing without Tailwind). The agent-alone navbar works at both widths (8 links on desktop, menu button on mobile). Note the runs used different models.",
+   "prompt_run_notes": "Desktop: 8 links, mobile: menu button. No page errors.",
+   "report_run_notes": "Desktop: 3 controls, nav with 5 links hidden. Same on mobile.",
+   "failure_categories": [
+    "report run: matrix error - inline-style advice hid the responsive nav (confirmed in browser)",
+    "unfair pair: different models"
+   ],
+   "check_errors": [],
+   "lessons": [
+    {
+     "kind": "avoid",
+     "topic": "tailwind-responsive",
+     "text": "Do not express Tailwind responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have no media queries, so the element stays hidden (or shown) at every width. Put them in a CSS file with an @media rule, or use the site's own responsive classes (e.g. Bootstrap d-none d-md-flex).",
+     "evidence": "Report advice 'express Tailwind as inline styles' -> <nav style={{display: 'none'}}>; desktop links never show."
+    }
+   ]
+  },
+  {
+   "prompt_run": "20261027-022446-prompt",
+   "report_run": "20261027-022341-report",
+   "verdict": "improved",
+   "summary": "Corrects the code-reading review (which said inconclusive). With the report the navbar works at both widths: desktop shows About, Projects, Resume, Blogs and the star button; mobile shows the logo and a menu button. The inline display:none I flagged is overridden by Bootstrap's d-md-flex (it uses !important). The agent-alone navbar is broken: unstyled blue links, an empty box, 212px tall, no collapse on mobile, because it kept Tailwind classes on a site without Tailwind. Same model in both runs.",
+   "prompt_run_notes": "Unstyled: default blue underlined links centred, empty white box, header 212px tall; same at both widths.",
+   "report_run_notes": "Styled in the site's Bootstrap look; 4 links + star on desktop, menu button on mobile.",
+   "failure_categories": [
+    "agent alone: styling not ported (confirmed: unstyled navbar)"
+   ],
+   "check_errors": [
+    "code-reading review wrongly predicted hidden desktop links; the browser shows Bootstrap's !important class wins"
+   ],
+   "lessons": [
+    {
+     "kind": "avoid",
+     "topic": "tailwind-without-tailwind",
+     "text": "On a site without Tailwind, Tailwind class names do nothing. Port the look to the site's own styling system (its Bootstrap classes or a CSS file) instead of copying the donor's class names.",
+     "evidence": "Agent alone kept the donor's Tailwind/headlessui markup on a Bootstrap site: navbar renders unstyled."
+    },
+    {
+     "kind": "do",
+     "topic": "tailwind-responsive",
+     "text": "On a Bootstrap site, express the donor's responsive Tailwind classes with Bootstrap's own display classes (d-none d-md-flex, d-md-none): they work at every width and override inline styles.",
+     "evidence": "Report run used d-none d-md-flex; the browser shows the desktop links visible and a menu button on mobile."
+    }
+   ]
+  }
+ ]
+}

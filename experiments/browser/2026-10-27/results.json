@@ -1,0 +1,810 @@
+{
+ "T1-alone": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "SIGN IN",
+     "Toggle theme"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 740
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "SIGN IN",
+     "Toggle theme"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 2027
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'"
+    ],
+    "scroll": [
+     "pageerror: Cannot read properties of undefined (reading 'top')",
+     "pageerror: Cannot read properties of undefined (reading 'top')",
+     "pageerror: Cannot read properties of undefined (reading 'top')"
+    ]
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Toggle theme",
+     "Open menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 5695
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Toggle theme",
+     "Open menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 5695
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": [
+     "pageerror: Cannot read properties of undefined (reading 'top')",
+     "pageerror: Cannot read properties of undefined (reading 'top')",
+     "pageerror: Cannot read properties of undefined (reading 'top')"
+    ]
+   }
+  }
+ },
+ "T1-report": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar navbar-default retro-navbar-header",
+     "top": 0,
+     "height": 75,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "SIGN IN",
+     "Toggle theme"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 753
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar navbar-default retro-navbar-header",
+     "top": 0,
+     "height": 75,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "SIGN IN",
+     "Toggle theme"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 2040
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar navbar-default retro-navbar-header",
+     "top": 0,
+     "height": 75,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Toggle theme",
+     "Open menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 5708
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar navbar-default retro-navbar-header",
+     "top": 0,
+     "height": 75,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Toggle theme",
+     "Open menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 5708
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ },
+ "T2-report": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "nav",
+     "classes": "navbar navbar-default navbar-fixed-top",
+     "top": 0,
+     "height": 75,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Sanajit Jana",
+     "Home",
+     "About",
+     "Skill",
+     "Education",
+     "Service",
+     "Blog",
+     "Contact"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 743
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "nav",
+     "classes": "navbar navbar-default navbar-fixed-top",
+     "top": 0,
+     "height": 75,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Sanajit Jana",
+     "Home",
+     "About",
+     "Skill",
+     "Education",
+     "Service",
+     "Blog",
+     "Contact"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 2030
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "nav",
+     "classes": "navbar navbar-default navbar-fixed-top",
+     "top": 0,
+     "height": 75,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Sanajit Jana",
+     "Toggle navigation"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 5709
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "nav",
+     "classes": "navbar navbar-default navbar-fixed-top",
+     "top": 0,
+     "height": 75,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Sanajit Jana",
+     "Toggle navigation"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": true,
+    "bodyText": 5709
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_NAME_NOT_RESOLVED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Cannot read properties of null (reading 'setAttribute')",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "pageerror: Unexpected token '<'",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED",
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ },
+ "T3-alone": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "MF",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "Toggle theme",
+     "SIGN IN"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 846
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "MF",
+     "HOME",
+     "ABOUT",
+     "PROJECTS",
+     "BLOG",
+     "CONTACT",
+     "Toggle theme",
+     "SIGN IN"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 828
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "MF",
+     "Toggle theme",
+     "Toggle mobile menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 804
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "retro-header",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "MF",
+     "Toggle theme",
+     "Toggle mobile menu"
+    ],
+    "inlineHidden": [],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 787
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ },
+ "T3-report": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Star",
+     "☰"
+    ],
+    "inlineHidden": [
+     "nav.hidden.items-center.gap-2 (5 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 813
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "top": 0,
+     "height": 84,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Star",
+     "☰"
+    ],
+    "inlineHidden": [
+     "nav.hidden.items-center.gap-2 (5 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 796
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Star",
+     "☰"
+    ],
+    "inlineHidden": [
+     "nav.hidden.items-center.gap-2 (5 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 812
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "fixed top-0 z-50 w-full border-b-4 border-black bg-dark backdrop-blur",
+     "top": 0,
+     "height": 84,
+     "width": 390
+    },
+    "visibleLinks": [
+     "~/ Muhammad Fiaz",
+     "Star",
+     "☰"
+    ],
+    "inlineHidden": [
+     "nav.hidden.items-center.gap-2 (5 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 797
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ },
+ "T4-alone": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "top": 0,
+     "height": 212,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Home",
+     "Projects",
+     "About",
+     "Resume",
+     "Blogs",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div. (0 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 828
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "top": 0,
+     "height": 212,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Home",
+     "Projects",
+     "About",
+     "Resume",
+     "Blogs",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div. (0 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 812
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "top": 0,
+     "height": 212,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Home",
+     "Projects",
+     "About",
+     "Resume",
+     "Blogs",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div. (0 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 827
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "flex items-center w-full bg-transparent justify-between py-5 px-6 md:px-12 transition-all duration-300",
+     "top": 0,
+     "height": 212,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Home",
+     "Projects",
+     "About",
+     "Resume",
+     "Blogs",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div. (0 links)"
+    ],
+    "hasNavbarClass": false,
+    "hasNavbarDefault": false,
+    "bodyText": 811
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ },
+ "T4-report": {
+  "desktop": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar fixed-top navbar-expand-md ",
+     "top": 0,
+     "height": 60,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "About",
+     "Projects",
+     "Resume",
+     "Blogs"
+    ],
+    "inlineHidden": [
+     "div.d-none.d-md-flex.align-items-center (4 links)"
+    ],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": false,
+    "bodyText": 827
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar fixed-top navbar-expand-md ",
+     "top": 0,
+     "height": 60,
+     "width": 1280
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "About",
+     "Projects",
+     "Resume",
+     "Blogs"
+    ],
+    "inlineHidden": [
+     "div.d-none.d-md-flex.align-items-center (4 links)"
+    ],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": false,
+    "bodyText": 811
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  },
+  "mobile": {
+   "atLoad": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar fixed-top navbar-expand-md ",
+     "top": 0,
+     "height": 72,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div.d-none.d-md-flex.align-items-center (4 links)"
+    ],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": false,
+    "bodyText": 788
+   },
+   "afterScroll": {
+    "navbar": {
+     "tag": "header",
+     "classes": "navbar fixed-top navbar-expand-md ",
+     "top": 0,
+     "height": 72,
+     "width": 390
+    },
+    "visibleLinks": [
+     "Portfolio",
+     "Toggle Menu"
+    ],
+    "inlineHidden": [
+     "div.d-none.d-md-flex.align-items-center (4 links)"
+    ],
+    "hasNavbarClass": true,
+    "hasNavbarDefault": false,
+    "bodyText": 772
+   },
+   "errors": {
+    "load": [
+     "console: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+    ],
+    "scroll": []
+   }
+  }
+ }
+}
