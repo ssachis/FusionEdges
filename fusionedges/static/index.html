@@ -188,6 +188,7 @@ a.ghost.main{background:var(--ink);color:var(--surface)}
 .pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.bad{background:var(--bad-soft);color:var(--bad)}.pill.meh{background:var(--warn-soft);color:var(--warn)}
 .mode{display:inline-block;border-radius:6px;padding:0 6px;font:600 11.5px var(--sans);margin-right:6px;background:var(--line)}
 .mode.rep{background:var(--donor-soft);color:var(--donor)}
+.seeall{justify-self:start;margin-top:4px}
 .sec{margin-top:34px;font:700 20px var(--display)}
 
 
@@ -673,14 +674,18 @@ async function openFolder(p){
   if (!r.ok) alert((await r.json()).error || "Could not open");
 }
 
+let showAllRuns = false;
 async function loadHistory(){
   const j = await (await fetch("/api/history")).json();
   if (!j.runs.length) { $("#history").innerHTML = '<span class="tag">None yet. Your runs will show up here.</span>'; return; }
-  $("#history").innerHTML = j.runs.map(r => {
+  const shown = showAllRuns ? j.runs : j.runs.slice(0, 5);
+  $("#history").innerHTML = shown.map(r => {
     const [w, c] = OUTCOME[r.outcome] || [r.status === "error" ? "Error" : (r.outcome || r.status), r.status === "error" ? "bad" : "meh"];
     return `<button class="run" data-id="${esc(r.id)}"><span class="when">${esc((r.created||"").replace("T"," ").slice(5,16))}</span>
       <span class="what"><span class="mode ${r.mode !== "prompt" ? "rep" : ""}" style="margin:0 8px 0 0">${{report: "with report", history: "report + history"}[r.mode] || "agent alone"}</span><b>${esc(r.component || "")}</b><span>${esc(r.source)} ← ${esc(r.donor)}</span></span>
-      <span class="pill ${c}">${esc(w)}${r.score ? " · " + esc(r.score) : ""}</span></button>`; }).join("");
+      <span class="pill ${c}">${esc(w)}${r.score ? " · " + esc(r.score) : ""}</span></button>`; }).join("")
+    + (j.runs.length > 5 ? `<button type="button" class="ghost seeall" id="seeall" aria-expanded="${showAllRuns}">${showAllRuns ? "Show fewer" : `See all ${j.runs.length} runs`}</button>` : "");
+  const sa = $("#seeall"); if (sa) sa.onclick = () => { showAllRuns = !showAllRuns; loadHistory(); };
   HIST = j.runs;
   document.querySelectorAll("#history .run").forEach(b => b.onclick = () => go("run=" + b.dataset.id));
 }
