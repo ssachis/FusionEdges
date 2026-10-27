@@ -274,6 +274,62 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 .exrow .t p.h{color:var(--ink)}
 .cond{font:700 11.5px var(--sans);border-radius:6px;padding:1px 7px;background:var(--donor-soft);color:var(--donor)}
 
+
+/* why */
+.whyh{margin:28px 0 6px;font:700 clamp(30px,4.6vw,44px)/1.05 var(--display);letter-spacing:-.02em}
+.goal{max-width:760px;margin:14px 0 6px;font:600 20px/1.45 var(--sans);background:var(--ok-soft);border:2px solid var(--ink);border-radius:16px;padding:16px 18px}
+.goal .wk{display:block;font:700 12px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--ok);margin-bottom:4px}
+.why{list-style:none;counter-reset:w;margin:18px 0 0;padding:0;display:grid;gap:12px;max-width:760px}
+.why li{counter-increment:w;position:relative;background:var(--surface);border:2px solid var(--ink);border-radius:16px;padding:16px 18px 16px 64px;font-size:17px;line-height:1.5;box-shadow:4px 4px 0 var(--ink)}
+.why li::before{content:counter(w);position:absolute;left:16px;top:16px;width:32px;height:32px;border-radius:50%;background:var(--site);color:#fff;display:grid;place-items:center;font:700 16px var(--display)}
+.why li:nth-child(2)::before{background:var(--bad)}.why li:nth-child(4)::before{background:var(--ok)}.why li:nth-child(5)::before{background:var(--donor)}
+.why .wk{display:block;font:700 12px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
+@media (max-width:760px){.why li{font-size:15.5px;padding-left:56px}.why li::before{left:12px}}
+
+/* tabs + analysis */
+.tabs{display:flex;gap:4px;margin:18px 0 0;border-bottom:2px solid var(--ink)}
+.tabs a{padding:9px 16px;font:700 15px var(--sans);color:var(--muted);text-decoration:none;border:2px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;margin-bottom:-2px}
+.tabs a[aria-current=page]{color:var(--ink);background:var(--surface);border-color:var(--ink)}
+.an-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:24px 0 6px}
+.an-head h2{margin:0;font:700 26px var(--display)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:14px 0}
+.tile{background:var(--surface);border:2px solid var(--ink);border-radius:14px;padding:12px 14px}
+.tile b{display:block;font:700 28px/1.1 var(--display)}
+.tile span{font-size:12.5px;color:var(--muted)}
+.tile small{display:block;font-size:12px;color:var(--muted);margin-top:4px}
+.vbar{display:flex;height:16px;border-radius:8px;overflow:hidden;border:2px solid var(--ink);margin:8px 0 4px}
+.vbar i{display:block}.vbar .improved{background:var(--ok)}.vbar .nochange{background:var(--line)}.vbar .worse{background:var(--bad)}.vbar .inconclusive{background:var(--warn)}
+.antable{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:13.5px}
+.antable th{text-align:left;font:600 12px var(--sans);color:var(--muted);padding:0 8px;white-space:nowrap}
+.antable td{background:var(--surface);padding:9px 8px;vertical-align:top;border-top:2px solid var(--line);border-bottom:2px solid var(--line)}
+.antable td:first-child{border-left:2px solid var(--line);border-radius:10px 0 0 10px}
+.antable td:last-child{border-right:2px solid var(--line);border-radius:0 10px 10px 0}
+.antable tr.fair td:first-child{box-shadow:inset 4px 0 0 var(--ok)}
+.antable .t b{display:block;font-weight:600}
+.antable .t small{color:var(--muted)}
+.bw{font-size:12.5px;line-height:1.45;white-space:nowrap}
+.bw a{color:var(--site)}
+.antable tr.more td{background:var(--sunk);border-color:var(--sunk);font-size:13px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.box{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.box h3{margin:0 0 8px;font:700 16px var(--display)}
+.box ul{margin:0;padding-left:18px;font-size:13.5px}
+.box li{margin:4px 0}
+.lesson{border-top:1px solid var(--line);padding:8px 0;font-size:13.5px}
+.lesson:first-of-type{border-top:0}
+.kind{font:700 11px var(--sans);text-transform:uppercase;letter-spacing:.04em;border-radius:6px;padding:1px 6px;margin-right:6px}
+.kind.do{background:var(--ok-soft);color:var(--ok)}.kind.avoid{background:var(--bad-soft);color:var(--bad)}
+.method{font-size:12.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+@media (max-width:760px){
+  .twocol{grid-template-columns:1fr}
+  .antable thead{display:none}
+  .antable tr.anrow{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border:2px solid var(--line);border-radius:12px;margin-bottom:8px}
+  .antable tr.anrow td{border:0!important;border-radius:0!important;background:none}
+  .antable tr.anrow td.t{grid-column:1/-1}
+  .antable td[data-l]::before{content:attr(data-l);display:block;font:600 11px var(--sans);color:var(--muted)}
+  .bw{white-space:normal}
+}
+
 @media (max-width:760px){
   .exsum{grid-template-columns:repeat(2,1fr)}.exrow{grid-template-columns:1fr}
   .cmphead,.pair2{grid-template-columns:1fr}
@@ -298,6 +354,9 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
     <div class="ai" id="ai"><i></i>Checking AI keys…</div>
   </header>
 
+  <nav class="tabs" aria-label="Views"><a href="#" data-view="transfer" aria-current="page">Transfer</a><a href="#analysis" data-view="analysis">Analysis</a><a href="#why" data-view="why">Why FusionEdges</a></nav>
+
+  <div id="view-transfer">
   <section class="hero">
     <div>
       <h1>Borrow a component from any repo.</h1>
@@ -376,6 +435,21 @@ table.adh td small{display:block;color:var(--muted);font-size:12px}
 
   <h2 class="sec">Recent runs</h2>
   <div id="history" class="hist"><span class="tag">None yet.</span></div>
+  </div>
+
+  <section id="view-analysis" class="hidden" aria-live="polite"></section>
+
+  <section id="view-why" class="hidden">
+    <h2 class="whyh">Why FusionEdges</h2>
+    <p class="goal"><span class="wk">The goal</span>Cut the time it takes to get to a <b>working</b> transfer: from asking for a component to having it run correctly on your site, at every screen size, with nothing else broken.</p>
+    <ol class="why">
+      <li><span class="wk">The problem</span>Moving a component from one repo into another should take minutes, but with coding agents it still means rounds of fixing what they broke.</li>
+      <li><span class="wk">The costly errors</span>The build catches some errors; the costly ones only show up when someone uses the page: a crash on scroll, hidden links, a navbar with no styling.</li>
+      <li><span class="wk">What we do</span>FusionEdges makes the transfer seamless by finding what the host site depends on before the agent edits, then confirming the result in a real browser at desktop and phone widths.</li>
+      <li><span class="wk">Evidence</span>In our pilot, both comparisons that used the same model came out working with the report and broken without it. That’s one round instead of several. <a href="#analysis">See the analysis →</a></li>
+      <li><span class="wk">It learns</span>Each reviewed failure becomes a lesson for the next transfer, so it gets faster and smoother over time.</li>
+    </ol>
+  </section>
 </div>
 
 <script>
@@ -777,10 +851,77 @@ async function loadExperiments(){
       <a class="ghost" href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Open diff</a></div>`).join("")}</div>`;
 }
 
+
+/* ---------- Analysis tab ---------- */
+function showView(v){
+  $("#view-transfer").classList.toggle("hidden", v !== "transfer");
+  $("#view-analysis").classList.toggle("hidden", v !== "analysis");
+  $("#view-why").classList.toggle("hidden", v !== "why");
+  document.querySelectorAll(".tabs a").forEach(a => { if (a.dataset.view === v) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+}
+const vpill = v => v ? `<span class="vpill ${VCLS(v)}">${esc(v)}</span>` : '<span class="tag">–</span>';
+function bwCell(b){
+  if (!b || !Object.keys(b).length) return '<span class="tag">not checked</span>';
+  return ["desktop", "mobile"].filter(k => b[k]).map(k => {
+    const x = b[k];
+    return `${k === "mobile" ? "phone" : "desktop"}: ${x.links} link${x.links === 1 ? "" : "s"}${x.scroll_errors ? ` · <span class="minus">${x.scroll_errors} err</span>` : ""}${x.screenshot ? ` <a href="/${esc(x.screenshot)}" target="_blank" aria-label="${k} screenshot">↗</a>` : ""}`;
+  }).join("<br>");
+}
+function verdictBar(counts){
+  const order = ["improved", "no change", "worse", "inconclusive"], tot = order.reduce((a, k) => a + (counts[k] || 0), 0) || 1;
+  return `<div class="vbar" role="img" aria-label="${order.map(k => `${counts[k] || 0} ${k}`).join(", ")}">${order.map(k => `<i class="${VCLS(k)}" style="width:${(counts[k] || 0) / tot * 100}%"></i>`).join("")}</div>
+    <div class="legend">${order.filter(k => counts[k]).map(k => `<span>${counts[k]} ${k}</span>`).join("")}</div>`;
+}
+async function loadAnalysis(exp){
+  const box = $("#view-analysis");
+  box.innerHTML = '<p class="tag" style="margin-top:24px">Loading…</p>';
+  let a; try { a = await (await fetch("/api/analysis" + (exp ? "?experiment=" + encodeURIComponent(exp) : ""))).json(); }
+  catch(e){ box.innerHTML = '<div class="err">Could not load the analysis.</div>'; return; }
+  const s = a.summary;
+  if (!a.rows.length) { box.innerHTML = `<div class="an-head"><h2>Analysis</h2></div><p class="tag">No comparisons yet. Run the same task with and without the report, or run an experiment.</p>`; return; }
+  const pct = (x, y) => y ? `${x > y ? "+" : ""}${Math.round((x - y) / y * 100)}%` : "";
+  const fairImp = (s.fair_final || {}).improved || 0;
+  const exps = `<select id="anExp" aria-label="Experiment"><option value="">All experiments</option>${a.experiments.map(e => `<option ${e === a.experiment ? "selected" : ""}>${esc(e)}</option>`).join("")}</select>`;
+  box.innerHTML = `
+    <div class="an-head"><h2>Did the report help?</h2>${exps}</div>
+    <p class="tag" style="margin:0">Agent alone (A) vs agent with the compatibility report (D) on the same task. Verdicts after reading the code and checking the page in a browser, where available.</p>
+    <div class="tiles">
+      <div class="tile"><span>Same-model pairs improved</span><b style="color:var(--ok)">${fairImp} / ${s.fair_pairs}</b><small>the only fair comparisons</small></div>
+      <div class="tile"><span>All pairs, reviewed verdict</span>${verdictBar(s.final)}<small>${s.pairs} pairs · ${s.reviewed} reviewed</small></div>
+      <div class="tile"><span>Automatic checks agreed with review</span><b>${s.agree} / ${s.reviewed}</b><small>the rest needed the code or a browser</small></div>
+      <div class="tile"><span>Crashes on scroll (browser)</span><b>${s.scroll_errors_alone} <span style="font-size:15px;color:var(--muted)">A</span> · ${s.scroll_errors_report} <span style="font-size:15px;color:var(--muted)">D</span></b><small>pages that threw when scrolled</small></div>
+      <div class="tile"><span>Tokens per run</span><b>${(s.tokens_report || 0).toLocaleString()}</b><small>with the report, vs ${(s.tokens_alone || 0).toLocaleString()} alone (${pct(s.tokens_report, s.tokens_alone)})</small></div>
+    </div>
+    <table class="antable"><thead><tr><th>Task</th><th>Same model</th><th>Checks A → D</th><th>Automatic</th><th>Reviewed</th><th>Browser A</th><th>Browser D</th><th></th></tr></thead><tbody>
+    ${a.rows.map((r, i) => `<tr class="anrow${r.same_model ? " fair" : ""}">
+      <td class="t"><b>${esc(r.task)}</b><small>${esc(r.component)} · condition ${esc(r.condition)}</small></td>
+      <td data-l="Same model">${r.same_model ? "yes" : `<span class="tag" title="${esc(r.models_alone.join(", "))} vs ${esc(r.models_report.join(", "))}">no</span>`}</td>
+      <td data-l="Checks A → D" style="white-space:nowrap">${esc(r.score_alone || "–")} → ${esc(r.score_report || "–")}</td>
+      <td data-l="Automatic">${vpill(r.auto_verdict)}</td>
+      <td data-l="Reviewed">${vpill(r.reviewed_verdict)}</td>
+      <td data-l="Browser A" class="bw">${bwCell(r.browser_alone)}</td>
+      <td data-l="Browser D" class="bw">${bwCell(r.browser_report)}</td>
+      <td><a class="ghost" style="padding:5px 10px;font-size:13px" href="#compare=${encodeURIComponent(r.prompt_run)},${encodeURIComponent(r.report_run)}">Diff</a></td></tr>
+      ${r.review_summary ? `<tr class="more"><td colspan="8"><b>Review:</b> ${esc(r.review_summary)}</td></tr>` : ""}`).join("")}
+    </tbody></table>
+    <p class="tag">Green edge: both runs used the same model. Pairs that mixed models count only as context.</p>
+    <div class="twocol" style="margin-top:16px">
+      <div class="box"><h3>What went wrong without the report</h3><ul>${a.failures.filter(f => f.side === "agent alone").map(f => `<li>${esc(f.kind)} <span class="tag">×${f.count}</span></li>`).join("") || '<li class="tag">nothing recorded</li>'}</ul></div>
+      <div class="box"><h3>What went wrong with the report</h3><ul>${a.failures.filter(f => f.side === "report run").map(f => `<li>${esc(f.kind)} <span class="tag">×${f.count}</span></li>`).join("") || '<li class="tag">nothing recorded</li>'}</ul></div>
+    </div>
+    <div class="box" style="margin-top:12px"><h3>Lessons the report learns from (${a.lessons.length})</h3>
+      ${a.lessons.map(l => `<div class="lesson"><span class="kind ${l.kind === "do" ? "do" : "avoid"}">${l.kind === "do" ? "Do" : "Avoid"}</span>${esc(l.text)} <span class="tag">· ${esc(l.trust)} · from ${esc(l.task)}</span></div>`).join("") || '<p class="tag">No lessons yet.</p>'}</div>
+    <p class="method"><b>How to read this.</b> Automatic verdicts come from static checks (build, rendered, script selectors, packages). Reviewed verdicts come from reading the diff and opening the page in Chromium at 1280px and 390px; when they differ, the review wins. Small numbers: treat this as a pilot, not a result.</p>`;
+  $("#anExp").onchange = e => loadAnalysis(e.target.value);
+}
+
 /* #run=<id> and #compare=<a>,<b> are linkable */
 function go(h){ if (location.hash.slice(1) === h) route(); else location.hash = h; }
 async function route(){
   const h = location.hash.slice(1);
+  if (h === "why") { showView("why"); return; }
+  if (h === "analysis" || h.startsWith("analysis=")) { showView("analysis"); return loadAnalysis(decodeURIComponent(h.split("=")[1] || "")); }
+  showView("transfer");
   if (h.startsWith("run=")) { const rec = await getRun(decodeURIComponent(h.slice(4))); if (rec && rec.id) { $("#progress").classList.add("hidden"); render(rec); $("#result").scrollIntoView({behavior: "smooth"}); } }
   else if (h.startsWith("compare=")) { const [a, b] = decodeURIComponent(h.slice(8)).split(","); if (a && b) renderCompare(a, b); }
 }

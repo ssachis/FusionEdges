@@ -142,6 +142,10 @@ class Handler(BaseHTTPRequestHandler):
         if p.startswith("/api/job/"):
             j = JOBS.get(p.rsplit("/", 1)[1])
             return self._json(j.public()) if j else self._json({"error": "unknown job"}, 404)
+        if p == "/api/analysis":
+            from . import records
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            return self._json(records.analysis((q.get("experiment") or [""])[0]))
         if p == "/api/comparisons":
             rows = compare.all_rows()
             return self._json({"rows": rows, "summary": compare.summary(rows)})

@@ -106,3 +106,75 @@ def export(name: str, date: str = "", out: str = "") -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, indent=1, default=str))
     return path
+
+
+def _browser_summary(run_id: str) -> dict:
+    rows = browser_for(run_id)
+    if not rows:
+        return {}
+    last = rows[-1]["checked_at"]
+    out = {}
+    for r in rows:
+        if r["checked_at"] == last:
+            out[r["viewport"]] = {"links": r["link_count"], "scroll_errors": len(r["scroll_errors"]),
+                                  "screenshot": r["screenshot"], "navbar": r["navbar_classes"]}
+    return out
+
+
+def analysis(experiment: str = "") -> dict:
+    """Everything the Analysis tab shows, computed from runs.db."""
+    from collections import Counter
+    comps = [c for c in compare.all_rows() if not experiment or c["experiment"] == experiment]
+    rows = []
+    for c in sorted(comps, key=lambda c: c["created"]):
+        p, r = store.load(c["prompt_run"]) or {}, store.load(c["report_run"]) or {}
+        mp, mr = sorted(set(p.get("models") or [])), sorted(set(r.get("models") or []))
+        rv = c.get("review") or {}
+        rows.append({
+            "id": c["id"], "experiment": c["experiment"], "condition": c.get("condition") or "D",
+            "task": f"{c['source'].split('/')[-1]} ← {c['donor'].split('/')[-1]}", "source": c["source"], "donor": c["donor"],
+            "component": c["component"], "prompt_run": c["prompt_run"], "report_run": c["report_run"],
+            "models_alone": mp, "models_report": mr, "same_model": bool(mp) and mp == mr,
+            "score_alone": c["prompt_score"], "score_report": c["report_score"],
+            "auto_verdict": c["verdict"], "reviewed_verdict": rv.get("verdict"), "reviewer": rv.get("reviewer"),
+            "review_summary": rv.get("summary"), "note": c["note"],
+            "tokens_alone": c["prompt_tokens"], "tokens_report": c["report_tokens"],
+            "cost_alone": c["prompt_cost"], "cost_report": c["report_cost"],
+            "browser_alone": _browser_summary(c["prompt_run"]), "browser_report": _browser_summary(c["report_run"]),
+            "failure_categories": rv.get("failure_categories") or [], "lessons": rv.get("lessons") or [],
+            "adherence": {k: (c.get("adherence") or {}).get(k) for k in ("testable", "addressed", "partial", "alone_addressed")},
+        })
+    final = lambda x: x["reviewed_verdict"] or x["auto_verdict"]   # noqa: E731
+    count = lambda xs, key: dict(Counter(key(x) for x in xs))       # noqa: E731
+    fair = [x for x in rows if x["same_model"]]
+    cats = Counter()
+    for x in rows:
+        for f in x["failure_categories"]:
+            side = "report run" if f.lower().startswith("report") else "agent alone" if f.lower().startswith("agent") else "pair"
+            kind = f.split(":", 1)[1].split("(")[0].split(" - ")[0].strip() if ":" in f else f
+            cats[(side, kind)] += 1
+    lessons, seen = [], set()
+    for x in rows:
+        for l in x["lessons"]:
+            t = l.get("text") if isinstance(l, dict) else l
+            if t and t not in seen:
+                seen.add(t)
+                lessons.append({**(l if isinstance(l, dict) else {"text": l}), "task": x["task"],
+                                "trust": "AI-reviewed" if (x["reviewer"] or "").lower().startswith("claude") else "human-reviewed"})
+    tok = [(x["tokens_alone"], x["tokens_report"]) for x in rows if x["tokens_alone"] and x["tokens_report"]]
+    with store.connect() as db:
+        exps = [e[0] for e in db.execute("SELECT DISTINCT experiment FROM comparisons WHERE experiment<>'' ORDER BY 1")]
+    return {
+        "experiments": exps, "experiment": experiment, "rows": rows,
+        "summary": {
+            "pairs": len(rows), "fair_pairs": len(fair), "reviewed": sum(1 for x in rows if x["reviewed_verdict"]),
+            "auto": count(rows, lambda x: x["auto_verdict"]), "final": count(rows, final), "fair_final": count(fair, final),
+            "agree": sum(1 for x in rows if x["reviewed_verdict"] and x["reviewed_verdict"] == x["auto_verdict"]),
+            "tokens_alone": round(sum(a for a, _ in tok) / len(tok)) if tok else None,
+            "tokens_report": round(sum(b for _, b in tok) / len(tok)) if tok else None,
+            "scroll_errors_alone": sum(1 for x in rows if any(v["scroll_errors"] for v in x["browser_alone"].values())),
+            "scroll_errors_report": sum(1 for x in rows if any(v["scroll_errors"] for v in x["browser_report"].values())),
+        },
+        "failures": [{"side": s, "kind": k, "count": n} for (s, k), n in cats.most_common()],
+        "lessons": lessons,
+    }
