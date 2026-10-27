@@ -1,0 +1,15 @@
+{
+ "name": "heldout-main",
+ "note": "Main experiment. Tasks = the first 12 kept by heldout-screening (filled in after screening, by the rule only). Conditions: A agent alone vs D with report (one-shot), 3 repeats. Then heldout-multistep: A2 vs D2 on the first 4 kept tasks, 3 repeats.",
+ "env": {
+  "FUSIONEDGES_PROVIDERS": "gemini",
+  "FUSIONEDGES_GEMINI_MODEL": "gemini-3.5-flash-lite"
+ },
+ "conditions": [
+  "prompt",
+  "report"
+ ],
+ "repeats": 3,
+ "seed": 2611,
+ "tasks": "FILL FROM SCREENING"
+}

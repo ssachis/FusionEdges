@@ -1,0 +1,15 @@
+{
+ "name": "heldout-multistep",
+ "note": "Second baseline: multi-step agent with tools, alone vs with the report, on the first 4 tasks kept by screening.",
+ "env": {
+  "FUSIONEDGES_PROVIDERS": "gemini",
+  "FUSIONEDGES_GEMINI_MODEL": "gemini-3.5-flash-lite"
+ },
+ "conditions": [
+  "agent",
+  "agent+report"
+ ],
+ "repeats": 3,
+ "seed": 2612,
+ "tasks": "FILL FROM SCREENING"
+}

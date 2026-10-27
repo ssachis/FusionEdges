@@ -1,0 +1,95 @@
+{
+ "name": "heldout-screening",
+ "note": "Screening (proposal sec. 5): agent alone, 2 runs per candidate task. Rule fixed before running: drop a task the baseline always passes or never gets working (both runs). Keep the first 12 remaining tasks in this file's order for the main experiment.",
+ "env": {
+  "FUSIONEDGES_PROVIDERS": "gemini",
+  "FUSIONEDGES_GEMINI_MODEL": "gemini-3.5-flash-lite"
+ },
+ "conditions": [
+  "prompt"
+ ],
+ "repeats": 2,
+ "seed": 2610,
+ "tasks": [
+  {
+   "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+   "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+   "donor": "https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb",
+   "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb",
+   "donor": "https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d",
+   "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d",
+   "donor": "https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e",
+   "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e",
+   "donor": "https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+   "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+   "donor": "https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065",
+   "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065",
+   "donor": "https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7",
+   "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7",
+   "donor": "https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f",
+   "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+   "component": "navbar"
+  },
+  {
+   "source": "https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f",
+   "donor": "https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2",
+   "component": "navbar"
+  }
+ ]
+}

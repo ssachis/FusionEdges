@@ -322,3 +322,67 @@ class KeptInAnalysisTest(Base):
         self.assertNotIn("unstyled", " ".join(l["text"] for l in records.analysis()["lessons"]))
         lessons_auto.decide(lid, "kept")
         self.assertIn("unstyled", " ".join(l["text"] for l in records.analysis()["lessons"]))
+
+
+class RunnerConditionsTest(Base):
+    def test_env_is_pinned_and_restored_and_screening_table(self):
+        import os
+        from fusionedges import experiment
+        fake_llm.install(("second", fake_llm.smart))
+        os.environ.pop("FUSIONEDGES_TEST_PIN", None)
+        seen = []
+        orig = experiment.run
+
+        def spy(params, log, run_id):
+            seen.append((params["mode"], params["edit"], os.environ.get("FUSIONEDGES_TEST_PIN")))
+            return orig(params, log=log, run_id=run_id)
+        experiment.run = spy
+        try:
+            spec = {"name": "t", "env": {"FUSIONEDGES_TEST_PIN": "on"},
+                    "tasks": [{"source": str(HOST), "donor": str(DONOR), "component": "navbar"}]}
+            logs = []
+            experiment.run_experiment(spec, log=logs.append, conditions=["prompt"], repeats=2, build=False)
+        finally:
+            experiment.run = orig
+        self.assertEqual({x[2] for x in seen}, {"on"})                    # pinned during the runs
+        self.assertIsNone(os.environ.get("FUSIONEDGES_TEST_PIN"))         # restored after
+        self.assertIn("SCREENING", "\n".join(logs))
+        self.assertEqual(experiment.CONDITIONS["agent+report"], ("report", "agent"))
+
+
+class ResumeTest(Base):
+    def test_quota_stops_cleanly_and_the_next_day_resumes(self):
+        from fusionedges import experiment, llm
+        spec = {"name": "multi-day", "tasks": [{"source": str(HOST), "donor": str(DONOR), "component": "navbar"},
+                                               {"source": str(FIX / "host_react"), "donor": str(DONOR), "component": "navbar"}]}
+        calls = {"n": 0}
+
+        def day_one(system, messages, tools, max_tokens):    # works for 3 calls, then the daily quota is gone
+            calls["n"] += 1
+            if calls["n"] > 3:
+                raise llm._Retryable("rate limit / quota (HTTP 429): You exceeded your current quota", 86400)
+            return fake_llm.smart(system, messages, tools, max_tokens)
+
+        fake_llm.install(("day1", day_one))
+        os.environ["FUSIONEDGES_WAIT_MAX"] = "0"
+        self.addCleanup(os.environ.pop, "FUSIONEDGES_WAIT_MAX", None)
+        logs = []
+        experiment.run_experiment(spec, log=logs.append, build=False)
+        text = "\n".join(logs)
+        self.assertIn("QUOTA REACHED", text)
+        prog = json.loads(experiment._progress_path("multi-day").read_text())
+        done1 = [k for k in prog if not k.startswith("pair|")]
+        self.assertTrue(0 < len(done1) < 4)                               # some runs, not all
+        fake_llm.install(("day2", fake_llm.smart))                        # quota reset
+        logs2 = []
+        experiment.run_experiment(spec, log=logs2.append, build=False)
+        self.assertIn(f"{len(done1)} already done (resuming)", logs2[0])
+        prog2 = json.loads(experiment._progress_path("multi-day").read_text())
+        self.assertEqual(len([k for k in prog2 if not k.startswith("pair|")]), 4)   # 2 tasks x 2 conditions
+        for k in done1:
+            self.assertEqual(prog2[k], prog[k])                           # nothing redone
+        self.assertEqual(len([c for c in compare.all_rows() if c["experiment"] == "multi-day"]), 2)
+        logs3 = []
+        experiment.run_experiment(spec, log=logs3.append, build=False)    # a third call has nothing left to do
+        self.assertTrue(any("All 4 runs done" in l for l in logs3))
+        self.assertFalse(any("=== multi-day" in l for l in logs3))
