@@ -102,6 +102,7 @@ class DefaultInterfaceTests(unittest.TestCase):
                 self.assertIn('id="source"',html)
                 self.assertIn('id="donor"',html)
                 self.assertIn('id="ghconnect"',html)
+                self.assertIn('id="source-repositories"',html)
                 self.assertNotIn('COMPONENT WORKSPACE',html)
         finally:server.shutdown();server.server_close()
 
