@@ -435,6 +435,7 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
   .verdict{flex-wrap:wrap}.score{margin-left:0}
 }
 .source-picker{position:relative}.source-picker.has-repos input{padding-right:44px}#source-repo-toggle{position:absolute;right:5px;top:4px;bottom:4px;width:34px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;font-size:20px}#source-github-choice{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px #0002;max-height:280px;overflow:auto}#source-repositories button{display:block;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;background:transparent;color:var(--ink);font:inherit;overflow-wrap:anywhere;cursor:pointer}#source-repositories button:hover,#source-repositories button[aria-selected=true]{background:var(--site-soft)}#source-repositories p{padding:8px;font-size:13px;color:var(--muted);margin:0}
+.auto-route{flex:1;min-width:230px;border:1px solid var(--line);border-radius:10px;padding:14px}.auto-route b,.auto-route span{display:block}.auto-route span{font-size:13px;color:var(--muted);margin-top:6px}.research-modes{width:100%;font-size:13px}.research-modes .seg{margin-top:10px}.assignment-card{border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0}.assignment-card ol{list-style:none;padding:0;margin:10px 0}.assignment-card li{margin:10px 0}.assignment-card li span{display:block;font-size:13px;color:var(--muted);margin-top:3px}
 </style>
 </head>
 <body>
@@ -499,20 +500,22 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
           <button type="button" class="chip" data-c="sidebar">sidebar</button>
         </div>
       </div>
-      <div class="seg" role="tablist" aria-label="Experiment condition">
-        <button type="button" role="tab" aria-selected="true" data-mode="prompt">
+      <div class="auto-route"><b>Automatic assignment</b><span>Rules → compatibility check & repair → agent, only when needed.</span></div>
+      <details class="research-modes"><summary>Research comparison modes</summary>      <div class="seg" role="tablist" aria-label="Experiment condition">
+        <button type="button" role="tab" aria-selected="true" data-mode="adaptive">
           <svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 13h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          <span>Agent alone<small>no report</small></span></button>
+          <span>Automatic<small>rules → compatibility → agent</small></span></button>
         <button type="button" role="tab" aria-selected="false" data-mode="report">
           <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9h8M9 13h8M9 17h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           <span>Agent + report<small>compatibility check first</small></span></button>
         <button type="button" role="tab" aria-selected="false" data-mode="history">
           <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9h8M9 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="19" cy="19" r="5" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M19 16.5V19l1.7 1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
           <span>Report + history<small>learns from past reports</small></span></button>
-        <button type="button" role="tab" aria-selected="false" data-mode="port-ai">
+        <button type="button" role="tab" aria-selected="false" data-mode="prompt">
           <svg viewBox="0 0 26 26" aria-hidden="true"><path d="M5 9h7M5 17h7M14 9l7 4-7 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <span>FusionEdges<small>rules first, AI only if needed</small></span></button>
+          <span>Agent alone<small>research baseline</small></span></button>
       </div>
+      </details>
     </div>
     <p class="explain" id="explain"></p>
 
@@ -531,6 +534,7 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
 
   <section class="panel hidden" id="progress">
     <h2 id="ptitle">Working…</h2>
+    <div id="assignment" role="status" aria-live="polite" aria-atomic="true"></div>
     <ol class="rail" id="steps"></ol>
     <details class="more" id="logbox"><summary>Agent log</summary><pre class="log" id="log"></pre></details>
   </section>
@@ -560,8 +564,9 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let mode = "prompt", prompts = {}, edited = false, poll = null;
+let mode = "adaptive", prompts = {}, edited = false, poll = null;
 const EXPLAIN = {
+  adaptive: "FusionEdges chooses the approach and tells you if it changes. Results that cannot be verified remain marked for review.",
   prompt: "The agent gets the component's code and your prompt, nothing else.",
   report: "A compatibility report is written first (what breaks, where it mounts, what to change), then sent to the agent with the same code.",
   history: "Like Agent + report, but the report also sees past cases from earlier reports on other repos and how those runs turned out. This task's own earlier runs are never used.",
@@ -585,9 +590,10 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   mode = b.dataset.mode;
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-selected", x === b));
   $("#explain").textContent = EXPLAIN[mode];
-  $("#go").textContent = mode === "prompt" || mode.startsWith("port") ? "Run" : "Write report & run";
+  $("#go").textContent = mode === "adaptive" ? "Integrate component" : "Run comparison";
 });
-$("#explain").textContent = EXPLAIN.prompt;
+$("#explain").textContent = EXPLAIN.adaptive;
+$("#go").textContent = "Integrate component";
 
 $("#stage").onclick = () => { const f = $("#flyer"), o = document.querySelector(".nav.old");
   [f, o].forEach(el => { el.style.animation = "none"; void el.offsetWidth; el.style.animation = ""; }); };
@@ -616,6 +622,7 @@ $("#form").addEventListener("submit", async e => {
     add_component: true, component: $("#cmp").value.trim(), prompt: $("#prompt").value};
   const err = $("#formerr"); err.classList.add("hidden");
   try { localStorage.setItem("fe2", JSON.stringify({source: body.source, donor: body.donor})); } catch(e){}
+  $("#assignment").innerHTML = routingHtml([], "queued");
   $("#go").disabled = true; $("#ptitle").textContent = "Starting…"; $("#steps").innerHTML = "";
   document.querySelectorAll("#progress .err").forEach(x => x.remove());
   const r = await fetch("/api/run", {method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify(body)});
@@ -627,8 +634,24 @@ $("#form").addEventListener("submit", async e => {
   $("#progress").scrollIntoView({behavior: "smooth", block: "start"});
 });
 
+function routingHtml(events,status){
+  const labels={rules:"Rules",report:"Compatibility check + repair",local:"Compatibility check + repair",agent:"Agent integration",accept:"Checks passed",review:"Review needed",stop:"Finished"};
+  const phases=[],notes=[];
+  for(const item of events){
+    if(!labels[item.route])continue;
+    if(["accept","review","stop"].includes(item.route)){notes.push(item);continue;}
+    const label=labels[item.route], reasons=item.reasons || [];
+    if(phases.length && phases[phases.length-1].label===label){phases[phases.length-1].reasons.push(...reasons);}
+    else phases.push({label,reasons:[...reasons]});
+  }
+  if(!phases.length)return '<p class="tag">Assignment pending — inspecting the repositories first.</p>';
+  const current=phases[phases.length-1], terminal=notes[notes.length-1];
+  return `<div class="assignment-card"><b>${terminal ? esc(labels[terminal.route]) : "Assigned: "+esc(current.label)}</b>${phases.length>1?'<p class="tag">Approach changed: '+phases.map(p=>esc(p.label)).join(' → ')+'</p>':''}<ol>${phases.map((p,i)=>`<li><strong>${i+1}. ${esc(p.label)}</strong><span>${[...new Set(p.reasons)].map(esc).join('; ')}</span></li>`).join('')}</ol>${terminal?'<p class="tag">'+(terminal.reasons||[]).map(esc).join('; ')+'</p>':''}</div>`;
+}
+
 async function tick(id){
   let j; try { j = await (await fetch("/api/job/" + id)).json(); } catch(e){ return; }
+  $("#assignment").innerHTML = routingHtml(j.routing || [], j.status);
   $("#steps").innerHTML = j.stages.map(s => `<li class="${esc(s.state)}"><span class="dot"></span>${esc(SHORT[s.id] || s.label)}<small>${esc(s.note || (s.state === "running" ? "working…" : ""))}</small></li>`).join("");
   $("#steps").style.gridTemplateColumns = window.innerWidth > 760 ? `repeat(${j.stages.length},1fr)` : "";
   const log = $("#log"), end = log.scrollTop + log.clientHeight >= log.scrollHeight - 30;
@@ -711,7 +734,7 @@ function render(rec){
     ${a.summary ? `<details class="more"><summary>What the agent says it did</summary><p style="white-space:pre-wrap;font-size:13.5px">${esc(a.summary)}</p></details>` : ""}
   </section>
   <section class="panel" id="changes"><h2>Code changes</h2><span class="tag">Working out what the agent changed…</span></section>
-  ${rec.routing ? `<section class="panel"><h2>Transfer routing</h2><p>${esc(rec.routing.status)}</p><ol>${(rec.routing.trace || []).map(t => `<li><b>${esc(t.route)}</b>: ${esc((t.reasons || []).join("; "))}</li>`).join("")}</ol><p class="tag">Historical memory is disabled pending evidence review.</p></section>` : ""}
+  ${rec.routing ? `<section class="panel"><h2>Assigned approach</h2>${routingHtml([{route:"rules",reasons:["Started with deterministic rules."]}, ...(rec.routing.trace || [])], rec.routing.status)}</section>` : ""}
   ${reportHtml(rec)}`;
   loadChanges(rec);
   askAboutRun(rec);

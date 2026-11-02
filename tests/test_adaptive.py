@@ -21,6 +21,19 @@ class RoutingTest(unittest.TestCase):
         self.agent=Mock(return_value=agent or usage(20))
         return adaptive.run(ledger or LEDGER,self.verify,self.report,self.local,self.agent,
                             has_contract=contract,log=lambda x:None)
+    def test_assignment_events_arrive_before_the_selected_editor_runs(self):
+        events=[]
+        def local(report):
+            self.assertEqual(events[-1]['route'],'local')
+            return usage()
+        def agent(report,verification):
+            self.assertEqual(events[-1]['route'],'agent')
+            return usage()
+        result=adaptive.run(LEDGER,Mock(side_effect=[FAIL,FAIL,PASS]),lambda *a:{},local,agent,
+            has_contract=True,log=lambda *a:None,on_route=events.append)
+        self.assertEqual([e['route'] for e in events],['report','local','agent','stop'])
+        self.assertEqual(events,result['adaptive']['trace'])
+
     def test_easy_verified_transfer_has_zero_ai(self):
         r=self.run_case();self.assertEqual(r['api_calls'],0)
         self.assertEqual(r['adaptive']['status'],'automated-pass')

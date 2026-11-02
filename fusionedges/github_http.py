@@ -119,6 +119,9 @@ def handle(handler):
                 if p.suffix=='.zip':extra['Content-Disposition']='attachment; filename="component-integration.zip"'
                 handler._send(p.read_bytes(),mimetypes.guess_type(str(p))[0] or 'application/octet-stream',extra=extra);return True
         raise GitHubError('Workspace endpoint not found.',404)
+    except ConnectionError:
+        handler.close_connection=True
+        return True
     except GitHubError as exc:
         if path.startswith('/auth/github/') and handler.headers.get('Host')==urllib.parse.urlparse(product.origin).netloc:
             handler._send(b'','text/plain',303,{'Location':'/picker?'+urllib.parse.urlencode({'auth_error':str(exc)})})

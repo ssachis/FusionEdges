@@ -50,6 +50,7 @@ class Job:
         self.status, self.error, self.record, self.run_id = "queued", None, None, None
         self.stages = [{"id": i, "label": l, "state": "pending", "note": ""} for i, l in _stages(mode)]
         self.log = []
+        self.routing = []
 
     def public(self):
         rec = self.record
@@ -61,7 +62,7 @@ class Job:
                 except json.JSONDecodeError:
                     rec = None
         return {"id": self.id, "status": self.status, "error": self.error, "stages": self.stages,
-                "log": self.log[-500:], "record": rec}
+                "log": self.log[-500:], "record": rec, "routing": list(self.routing)}
 
 
 def _worker(job: Job, params: dict):
@@ -69,6 +70,11 @@ def _worker(job: Job, params: dict):
         job.log.append(f"{time.strftime('%H:%M:%S')} {m}")
 
     def stage(sid, state, note=""):
+        if sid == "assignment":
+            job.routing.append(json.loads(note))
+            return
+        if sid == "port" and state == "running":
+            job.routing.append({"route":"rules", "reasons":["Start with deterministic rules; escalate only when verification requires it."]})
         for s in job.stages:
             if s["id"] == sid:
                 s["state"], s["note"] = state, note
@@ -121,14 +127,18 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
     def _send(self, body: bytes, ctype: str, code=200, extra=None):
-        self.send_response(code)
-        self.send_header("content-type", ctype)
-        self.send_header("content-length", str(len(body)))
-        self.send_header("cache-control", "no-store")
-        for k, v in (extra or {}).items():
-            self.send_header(k, v)
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(code)
+            self.send_header("content-type", ctype)
+            self.send_header("content-length", str(len(body)))
+            self.send_header("cache-control", "no-store")
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(body)
+        except ConnectionError:
+            self.close_connection = True  # Browser navigation can cancel a response.
+
 
     def _json(self, obj, code=200):
         self._send(json.dumps(obj, default=str).encode(), "application/json", code)

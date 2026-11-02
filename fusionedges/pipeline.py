@@ -355,7 +355,8 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
                                           scan_for(project, donor.path, False, component), can_build, log,
                                           report=rep, max_steps=8)
                 agent = adaptive.run(port_rec, adaptive_verify, adaptive_report, adaptive_local, adaptive_agent,
-                                     has_contract=bool(params.get("acceptance")), log=log)
+                                     has_contract=bool(params.get("acceptance")), log=log,
+                                     on_route=lambda item: _outer_stage("assignment", "update", json.dumps(item)))
                 rec["routing"] = agent["adaptive"]
                 stage("report", "done", "Compatibility record saved")
             elif port_rec is not None and not port_rec["ok"]:

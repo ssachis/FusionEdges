@@ -46,7 +46,7 @@ def merge_usage(*records):
     return out
 
 
-def run(ledger, verify, make_report, local_edit, agent_edit, *, has_contract, log=print):
+def run(ledger, verify, make_report, local_edit, agent_edit, *, has_contract, log=print, on_route=None):
     """Callbacks keep the router testable independently of a provider or repository.
 
     At most one local AI touch, then at most one bounded tool-agent invocation. Report usage is
@@ -57,6 +57,8 @@ def run(ledger, verify, make_report, local_edit, agent_edit, *, has_contract, lo
     def event(route, reasons):
         item = {'route': route, 'reasons': reasons, 'seconds': round(time.monotonic()-started, 3)}
         trace.append(item)
+        if on_route is not None:
+            on_route(dict(item))
         log('[adaptive] ' + route + ': ' + '; '.join(reasons))
     def finish(status, verification):
         totals = merge_usage(*usages)
