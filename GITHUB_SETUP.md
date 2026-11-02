@@ -2,6 +2,12 @@
 
 FusionEdges keeps its original interface and two repository-link fields. Login is optional. Selecting a repository in the left sidebar fills “Your site”; the donor link and existing transfer/report/analysis controls stay available.
 
+## One-time developer registration
+
+Run `python3 -m fusionedges.github_setup` and open **http://127.0.0.1:8110/github-setup**. Click **Register FusionEdges on GitHub**, review the prefilled settings and create the app. The callback configures login automatically and saves only the needed app credentials in ignored `.github-workspaces/app-config.json` with owner-only file access. No secret needs copying or pasting. Then install on selected repositories using the setup page link and restart the main app once. Future users only use **Connect GitHub**.
+
+The helper uses port 8110 to avoid interrupting the existing application; the login callback remains port 8101. Keep the helper running until GitHub returns to it. The manifest follows [GitHub's registration flow](https://docs.github.com/en/apps/sharing-github-apps/registering-a-github-app-from-a-manifest).
+
 ## Start
 
 Start the main app from the Desktop project in your terminal with your existing AI environment:

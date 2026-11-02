@@ -9,7 +9,11 @@ from .github_api import Client,GitHubError
 from .github_projects import Projects
 
 class Product:
-    def __init__(self,origin,root):self.origin=origin;self.sessions=Sessions(origin);self.projects=Projects(root)
+    def __init__(self,origin,root):
+        from .github_setup import Registration, load_config
+        load_config(root)
+        self.origin=origin;self.sessions=Sessions(origin);self.projects=Projects(root)
+        self.registration=Registration(origin,root)
 
 
 def handle(handler):
@@ -19,7 +23,7 @@ def handle(handler):
             handler._send(b'{"error":"Start the optional GitHub connection service on port 8101."}', 'application/json', 404)
             return True
         return False
-    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/callback')
+    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/callback','/auth/github/register/callback')
     if path=='/api/status':return False
     if path=='/lab' and handler.command=='GET':
         handler._send(b'','text/plain',303,{'Location':'http://127.0.0.1:8000/'})
@@ -32,6 +36,12 @@ def handle(handler):
     try:
         if handler.headers.get('Host')!=urllib.parse.urlparse(product.origin).netloc:
             raise GitHubError('Use the local address printed by FusionEdges.',403)
+        if handler.command=='GET' and path=='/github-setup':
+            setup_session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=True)
+            handler._send(product.registration.page(setup_session),'text/html',extra={
+                'Set-Cookie':product.sessions.cookie(setup_session),'Cache-Control':'no-store','Referrer-Policy':'no-referrer',
+                'Content-Security-Policy':"default-src 'self'; script-src 'none'; form-action https://github.com; frame-ancestors 'none'; base-uri 'none'"})
+            return True
         if handler.command=='GET' and path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup'):
             file={'/':'projects.html','/projects':'projects.html','/projects.js':'projects.js','/projects.css':'projects.css','/picker':'picker.html','/picker.js':'picker.js','/picker.css':'picker.css','/github-setup':'github-setup.html'}[path]
             p=Path(__file__).parent/'static'/file
@@ -50,6 +60,10 @@ def handle(handler):
             handler._send(b'','text/plain',303,extra)
         if handler.command=='GET' and path=='/api/github/session':respond(product.sessions.public(session),s=session);return True
         if handler.command=='GET' and path=='/auth/github/start':redirect(product.sessions.start(session),session);return True
+        if handler.command=='GET' and path=='/auth/github/register/callback':
+            q=urllib.parse.parse_qs(parsed.query)
+            product.registration.complete(session,(q.get('code') or [''])[0],(q.get('state') or [''])[0])
+            redirect('/github-setup');return True
         if handler.command=='GET' and path=='/auth/github/callback':
             q=urllib.parse.parse_qs(parsed.query)
             new=product.sessions.callback(session,(q.get('code') or [''])[0],(q.get('state') or [''])[0])
