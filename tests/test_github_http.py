@@ -75,6 +75,20 @@ class HTTPTests(unittest.TestCase):
                     self.assertEqual(caught.exception.code,303)
                     self.assertEqual(caught.exception.headers['Location'],destination)
 
+    def test_successful_oauth_sets_cookie_before_repository_lookup(self):
+        from fusionedges.github_api import NoRedirect
+        self.call('/api/github/session')
+        current=next(iter(self.server.github.sessions.items.values()))
+        with patch.object(Client,'profile',return_value={'id':7,'login':'tester'}):
+            authenticated=self.server.github.sessions.connect(current,TOKEN,'app')
+        browser=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies),NoRedirect())
+        with patch.object(self.server.github.sessions,'callback',return_value=authenticated):
+            with patch.object(Client,'repositories',side_effect=AssertionError('Must not query before saving login')):
+                with self.assertRaises(urllib.error.HTTPError) as caught:browser.open(self.origin+'/auth/github/callback?code=test&state=test')
+        self.assertEqual(caught.exception.code,303)
+        self.assertIn('Set-Cookie',caught.exception.headers)
+        self.assertTrue(self.call('/api/github/session')[1]['authenticated'])
+
     def test_dns_rebinding_host_is_rejected(self):
         req=urllib.request.Request(self.origin+'/api/github/session',headers={'Host':'evil.example'})
         with self.assertRaises(urllib.error.HTTPError) as e:self.browser.open(req)

@@ -83,7 +83,8 @@ def handle(handler):
         if handler.command=='GET' and path=='/auth/github/callback':
             q=urllib.parse.parse_qs(parsed.query)
             new=product.sessions.callback(session,(q.get('code') or [''])[0],(q.get('state') or [''])[0])
-            redirect(connection_destination(new),new);return True
+            # Save successful authorization before any repository API request can fail.
+            redirect('/picker?connected=1',new);return True
         params={}
         if handler.command=='POST':
             product.sessions.csrf(session,handler.headers)

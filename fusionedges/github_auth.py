@@ -17,12 +17,16 @@ COOKIE='fe_github_session'
 TTL=8*60*60
 
 class Sessions:
-    def __init__(self,origin):self.origin=origin.rstrip('/');self.lock=threading.RLock();self.items={};self.pending={}
+    def __init__(self,origin):
+        self.origin=origin.rstrip('/')
+        # Cookies are shared across ports; each local service needs its own name.
+        self.cookie_name=COOKIE+'_'+hashlib.sha256(self.origin.encode()).hexdigest()[:12]
+        self.lock=threading.RLock();self.items={};self.pending={}
     def from_cookie(self,header,create=False):
         cookie=SimpleCookie()
         try:cookie.load(header or '')
         except Exception:pass
-        sid=cookie[COOKIE].value if COOKIE in cookie else ''
+        sid=cookie[self.cookie_name].value if self.cookie_name in cookie else ''
         with self.lock:
             s=self.items.get(sid)
             if s and s['expires']<=time.time():self.items.pop(sid,None);s=None
@@ -31,7 +35,7 @@ class Sessions:
                                               'token':None,'user':None,'kind':None};self.items[sid]=s
             return s
     def cookie(self,s):
-        return f"{COOKIE}={s['id']}; Path=/; HttpOnly; SameSite=Lax; Max-Age={max(0,int(s['expires']-time.time()))}"+('; Secure' if self.origin.startswith('https:') else '')
+        return f"{self.cookie_name}={s['id']}; Path=/; HttpOnly; SameSite=Lax; Max-Age={max(0,int(s['expires']-time.time()))}"+('; Secure' if self.origin.startswith('https:') else '')
     def public(self,s):return {'authenticated':bool(s and s['token']),'user':s.get('user') if s else None,
                              'csrf':s.get('csrf') if s else None,'github_login_configured':bool(os.environ.get('FUSIONEDGES_GITHUB_CLIENT_ID') and os.environ.get('FUSIONEDGES_GITHUB_CLIENT_SECRET')),
                              'install_url':'https://github.com/apps/'+urllib.parse.quote(os.environ.get('FUSIONEDGES_GITHUB_APP_SLUG',''),safe='')+'/installations/new' if os.environ.get('FUSIONEDGES_GITHUB_APP_SLUG') else None}

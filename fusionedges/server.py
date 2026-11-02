@@ -143,6 +143,10 @@ class Handler(BaseHTTPRequestHandler):
         self._send(p.read_bytes(), ctype, extra={"content-disposition": f'attachment; filename="{p.name}"'} if download else None)
 
     def do_GET(self):
+        # Keep the app and auth iframe on the same site for SameSite cookies.
+        if self.headers.get('Host','').split(':',1)[0] == 'localhost':
+            port=self.server.server_address[1]
+            return self._send(b'', 'text/plain', 303, {'Location':f'http://127.0.0.1:{port}'+self.path})
         from .github_http import handle
         if handle(self):
             return

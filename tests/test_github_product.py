@@ -49,6 +49,15 @@ class AuthTests(unittest.TestCase):
         with patch.object(auth.Client,'profile',return_value={'id':1,'login':'alice'}):new=sessions.connect(old,TOKEN)
         self.assertNotEqual(old['id'],new['id']);self.assertNotIn(old['id'],sessions.items)
         self.assertNotIn(TOKEN,json.dumps(sessions.public(new)));self.assertIn('HttpOnly',sessions.cookie(new))
+    def test_local_services_do_not_overwrite_login_cookie(self):
+        main=auth.Sessions('http://127.0.0.1:8101')
+        setup=auth.Sessions('http://127.0.0.1:8110')
+        a=main.from_cookie('',True);b=setup.from_cookie('',True)
+        jar=main.cookie(a).split(';')[0]+'; '+setup.cookie(b).split(';')[0]
+        self.assertNotEqual(main.cookie_name,setup.cookie_name)
+        self.assertIs(main.from_cookie(jar),a)
+        self.assertIs(setup.from_cookie(jar),b)
+
     def test_post_requires_same_origin_and_csrf(self):
         s=auth.Sessions('http://127.0.0.1:8101');session=s.from_cookie('',True)
         with self.assertRaises(gh.GitHubError):s.csrf(session,{'Origin':'https://evil.example','X-FusionEdges-CSRF':session['csrf']})
