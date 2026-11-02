@@ -135,7 +135,7 @@ class ReviewLessonsTest(Base):
         e_other = CompareTest._run(self, "history", source=FIX / "host_react", auto_compare=False)
         rl = e_other["report"]["memory"]["review_lessons"]
         self.assertEqual(len(rl), 1)
-        self.assertEqual(rl[0]["trust"], "human-reviewed")
+        self.assertEqual(rl[0]["trust"], "unverified")
         self.assertIn("inline styles", e_other["report"]["memory"]["lessons"][0])
 
     def test_ai_reviews_are_labelled_as_such_and_repeats_are_merged(self):

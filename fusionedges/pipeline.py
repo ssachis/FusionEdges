@@ -19,7 +19,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import browser, compare, diffs, memory, metrics, paths, port, rag, records, store
+from . import adaptive, browser, compare, diffs, memory, metrics, paths, port, rag, records, store
 from .agents import fit_to_limit, report_markdown, run_edit_agent, run_oneshot, run_report_agent
 from .checks import component_checks, run_checks
 from .repos import fetch
@@ -111,6 +111,11 @@ def _git_commit(folder: Path, message: str, log):
 
 
 def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = None) -> dict:
+    if params.get("mode") == "adaptive" and not (params.get("component") or "").strip():
+        raise ValueError("Adaptive transfer requires a named component")
+    if params.get("mode") == "adaptive" and params.get("acceptance"):
+        from .contracts import validate
+        validate(params["acceptance"])
     t0 = time.time()
     timings, _started = {}, {}
     _outer_stage = stage
@@ -128,6 +133,8 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
     opts = {"migration": bool(params.get("migration")) and not component,
             "style": bool(params.get("style")) and not component, "component": component,
             "edit": params.get("edit") or os.environ.get("FUSIONEDGES_EDIT", "oneshot")}
+    if mode == "adaptive":
+        opts["edit"] = "oneshot"  # the versioned router, rather than a global env var, chooses editors
     prompt = (params.get("prompt") or "").strip()
     if not (opts["migration"] or opts["style"] or component):
         raise ValueError("Pick codebase migration, style transfer, or add a component")
@@ -144,12 +151,26 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
            "status": "running", "folder": str(folder), "project": str(project),
            "source": {"spec": params.get("source", "")}, "donor": {"spec": params.get("donor", "")}}
 
+    if params.get("experiment"):
+        from .evidence import runtime_manifest
+        rec["provenance"] = runtime_manifest()
+        rec["experiment"] = params["experiment"]
+        rec["acceptance"] = params.get("acceptance")
+        rec["constraints"] = params.get("constraints")
+
     def save():
         (folder / "run.json").write_text(json.dumps(rec, indent=1, default=str))
         try:
             store.save(rec)
         except Exception as e:
             log(f"warning: could not write the database: {e}")
+
+    def controlled_component_checks(*args, **kwargs):
+        result = component_checks(*args, **kwargs)
+        if params.get("constraints"):
+            from .pilot import constrain_result
+            result = constrain_result(result, project, params["constraints"])
+        return result
 
     try:
         stage("fetch", "running")
@@ -199,6 +220,9 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         start_from = donor if opts["migration"] else source
         shutil.copytree(start_from.path, project, ignore=COPY_IGNORE, symlinks=False)
         rec["started_from"] = "donor" if opts["migration"] else "source"
+        if params.get("source_setup"):
+            from .pilot import install_source_setup
+            rec["source_setup"] = install_source_setup(project, params["source_setup"])
         # snapshot the starting copy so output/<run>/changes.diff shows exactly what the agent changed
         _git_commit(project, f"{diffs.BASELINE_MSG}: copy of the {rec['started_from']} "
                              f"({start_from.label}{' @ ' + start_from.commit[:7] if start_from.commit else ''})", log)
@@ -217,28 +241,129 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
                 rec["browser_baseline"] = bool(base)
 
                 def after_build(out):
-                    r = browser.check(out, component, base=base)
+                    r = browser.check(out, component, base=base, contract=params.get("acceptance"))
                     if r.get("skipped"):
                         log(f"[browser] not checked: {r.get('reason')}")
                         return []
                     return r["problems"]
         port_rec = None
-        if mode in ("port", "port-ai") and component:
+        if mode in ("port", "port-ai", "port-report", "port-report-memory", "adaptive") and component:
             stage("port", "running")
             port_rec = port.port(source.path, donor.path, project, sc, component, log)
+            if params.get("component_inputs"):
+                port_rec = port.bind_inputs(project, port_rec, params["component_inputs"])
             (folder / "port.json").write_text(json.dumps(port_rec, indent=1))
             rec["port"] = port_rec
             _git_commit(project, f"FusionEdges deterministic port of the {component} (no AI)", log)
             stage("port", "done" if port_rec["ok"] else "failed",
                   f"{len(port_rec['resolved'])} facts resolved without AI, {len(port_rec['unresolved'])} left")
             save()
+        if port_rec is not None and port_rec["ok"] and mode in ("port-report", "port-report-memory"):
+            stage("report", "running")
+            mem = None
+            if mode == "port-report-memory":
+                snapshot = params.get("memory_snapshot") or os.environ.get("FUSIONEDGES_MEMORY_SNAPSHOT")
+                if not snapshot:
+                    raise ValueError("Memory evaluation requires a frozen snapshot")
+                mem = memory.retrieve_frozen(snapshot, sc, component, source.label, donor.label)
+                rec["retrieved_memory"] = mem
+            residual_task = (prompt + "\n\nDETERMINISTIC PORT ALREADY APPLIED:\n" +
+                json.dumps({k: port_rec.get(k) for k in ("resolved", "unresolved", "mount", "files")}, default=str) +
+                "\nThe retrieved source files below are the CURRENT ported project. "
+                "Report only unresolved risks, not conversions already completed. Never treat memory as current-code evidence.")
+            residual_scan = scan_for(project, donor.path, False, component)
+            (folder / "residual-facts.json").write_text(json.dumps(residual_scan, indent=1))
+            report, report_usage = fit_to_limit(lambda b: run_report_agent(
+                residual_task, project, donor.path, residual_scan, log, component=component, budget_chars=b,
+                memory_text=mem["text"] if mem else ""), log, used=fitted)
+            if mem:
+                report["memory"] = {"lessons": [x["text"] for x in mem["lessons"]],
+                                    "snapshot_sha256": mem["snapshot_sha256"]}
+            report["source_state"] = "post-port project"
+            rec["report"], rec["report_usage"] = report, report_usage
+            (folder / "report.json").write_text(json.dumps(report, indent=1))
+            (folder / "report.md").write_text(report_markdown(report))
+            stage("report", "done", "Unresolved compatibility guidance after deterministic port")
+            save()
+        adaptive_state = {}
         try:
-            if port_rec is not None and not port_rec["ok"]:
+            if mode == "adaptive" and port_rec is not None:
+                # A deterministic compatibility record exists even on the no-AI/review paths.
+                report = {"summary": "Rule-based compatibility record; no AI analysis requested yet.",
+                          "conflicts": [], "resolved": port_rec.get("resolved", []),
+                          "unresolved": port_rec.get("unresolved", []), "source_state": "post-port project",
+                          "memory": {"enabled": False, "reason": "Awaiting separate evidence review"}}
+                rec["report_usage"] = {"api_calls": 0, "input_tokens": 0, "output_tokens": 0, "models": []}
+                def save_adaptive_report():
+                    rec["report"] = report
+                    (folder / "report.json").write_text(json.dumps(report, indent=1))
+                    (folder / "report.md").write_text(report_markdown(report) +
+                        "\n\n## Rules completed\n" + json.dumps(port_rec.get("resolved", []), indent=2) +
+                        "\n\n## Remaining compatibility issues\n" + json.dumps(port_rec.get("unresolved", []), indent=2))
+                    save()
+                save_adaptive_report()
+                def adaptive_verify():
+                    b = run_build(project) if can_build else {"ok": None, "skipped": True, "reason": "Build verification unavailable"}
+                    seen_now = None
+                    if use_browser and b.get("ok") is True:
+                        try:
+                            seen_now = browser.check(project, component, base=base, contract=params.get("acceptance"))
+                        except Exception as exc:
+                            seen_now = {"skipped": True, "reason": str(exc)[:200]}
+                    ck = controlled_component_checks(source.path, project, component, b, sc["source"]["framework"],
+                                          donor=donor.path, facts=sc["facts"], browser=seen_now)
+                    vals = (ck.get("checks") or {}).values()
+                    failed = [x.get("label", "Static check failed") for x in vals if x.get("pass") is False]
+                    failed += (seen_now or {}).get("problems", [])
+                    available = bool(params.get("acceptance")) and use_browser and b.get("ok") is not None and (
+                        b.get("ok") is False or (bool(seen_now) and not seen_now.get("skipped") and seen_now.get("pass") is not None))
+                    passed = bool(available and b.get("ok") is True and (seen_now or {}).get("pass") is True and not failed)
+                    adaptive_state.update({"build": b, "checks": ck, "browser": seen_now})
+                    return {"available": bool(available), "passed": passed, "problems": failed,
+                            "build_ok": b.get("ok"), "browser_pass": (seen_now or {}).get("pass")}
+                def adaptive_report(reasons, verification):
+                    nonlocal report
+                    stage("report", "running")
+                    residual = scan_for(project, donor.path, False, component)
+                    (folder / "residual-facts.json").write_text(json.dumps(residual, indent=1))
+                    task_now = (prompt + "\nOnly investigate unresolved compatibility in the CURRENT output. "
+                                "Rules already applied: " + json.dumps(port_rec.get("resolved", [])) +
+                                "\nRouting evidence: " + json.dumps({"reasons": reasons, "verification": verification}))
+                    report, usage = fit_to_limit(lambda b: run_report_agent(task_now, project, donor.path, residual,
+                                               log, component=component, budget_chars=b), log, used=fitted)
+                    report["source_state"] = "post-port project"
+                    report["memory"] = {"enabled": False, "reason": "Awaiting separate evidence review"}
+                    rec["report_usage"] = usage
+                    stage("report", "failed" if report.get("agent_failed") else "done", "Focused unresolved compatibility report")
+                    save_adaptive_report()
+                    return report
+                def adaptive_local_check(out):
+                    seen_local = browser.check(out, component, base=base, contract=params.get("acceptance"))
+                    if seen_local.get("skipped"):
+                        raise RuntimeError("Browser verification unavailable")
+                    ck_local = controlled_component_checks(source.path, out, component, {"ok": True}, sc["source"]["framework"],
+                                                donor=donor.path, facts=sc["facts"], browser=seen_local)
+                    return list(seen_local.get("problems") or []) + [v.get("label", "Static check failed")
+                        for v in (ck_local.get("checks") or {}).values() if v.get("pass") is False]
+                def adaptive_local(rep):
+                    return port.finish_with_ai(prompt, port_rec, project, component, can_build, log,
+                                               after_build=adaptive_local_check, max_repairs=1, report=rep)
+                def adaptive_agent(rep, verification):
+                    task_now = (prompt + "\nContinue the existing transfer; preserve resolved work and unrelated host content. "
+                                "Current verification: " + json.dumps(verification))
+                    return run_edit_agent(task_now, source.path, donor.path, project,
+                                          scan_for(project, donor.path, False, component), can_build, log,
+                                          report=rep, max_steps=8)
+                agent = adaptive.run(port_rec, adaptive_verify, adaptive_report, adaptive_local, adaptive_agent,
+                                     has_contract=bool(params.get("acceptance")), log=log)
+                rec["routing"] = agent["adaptive"]
+                stage("report", "done", "Compatibility record saved")
+            elif port_rec is not None and not port_rec["ok"]:
                 agent = {**port.no_ai(port_rec), "error": port_rec.get("reason", "deterministic port failed")}
             elif port_rec is not None and mode == "port":
                 agent = port.no_ai(port_rec)
             elif port_rec is not None:
-                agent = port.finish_with_ai(prompt, port_rec, project, component, can_build, log, after_build=after_build)
+                agent = port.finish_with_ai(prompt, port_rec, project, component, can_build, log, after_build=after_build, report=report)
             elif opts["edit"] == "agent":
                 agent = run_edit_agent(prompt, source.path, donor.path, project, sc, can_build, log, report=report)
             else:
@@ -258,7 +383,9 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         save()
 
         stage("check", "running")
-        if can_build or (bool(params.get("build", True)) and build_command(project)[0] is not None):
+        if mode == "adaptive" and adaptive_state.get("build"):
+            build = adaptive_state["build"]
+        elif can_build or (bool(params.get("build", True)) and build_command(project)[0] is not None):
             log("Installing dependencies and building the output (first time can take a few minutes)...")
             build = run_build(project)
         else:
@@ -267,10 +394,14 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         (folder / "build.log").write_text(build.get("output", ""))
         rec["run_script"] = run_script(project)
         rec["build"] = {k: build.get(k) for k in ("ok", "skipped", "reason")}
+        import hashlib as _hashlib
+        rec["dependency_lock_sha256"] = {n: _hashlib.sha256((project / n).read_bytes()).hexdigest()
+                                        for n in ("package-lock.json", "yarn.lock", "pnpm-lock.yaml") if (project / n).is_file()}
         rec["build_tail"] = (build.get("output") or "")[-2000:]
         seen = None
         if component and use_browser and build.get("ok") is not False:
-            seen = browser.check(project, component, shots=folder / "browser", base=base)
+            seen = browser.check(project, component, shots=folder / "browser", base=base, contract=params.get("acceptance"))
+            (folder / "browser.json").write_text(json.dumps(seen, indent=1))
             rec["browser"] = {k: seen.get(k) for k in ("skipped", "reason", "problems", "pass", "baseline_used")}
             if not seen.get("skipped"):
                 records.save_browser(run_id, seen)
@@ -281,11 +412,17 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
                     for d in drafts:
                         log(f"[lessons] proposed ({d['cause']}): {d['text'][:110]}")
         if component:
-            rec["checks"] = component_checks(source.path, project, component, build, sc["source"]["framework"],
+            rec["checks"] = controlled_component_checks(source.path, project, component, build, sc["source"]["framework"],
                                                donor=donor.path, facts=sc["facts"], browser=seen)
         else:
             rec["checks"] = run_checks(source.path, donor.path, project, opts["migration"], opts["style"], build,
                                        donor_style_files(donor.path, sc["donor"]) if opts["migration"] and opts["style"] else [])
+        if mode == "adaptive" and rec.get("routing", {}).get("status") != "automated-pass":
+            rec["checks"]["checks"]["adaptive_verification"] = {
+                "label": "Adaptive acceptance verified", "pass": None,
+                "value": rec.get("routing", {}).get("status", "needs-review")}
+            if rec["checks"].get("outcome", "").startswith("passed"):
+                rec["checks"]["outcome"] = "partial"
         (folder / "checks.json").write_text(json.dumps(rec["checks"], indent=1))
         what = (f"add {component}" if component else
                 " + ".join(x for x, on in (("migration", opts["migration"]), ("style", opts["style"])) if on))

@@ -21,12 +21,15 @@ CONDITIONS = {
     "M": ("FusionEdges port", "Rule-based port, no AI at all."),
     "M1": ("FusionEdges port v1", "First version of the rule-based port (superseded on 1 Nov); kept for the record."),
     "M2": ("FusionEdges port v2", "Second version (superseded after its browser check on 1 Nov); kept for the record."),
+    "AD": ("Adaptive FusionEdges", "Rules and verification first; report and AI only as needed."),
+    "MR": ("Rules + report + AI", "Compatibility report after rule-based port."),
+    "MRM": ("Rules + report + memory + AI", "Residual report informed by a frozen cross-repository corpus."),
     "MA": ("FusionEdges port + AI", "Rule-based port; the AI is called only if the result does not work."),
     "A2": ("Multi-step agent", "Agent with tools, many steps."),
     "D2": ("Multi-step agent + report", "Same, plus the report."),
 }
-MODE_TO_COND = {("prompt", "oneshot"): "A", ("report", "oneshot"): "D", ("history", "oneshot"): "E",
-                ("port", "oneshot"): "M", ("port-ai", "oneshot"): "MA",
+MODE_TO_COND = {("adaptive", "oneshot"): "AD", ("prompt", "oneshot"): "A", ("report", "oneshot"): "D", ("history", "oneshot"): "E",
+                ("port", "oneshot"): "M", ("port-ai", "oneshot"): "MA", ("port-report", "oneshot"): "MR", ("port-report-memory", "oneshot"): "MRM",
                 ("prompt", "agent"): "A2", ("report", "agent"): "D2"}
 
 SCHEMA = """
@@ -126,10 +129,12 @@ def from_run(rec: dict, experiment: str = "") -> dict:
     # the "browser" check is summarised by the problems themselves, named below
     fails = [CHECK_FAILURE.get(k, k) for k, v in checks.items() if v.get("pass") is False and k != "browser"]
     fails += [_browser_kind(p) for p in bprobs]
-    if a.get("error"):
+    if a.get("error") or a.get("repair_error"):
         fails.append("AI call failed")
     all_checks = bool(applicable) and passed == len(applicable)
-    success = int(bool(built) and all_checks and bpass != 0) if built is not None else 0
+    success = int(bool(built) and all_checks and bpass == 1 and not a.get("error") and not a.get("repair_error")) if built is not None else 0
+    if rec.get("mode") == "adaptive" and rec.get("routing", {}).get("status") != "automated-pass":
+        success = 0
     # verified = also checked in a browser; without a browser result success stays "unverified" (browser_pass NULL)
     host_reg = int(bool(built) and (checks.get("host_scripts", {}).get("pass") is False or bpass == 0))
     t = rec.get("timings") or {}
@@ -157,7 +162,7 @@ def from_run(rec: dict, experiment: str = "") -> dict:
         "files_changed": ch.get("files"), "lines_added": ch.get("added"), "lines_removed": ch.get("removed"),
         "built": None if built is None else int(bool(built)), "checks_passed": passed, "checks_total": len(applicable),
         "browser_pass": bpass, "browser_source": bsrc, "host_regression": host_reg, "verified_success": success,
-        "ai_error": int(bool(a.get("error"))),
+        "ai_error": int(bool(a.get("error") or a.get("repair_error"))),
         "port_resolved": len(port.get("resolved") or []) if port else None,
         "port_left": len(port.get("unresolved") or []) if port else None,
         "failures": json.dumps(sorted(set(fails))), "observation": "",

@@ -152,3 +152,37 @@ def retrieve(scan: dict, component: str, source_label: str, donor_label: str, k:
             "review_lessons": [{k: l.get(k) for k in ("text", "kind", "topic", "trust", "seen", "comparisons", "reviewer")} for l in rl],
             "lessons": [l["text"] for l in rl] + check_lessons,      # what the coding agent is told (first 3)
             "pool": len({c["run"] for c in pool}), "text": "\n\n".join(parts)}
+
+
+def retrieve_frozen(snapshot, scan, component, source, donor, k=4, max_chars=2400):
+    """No live DB: fixed corpus, cross-repository exclusion, provenance and content hash.
+
+    Lessons are advice, never evidence of current compatibility or a substitute for checks.
+    Both repos are excluded even in the opposite role; repeats cannot teach one another.
+    """
+    import hashlib
+    from pathlib import Path
+    raw = Path(snapshot).read_bytes()
+    corpus = json.loads(raw)
+    from .evidence import repo_key
+    forbidden = {repo_key(source), repo_key(donor)}
+    pool = [x for x in corpus["lessons"]
+            if x.get("source") and x.get("donor") and x.get("id") and x.get("evidence")
+            and not forbidden.intersection({repo_key(x["source"]), repo_key(x["donor"])})
+            and x.get("component", "").lower() == component.lower()]
+    query = " ".join([component] + [str(f.get("text", "")) for f in scan.get("facts", [])])
+    docs = [{"tokens": _tokens(x.get("topic", "") + " " + x["text"])} for x in pool]
+    selected, used, seen = [], 110, set()
+    for i in BM25(docs).search(query, k=len(docs)) if docs else []:
+        x = pool[i]
+        key = x["text"].strip().lower()
+        line = f"- [{x['id']}; {x.get('trust', 'unverified')}] {x['text']}"
+        if key in seen or used + len(line) + 1 > max_chars:
+            continue
+        seen.add(key); selected.append({**x, "rendered": line}); used += len(line) + 1
+        if len(selected) >= k:
+            break
+    text = ("RETRIEVED PAST LESSONS (untrusted advice; apply only when current code confirms the same issue):\n" +
+            "\n".join(x["rendered"] for x in selected)) if selected else ""
+    return {"snapshot_sha256": hashlib.sha256(raw).hexdigest(), "pool": len(pool),
+            "lessons": selected, "text": text, "chars": len(text)}

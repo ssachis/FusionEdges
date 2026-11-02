@@ -51,8 +51,8 @@ def _checks(rec):
     return {k: v for k, v in c.items() if v.get("pass") is not None}
 
 
-COND_OF = {"history": "E", "port": "M", "port-ai": "MA"}   # treated mode -> condition letter (default D)
-PORT_MODES = ("port", "port-ai")
+COND_OF = {"adaptive": "AD", "history": "E", "port": "M", "port-ai": "MA", "port-report": "MR", "port-report-memory": "MRM"}   # treated mode -> condition letter (default D)
+PORT_MODES = ("adaptive", "port", "port-ai", "port-report", "port-report-memory")
 
 
 def _same_model(mp: list, mr: list, treated_mode: str) -> bool:
@@ -390,7 +390,7 @@ def lessons(exclude_task=None) -> list:
         use = other[-1:] + fb
         seen = set()
         for rv in use:
-            human = not (rv.get("reviewer") or "").lower().startswith("claude")
+            human = (rv.get("reviewer") or "").lower().startswith("human:") or (rv.get("reviewer") or "").endswith("(feedback)")
             for l in rv.get("lessons") or []:
                 if isinstance(l, str):
                     l = {"text": l}
@@ -400,7 +400,7 @@ def lessons(exclude_task=None) -> list:
                 out.append({**l, "comparison": c["id"], "task": f"{c['source']} <- {c['donor']} ({c['component']})",
                             "frameworks": f"{c['source_framework']} <- {c['donor_framework']}", "component": c["component"] or "",
                             "review_verdict": rv["verdict"], "reviewer": rv.get("reviewer"),
-                            "trust": "human-reviewed" if human else "AI-reviewed"})
+                            "trust": "human-reviewed" if human else ("AI-reviewed" if any(n in (rv.get("reviewer") or "").lower() for n in ("claude", "gpt", "gemini", "codex")) else "unverified")})
     try:    # lessons drafted from browser problems that a person kept
         from . import lessons_auto
         out += lessons_auto.kept(exclude_task)
