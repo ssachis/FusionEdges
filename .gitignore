@@ -7,3 +7,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .fe-preview/
+
+.github-workspaces/
+.env
+.env.local

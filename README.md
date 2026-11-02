@@ -1,5 +1,7 @@
 # FusionEdges
 
+This feature branch adds a GitHub-connected project workspace at port **8101**. Start it with `zsh start-github-feature.command`. Select a target repository in the left sidebar, integrate a public donor component, inspect the diff/checks, and approve a **new-branch draft PR**. Setup and limitations: [GITHUB_SETUP.md](GITHUB_SETUP.md). The original Desktop pilot is separate and unchanged.
+
 Convert **your site** into a **donor repo's codebase and style** with an AI agent, and measure whether
 giving the agent a **compatibility report** first makes the migration work better.
 

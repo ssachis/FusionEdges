@@ -1,0 +1,83 @@
+# GitHub component integrations — local feature branch
+
+Branch: `codex/github-component-pr`. It has its own worktree. The original Desktop pilot folder, experiment files, model settings, progress and running process are not changed by this feature.
+
+## Start the separate workspace
+
+From the feature worktree, run:
+
+```bash
+zsh start-github-feature.command
+```
+
+The local app opens at **http://127.0.0.1:8101**. Its workspace is separate from the research server. The original experiment interface is available at `/lab` on the feature server, but experiment assets/progress remain in the original Desktop folder.
+
+You can connect GitHub and inspect the UI while the pilot runs. Wait for the pilot to finish or pause before running real AI integrations with the same Gemini key: those would share the provider quota even though the files/processes are separate.
+
+## User flow
+
+1. Connect GitHub with a fine-grained token, or use GitHub App sign-in after one-time setup.
+2. In the **left sidebar**, select/add the repository that should receive changes. Targets must be writable; public and private targets are supported.
+3. Enter another person’s **public GitHub repository** and name a component. Optional instructions specify placement, props and host behavior to preserve.
+4. Confirm trust before running repository build scripts on this Mac. Private targets require separate consent before code is sent to the configured AI provider.
+5. The app pins source/donor commits, prepares the transfer in an account-owned local workspace, and records compatibility guidance, checks, screenshots and code diffs. No remote branch is created yet.
+6. Inspect the proposed diff, verification results and donor attribution. Missing checks remain unverified. Failed/unknown checks require explicit acknowledgement before a draft can be opened.
+7. **Approve & open draft PR** creates a `fusionedges/<component>-<id>` branch and a draft PR into the target’s default branch, normally `main`.
+8. Review CI and merge on GitHub when ready. FusionEdges never force-pushes, updates the default branch directly, or automatically merges.
+
+A new approval is required if local patch/check/report content changes. If the target default branch advanced since the integration started, regenerate against the latest commit. Partial publication can be retried; the app reuses its branch/PR rather than blindly pushing over an existing branch.
+
+## Option A: fine-grained token for the local demo
+
+In GitHub Settings → Developer settings → Personal access tokens → Fine-grained tokens:
+
+- Give the token an expiry.
+- Select only the target repositories you intend to change.
+- Repository permissions: **Contents: Read and write**, **Pull requests: Read and write**, and required metadata read access.
+- Enter it in the local app’s password field under “Connect with a fine-grained GitHub token.” Do not put it in chat, URLs, a repository, or a command saved in shell history.
+
+Tokens are kept only in this local server’s memory. Session cookies are opaque IDs with HttpOnly/SameSite attributes. Browser localStorage, generated projects, worker input files and Git clone URLs do not contain the GitHub token. Disconnecting clears the current local connection; revoke a token in GitHub to revoke its GitHub access. An already running trusted integration may continue its local work after disconnection; publication still requires an authenticated connection.
+
+Public donor repositories are read anonymously so they do not need to be included in a fine-grained token’s selected target repositories. Anonymous API rate limits can still apply. Private donors are not supported in this first version.
+
+## Option B: “Continue with GitHub” using a GitHub App
+
+Register a GitHub App with:
+
+- Homepage: `http://127.0.0.1:8101/projects`
+- User authorization callback: `http://127.0.0.1:8101/auth/github/callback`
+- Repository **Contents** and **Pull requests** read/write permissions, plus required metadata access.
+- User authorization enabled. Install it on selected target repositories.
+- No webhook or private key is required for this user-access-token flow.
+
+Configure these server environment variables locally:
+
+```text
+FUSIONEDGES_GITHUB_CLIENT_ID
+FUSIONEDGES_GITHUB_CLIENT_SECRET
+FUSIONEDGES_GITHUB_APP_SLUG
+```
+
+Restart only the feature server after configuration. Never paste the client secret into chat or commit it. The callback uses one-time state bound to the browser session and PKCE S256. Reconnect when the local session or GitHub token expires; refresh tokens are not persisted in this prototype.
+
+GitHub App user tokens are limited to resources accessible to **both** the user and app installation. The repository selector reads that accessible installation set. See [GitHub’s user-token authorization documentation](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/generating-a-user-access-token-for-a-github-app) and [installation repository endpoints](https://docs.github.com/en/rest/apps/installations).
+
+Draft creation uses GitHub’s [pull request API](https://docs.github.com/en/rest/pulls/pulls#create-a-pull-request). Draft availability and organization policies can affect the API response; this feature never silently falls back to publishing a ready-for-review PR.
+
+## Local architecture and limits
+
+This is a **local development prototype**, not a hosted multi-user deployment. GitHub sessions exist only in memory. Project metadata, private source archives, logs and generated results are stored under the feature worktree’s ignored `.github-workspaces/<GitHub-user-id>/…` folders; there is no public link to those files. Product endpoints enforce account ownership. They are not placed in the legacy lab’s public output database or files route.
+
+A separate subprocess runs each integration with its own `FUSIONEDGES_HOME`, output database and tools folder. GitHub credentials never enter that worker. Build subprocesses have provider/token/secret environment variables removed, but this is **not an operating-system sandbox**. Trusted repository scripts still run as the local user. Hosted deployment would require isolated execution, durable encrypted credentials/session storage, HTTPS and hardening of the legacy lab endpoints.
+
+The product currently uses rules → residual compatibility report → targeted AI repairs. It does not reuse the pilot’s output/progress or turn on historical memory RAG. No automatic result should be represented as independently visually reviewed. Source baseline checks are used when available; unsupported Next SSR preview paths remain unverified. Local browser screenshots do not become public GitHub attachments.
+
+Publication carries donor source/commit/license attribution in the diff and PR description. License metadata is informational, not a determination that reuse is permitted. Users must review licensing before merging. Credential files and GitHub automation edits are blocked from publication; archive links/special files and large archives/patches are also rejected in this first version.
+
+## Validation performed
+
+- Unit and HTTP tests use mocked GitHub responses; no real PRs, branches or API credentials were used.
+- Browser flow tested: token connection → sidebar repo selection → local integration result → diff/check review → explicit approval → new-branch draft PR.
+- Tests cover session rotation, CSRF and host checks, account ownership, archive traversal/links, protected files, stale approval, stale default branch, worker credential isolation and no default-branch update/merge.
+- Desktop and mobile UI checked, including no horizontal overflow at 390px.
+- Live GitHub App login and real PR creation require your registered app or fine-grained token and have **not** been exercised against your account.
