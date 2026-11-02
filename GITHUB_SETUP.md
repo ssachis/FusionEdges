@@ -91,3 +91,7 @@ Publication carries donor source/commit/license attribution in the diff and PR d
 - Live GitHub App login and real PR creation require your registered app or fine-grained token and have **not** been exercised against your account.
 
 The registered app separates user authorization from installation permissions. The connection endpoint guides users through both. For newly registered apps, the installation setup URL returns to the connection endpoint; existing app installations are also detected by the sidebar while the GitHub window is open.
+
+## Installation-first connection
+
+Connect GitHub opens the app's GitHub installation screen first. Set the existing registered app's **Setup URL** in GitHub Developer Settings to `http://127.0.0.1:8101/auth/github/installed` (keep **Request user authorization during installation** unchecked). Newly created app manifests include this setting automatically. After installation, that endpoint starts user authorization when necessary and verifies repository access before displaying the picker. The existing app was registered before this return URL was added, so its setting requires one developer update on GitHub; local code cannot change the registered setting by itself.

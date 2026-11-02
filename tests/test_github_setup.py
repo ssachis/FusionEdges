@@ -27,6 +27,7 @@ class SetupTests(unittest.TestCase):
         self.assertFalse(manifest['hook_attributes']['active'])
         self.assertEqual(manifest['hook_attributes']['url'],'https://example.com/fusionedges/unused-webhook')
         self.assertEqual(manifest['default_events'],[])
+        self.assertEqual(manifest['setup_url'],'http://127.0.0.1:8101/auth/github/installed')
         self.assertEqual(set(manifest['default_permissions']),{'contents','pull_requests','metadata'})
         self.assertIn(state,page)
     def test_wrong_browser_and_replay_rejected_before_network(self):

@@ -48,7 +48,18 @@ class HTTPTests(unittest.TestCase):
             with self.browser.open(self.origin+path) as response:
                 self.assertIn("frame-ancestors 'none'",response.headers['Content-Security-Policy'])
                 self.assertEqual(response.status,200)
-    def test_connect_routes_existing_user_to_repository_access_or_picker(self):
+    def test_connect_opens_github_installation_before_login(self):
+        import os
+        from fusionedges.github_api import NoRedirect
+        browser=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies),NoRedirect())
+        with patch.dict(os.environ,{'FUSIONEDGES_GITHUB_APP_SLUG':'fusionedges-test'}):
+            with patch.object(Client,'repositories') as repos:
+                with self.assertRaises(urllib.error.HTTPError) as caught:browser.open(self.origin+'/auth/github/connect')
+                self.assertEqual(caught.exception.code,303)
+                self.assertEqual(caught.exception.headers['Location'],'https://github.com/apps/fusionedges-test/installations/new')
+                repos.assert_not_called()
+
+    def test_installation_return_verifies_access_before_showing_picker(self):
         from fusionedges.github_api import NoRedirect
         import os
         _,session=self.call('/api/github/session')
@@ -60,7 +71,7 @@ class HTTPTests(unittest.TestCase):
         with patch.dict(os.environ,{'FUSIONEDGES_GITHUB_APP_SLUG':'fusionedges-test'}):
             for repos,destination in [([], 'https://github.com/apps/fusionedges-test/installations/new'),([{'id':1}],'/picker?connected=1')]:
                 with patch.object(Client,'repositories',return_value=repos):
-                    with self.assertRaises(urllib.error.HTTPError) as caught:browser.open(self.origin+'/auth/github/connect')
+                    with self.assertRaises(urllib.error.HTTPError) as caught:browser.open(self.origin+'/auth/github/installed')
                     self.assertEqual(caught.exception.code,303)
                     self.assertEqual(caught.exception.headers['Location'],destination)
 

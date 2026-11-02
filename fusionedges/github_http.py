@@ -23,7 +23,7 @@ def handle(handler):
             handler._send(b'{"error":"Start the optional GitHub connection service on port 8101."}', 'application/json', 404)
             return True
         return False
-    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/connect','/auth/github/callback','/auth/github/register/callback')
+    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/connect','/auth/github/installed','/auth/github/callback','/auth/github/register/callback')
     if path=='/api/status':return False
     if path=='/lab' and handler.command=='GET':
         handler._send(b'','text/plain',303,{'Location':'http://127.0.0.1:8000/'})
@@ -50,7 +50,7 @@ def handle(handler):
             if path == '/picker':
                 headers['Content-Security-Policy'] = headers['Content-Security-Policy'].replace("frame-ancestors 'none'", "frame-ancestors http://127.0.0.1:8000")
             handler._send(p.read_bytes(),mimetypes.guess_type(str(p))[0] or 'text/plain',extra=headers);return True
-        session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=handler.command=='GET' and path in ('/api/github/session','/auth/github/start','/auth/github/connect'))
+        session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=handler.command=='GET' and path in ('/api/github/session','/auth/github/start','/auth/github/connect','/auth/github/installed'))
         def respond(data,status=200,s=None):
             handler._send(json.dumps(data,default=str).encode(),'application/json',status,
                           extra={'Set-Cookie':product.sessions.cookie(s),'X-Content-Type-Options':'nosniff'} if s else {'X-Content-Type-Options':'nosniff'})
@@ -69,6 +69,11 @@ def handle(handler):
             if not product.sessions.public(current)['github_login_configured']:return '/github-setup'
             return product.sessions.start(current)
         if handler.command=='GET' and path=='/auth/github/connect':
+            # The first screen is GitHub's installation/repository selection, not OAuth.
+            install=product.sessions.public(session).get('install_url')
+            redirect(install or '/github-setup',session);return True
+        if handler.command=='GET' and path=='/auth/github/installed':
+            # Never trust installation_id from the query: verify access with the user's token.
             redirect(connection_destination(session),session);return True
         if handler.command=='GET' and path=='/auth/github/start':redirect(product.sessions.start(session),session);return True
         if handler.command=='GET' and path=='/auth/github/register/callback':

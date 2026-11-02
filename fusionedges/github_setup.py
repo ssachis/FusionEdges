@@ -54,7 +54,7 @@ class Registration:
                 'hook_attributes':{'url':'https://example.com/fusionedges/unused-webhook', 'active':False},
                 'public':True, 'default_permissions':{'contents':'write','pull_requests':'write','metadata':'read'},
                 'default_events':[], 'request_oauth_on_install':False,
-                'setup_url':self.login_origin+'/auth/github/connect'}
+                'setup_url':self.login_origin+'/auth/github/installed'}
             action = 'https://github.com/settings/apps/new?'+urllib.parse.urlencode({'state':state})
             content = '<h1>Register FusionEdges once.</h1><p>This is developer setup. Future users simply click Continue with GitHub.</p><p>GitHub will show the prefilled app settings. Review the name and create the app. Credentials are returned directly to this Mac and saved privately; you do not paste them anywhere.</p><p>Permissions: repository contents and pull requests read/write, metadata read. These apply only after installation on repositories you select. No webhook events are enabled.</p>'
             content += '<form action="'+html.escape(action,quote=True)+'" method="post"><input type="hidden" name="manifest" value="'+html.escape(json.dumps(manifest),quote=True)+'"><button>Register FusionEdges on GitHub →</button></form>'
