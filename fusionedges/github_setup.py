@@ -51,7 +51,7 @@ class Registration:
                 'description':'Optional component integration with local review and approval before a draft pull request.',
                 'redirect_url':self.origin+'/auth/github/register/callback',
                 'callback_urls':[self.login_origin+'/auth/github/callback'],
-                'hook_attributes':{'url':self.login_origin+'/unused-webhook', 'active':False},
+                'hook_attributes':{'active':False},
                 'public':True, 'default_permissions':{'contents':'write','pull_requests':'write','metadata':'read'},
                 'default_events':[], 'request_oauth_on_install':False}
             action = 'https://github.com/settings/apps/new?'+urllib.parse.urlencode({'state':state})
