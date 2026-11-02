@@ -219,17 +219,20 @@ def analysis(experiment: str = "") -> dict:
             x["fair"] = x["same_model"]
     from . import metrics
     try:
-        with store.connect() as db:
-            n_runs = db.execute("SELECT COUNT(*) FROM runs WHERE status='done' AND COALESCE(component,'')<>''").fetchone()[0]
-        with metrics.connect() as db:
-            n_met = db.execute("SELECT COUNT(*) FROM run_metrics").fetchone()[0]
-        if n_met < n_runs:
-            metrics.backfill()
+        metrics.backfill()   # always: rows are cheap to rebuild, and labels/conditions change with the code
         mrows = metrics.rows(experiment.split(" [")[0] if experiment else "")
     except Exception:  # noqa: BLE001 - the pair view must still load
         mrows = []
     conds = metrics.by_condition(mrows)
+    try:
+        from . import qualitative
+        qualitative.load_pending()          # reviews committed as JSON are loaded the first time the tab opens
+        qual = qualitative.summary()
+        qual["overall"] = qualitative.overall(mrows)
+    except Exception:  # noqa: BLE001 - the rest of the tab must still load
+        qual = {"runs": [], "tasks": [], "by_condition": {}, "better": {}, "reviewers": []}
     return {
+        "qualitative": qual,
         "vs_agent": {"headline": metrics.headline(conds, mrows), "conditions": conds, "matrix": metrics.task_matrix(mrows),
                      "observations": [{k: r[k] for k in ("run_id", "created", "condition", "task", "observation", "failures",
                                                           "tokens_total", "seconds_total", "verified_success", "browser_pass",

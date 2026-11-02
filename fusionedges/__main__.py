@@ -62,6 +62,8 @@ def main(argv=None):
     rs = sub.add_parser("rescore", help="re-run the checks on finished runs (no AI calls)")
     rs.add_argument("ids", nargs="*")
     res = sub.add_parser("results", help="verdicts recorded so far")
+    sbs = sub.add_parser("import-sidebyside", help="store a side-by-side qualitative review (experiments/reviews/*.json)")
+    sbs.add_argument("file")
     sub.add_parser("metrics", help="fill run_metrics for every earlier run and print the per-condition table")
     res.add_argument("--experiment")
     a = ap.parse_args(argv)
@@ -87,6 +89,10 @@ def main(argv=None):
         else:
             print(f"Wrote {records.export(a.name, a.date)}")
         return 0
+    if a.cmd == "import-sidebyside":
+        from . import qualitative
+        print(qualitative.import_file(Path(a.file)))
+        return
     if a.cmd == "metrics":
         from . import metrics
         print(f"{metrics.backfill()} runs in run_metrics")

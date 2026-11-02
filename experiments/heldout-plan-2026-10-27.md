@@ -67,3 +67,9 @@ A host regression: 1 and 2 hold but 3 or 4 fails.
     section 6). Those 20 runs are kept and shown as **M1**; only v2 runs count as M / MA.
   - Every run now writes one row to `run_metrics` (tokens per step, AI calls, time per stage, repairs, build, checks,
     browser, verified success, host regression, failure kinds, a one-line observation). The Analysis tab reads it.
+- **1 Nov 2026, night: port v3, browser check v2, lint off in builds (still before any A/D held-out run).**
+  - Browser check v2: the navbar is the visible element near the top holding the most links (smallest one on a tie),
+    not the widest; v1 measured a site's 480px hero `<header>` instead of the nav inside it. Same for every condition.
+  - Builds run with `DISABLE_ESLINT_PLUGIN=true` (CRA): 2 sites failed before any change on their own ESLint config.
+    Lint is not part of "works". Same for every condition.
+  - Port v3 (VERSION = 3); v2 runs are kept and shown as **M2**.

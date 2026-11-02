@@ -1,0 +1,673 @@
+{
+ "reviewer": "Claude (screenshots at 1280px and 390px, diffs)",
+ "reviewed_at": "2026-11-02",
+ "set": "sidebyside-2026-11-02",
+ "note": "Held-out tasks, agent alone (2 runs, gemini-3.5-flash-lite) vs FusionEdges port v3 (no AI). Judged from the browser screenshots each run saved and its diff. Not blind: the reviewer knew which approach made each run. A blind second review by a person is still to do.",
+ "scale": {
+  "looks_like_donor": "yes = the donor's navbar as designed; partly = donor's items/structure but not its look, or a visible defect; no = not the donor's navbar",
+  "site_intact": "yes = rest of the page as before; partly = moved/changed; no = part of the site lost or covered"
+ },
+ "tasks": [
+  {
+   "task": "Aking16/React-Fast-Food ← Deeds67/blog",
+   "donor_has_navbar": "yes",
+   "better": "neither",
+   "summary": "Neither works. The agent left the site as it was (one run changed nothing). The port shows the donor's Home/Projects tabs but removed the site's hero, because the site's Navbar component also renders the hero.",
+   "runs": [
+    {
+     "run_id": "20261102-100839-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "yes",
+     "verdict": "not-ported",
+     "note": "Site unchanged; donor navbar not added.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-102437-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "yes",
+     "verdict": "not-ported",
+     "note": "Site unchanged; donor navbar not added.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-094252-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Donor tabs shown, but the pizza hero is gone: the site's navbar component held the hero too.",
+     "causes": [
+      "replaced a component that holds more than the navbar"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "Aking16/React-Fast-Food ← ixartz/Next-js-Landing-Page-Starter-Template",
+   "donor_has_navbar": "yes",
+   "better": "neither",
+   "summary": "Neither works. The agent kept the site's own navbar. The port shows the donor's logo and links, but they run together (their spacing was in a removed <style jsx> block) and the hero is gone, as above.",
+   "runs": [
+    {
+     "run_id": "20261102-100745-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "yes",
+     "verdict": "not-ported",
+     "note": "Site's own navbar kept; donor's not added.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-102343-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "yes",
+     "verdict": "not-ported",
+     "note": "Site's own navbar, slightly re-spaced; donor's not added.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-094229-port",
+     "condition": "M",
+     "looks_like_donor": "partly",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Donor logo + GitHub/Sign in shown but squashed together; hero removed.",
+     "causes": [
+      "replaced a component that holds more than the navbar",
+      "spacing lost (Next <style jsx>)"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "GrohTech/react-portfolio ← aarabii/An",
+   "donor_has_navbar": "yes",
+   "better": "neither",
+   "summary": "Nothing builds. The agent's runs fail on packages; the port fails because @base-ui/react cannot be bundled by this site's old Create React App.",
+   "runs": [
+    {
+     "run_id": "20261102-095958-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-101628-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-093900-port",
+     "condition": "M",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: package needs a newer bundler"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "GrohTech/react-portfolio ← maxlindquistt/MaxLindquist",
+   "donor_has_navbar": "no",
+   "better": "neither",
+   "summary": "The donor has no desktop navbar (only a hero and a phone bottom bar), so the task asks for something that is not there. One agent run invented a Bootstrap navbar; the port pasted the donor's hero over the site's header.",
+   "runs": [
+    {
+     "run_id": "20261102-100112-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "broken",
+     "note": "Donor hero placed where the navbar was; no navbar.",
+     "causes": [
+      "donor has no desktop navbar"
+     ]
+    },
+    {
+     "run_id": "20261102-101759-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Agent wrote its own navbar (About/Projects/Contact/Resume) above the donor hero.",
+     "causes": [
+      "donor has no desktop navbar",
+      "navbar invented"
+     ]
+    },
+    {
+     "run_id": "20261102-093938-port",
+     "condition": "M",
+     "looks_like_donor": "no",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Donor hero overlaps the site's yellow header.",
+     "causes": [
+      "donor has no desktop navbar",
+      "mounted inside the site's header"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "JColeCodes/react-portfolio ← Deeds67/blog",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "Port is better. It shows the donor's Home/Projects tabs with the hero untouched. The agent's working run shrank the hero; its other run left two navbars.",
+   "runs": [
+    {
+     "run_id": "20261102-100344-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Old and new navbars both on the page.",
+     "causes": [
+      "two navbars"
+     ]
+    },
+    {
+     "run_id": "20261102-102052-prompt",
+     "condition": "A",
+     "looks_like_donor": "yes",
+     "site_intact": "partly",
+     "verdict": "works",
+     "note": "Donor tabs shown, but the hero lost its height.",
+     "causes": [
+      "site layout changed"
+     ]
+    },
+    {
+     "run_id": "20261102-094033-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "works",
+     "note": "Donor tabs top-left, hero and rest of site untouched.",
+     "causes": []
+    }
+   ]
+  },
+  {
+   "task": "JColeCodes/react-portfolio ← ixartz/Next-js-Landing-Page-Starter-Template",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "Port is better. It adds the donor's navbar and leaves the site alone. The agent did not port it and rewrote the site's own heading to 'J. COLE'.",
+   "runs": [
+    {
+     "run_id": "20261102-100217-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "not-ported",
+     "note": "Site heading rewritten; donor navbar not added.",
+     "causes": [
+      "donor navbar not ported",
+      "changed site content"
+     ]
+    },
+    {
+     "run_id": "20261102-101931-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "not-ported",
+     "note": "Same: site heading rewritten; donor navbar not added.",
+     "causes": [
+      "donor navbar not ported",
+      "changed site content"
+     ]
+    },
+    {
+     "run_id": "20261102-094003-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "works",
+     "note": "Donor logo + GitHub / Sign in over the hero; site intact.",
+     "causes": []
+    }
+   ]
+  },
+  {
+   "task": "SkyCooper/ReactRouterWebpage ← Deeds67/blog",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "All three pass the checks, but only the port looks like the donor: centred tabs with an underline. The agent's navbars are a tiny vertical list, one spilling into the hero.",
+   "runs": [
+    {
+     "run_id": "20261102-095609-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Links as a tiny vertical list top-right.",
+     "causes": [
+      "styling not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-101208-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "partly",
+     "verdict": "partly",
+     "note": "Dark bar; links overflow into the hero.",
+     "causes": [
+      "styling not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-093648-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "works",
+     "note": "Donor's centred tabs, site intact.",
+     "causes": []
+    }
+   ]
+  },
+  {
+   "task": "SkyCooper/ReactRouterWebpage ← aarabii/An",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "All pass the checks. The agent's navbars are unstyled browser-default links; the port's is styled like the donor but its logo image is broken.",
+   "runs": [
+    {
+     "run_id": "20261102-095449-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Unstyled blue links and a raw search button.",
+     "causes": [
+      "styling not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-101053-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Same: unstyled links.",
+     "causes": [
+      "styling not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-093524-port",
+     "condition": "M",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Styled like the donor; logo image missing.",
+     "causes": [
+      "imported image not copied"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "SrPirson/Portfolio ← Deeds67/blog",
+   "donor_has_navbar": "yes",
+   "better": "tie",
+   "summary": "Both look acceptable. The agent blended the donor's items into the site's pill navbar; the port shows the donor's tabs. The port fails only the package check, for a package the site itself already imports without listing it, which the agent happened to add.",
+   "runs": [
+    {
+     "run_id": "20261102-095915-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "works",
+     "note": "Donor items inside the site's own pill style.",
+     "causes": [
+      "blended into the site's design"
+     ]
+    },
+    {
+     "run_id": "20261102-101525-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "works",
+     "note": "Same.",
+     "causes": [
+      "blended into the site's design"
+     ]
+    },
+    {
+     "run_id": "20261102-093833-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Donor tabs in place; site intact. Check fails on a package the site was already missing.",
+     "causes": [
+      "site's own missing package"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "SrPirson/Portfolio ← ixartz/Next-js-Landing-Page-Starter-Template",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "Port is better. The agent did not port the navbar and its phone layout overlaps; the port shows the donor's navbar (links squashed together).",
+   "runs": [
+    {
+     "run_id": "20261102-095826-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "not-ported",
+     "note": "Site navbar reordered; on a phone the text overlaps.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-101431-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "not-ported",
+     "note": "Same.",
+     "causes": [
+      "donor navbar not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-093806-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Donor navbar in place; links run together.",
+     "causes": [
+      "spacing lost (Next <style jsx>)",
+      "site's own missing package"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "akbarsoft0/React-portfolio ← aarabii/An",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "Only the port builds: donor navbar with Resume, search and a phone menu; the logo image is broken.",
+   "runs": [
+    {
+     "run_id": "20261102-100433-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-102138-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-094107-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Donor navbar works at both widths; logo image missing.",
+     "causes": [
+      "imported image not copied"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "akbarsoft0/React-portfolio ← maxlindquistt/MaxLindquist",
+   "donor_has_navbar": "no",
+   "better": "A",
+   "summary": "Donor has no desktop navbar. The agent kept the site's navbar and added the donor's hero under it; the port replaced the navbar with the hero and its waving-hand image fills the screen.",
+   "runs": [
+    {
+     "run_id": "20261102-100527-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Site navbar kept, donor hero below it.",
+     "causes": [
+      "donor has no desktop navbar"
+     ]
+    },
+    {
+     "run_id": "20261102-102215-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Same, with a blank button.",
+     "causes": [
+      "donor has no desktop navbar"
+     ]
+    },
+    {
+     "run_id": "20261102-094157-port",
+     "condition": "M",
+     "looks_like_donor": "no",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Huge waving-hand image; site navbar gone.",
+     "causes": [
+      "donor has no desktop navbar",
+      "image unstyled"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "losier/v4 ← aarabii/An",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "The agent's runs do not build. The port builds, but mounted the donor navbar in place of the site's HeaderSocials (social icons) instead of its navbar, so it shows at the bottom on a phone.",
+   "runs": [
+    {
+     "run_id": "20261102-100907-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-102518-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: packages"
+     ]
+    },
+    {
+     "run_id": "20261102-094315-port",
+     "condition": "M",
+     "looks_like_donor": "partly",
+     "site_intact": "partly",
+     "verdict": "broken",
+     "note": "Wrong slot: replaced the social-icon bar, not the navbar.",
+     "causes": [
+      "mounted in the wrong place (name match)"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "losier/v4 ← maxlindquistt/MaxLindquist",
+   "donor_has_navbar": "no",
+   "better": "A",
+   "summary": "Donor has no desktop navbar. One agent run kept the site's navbar and added the donor hero; the port again replaced the social-icon bar.",
+   "runs": [
+    {
+     "run_id": "20261102-100955-prompt",
+     "condition": "A",
+     "looks_like_donor": "no",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Unstyled donor hero text on top of the site.",
+     "causes": [
+      "donor has no desktop navbar",
+      "styling not ported"
+     ]
+    },
+    {
+     "run_id": "20261102-102906-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Site navbar kept, donor hero below.",
+     "causes": [
+      "donor has no desktop navbar"
+     ]
+    },
+    {
+     "run_id": "20261102-094414-port",
+     "condition": "M",
+     "looks_like_donor": "no",
+     "site_intact": "partly",
+     "verdict": "broken",
+     "note": "Social-icon bar replaced; hero shows low on a phone.",
+     "causes": [
+      "donor has no desktop navbar",
+      "mounted in the wrong place (name match)"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "xItzHypeR/portfolio ← ixartz/Next-js-Landing-Page-Starter-Template",
+   "donor_has_navbar": "yes",
+   "better": "M",
+   "summary": "Only the port builds. Its navbar is the donor's, but its dark text is hard to read on this dark site.",
+   "runs": [
+    {
+     "run_id": "20261102-095652-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: code"
+     ]
+    },
+    {
+     "run_id": "20261102-101307-prompt",
+     "condition": "A",
+     "looks_like_donor": "n/a",
+     "site_intact": "n/a",
+     "verdict": "no-build",
+     "note": "no build, so nothing to see",
+     "causes": [
+      "build fails: code"
+     ]
+    },
+    {
+     "run_id": "20261102-093720-port",
+     "condition": "M",
+     "looks_like_donor": "yes",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Donor navbar present; low contrast on the dark site.",
+     "causes": [
+      "colours clash with a dark site"
+     ]
+    }
+   ]
+  },
+  {
+   "task": "xItzHypeR/portfolio ← maxlindquistt/MaxLindquist",
+   "donor_has_navbar": "no",
+   "better": "A",
+   "summary": "Donor has no desktop navbar. Both agent runs invented a good-looking navbar (not the donor's); the port replaced the site's navbar with the donor's hero, so the site loses its navigation.",
+   "runs": [
+    {
+     "run_id": "20261102-095711-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Invented navbar + donor hero; looks good, not the donor's.",
+     "causes": [
+      "donor has no desktop navbar",
+      "navbar invented"
+     ]
+    },
+    {
+     "run_id": "20261102-101326-prompt",
+     "condition": "A",
+     "looks_like_donor": "partly",
+     "site_intact": "yes",
+     "verdict": "partly",
+     "note": "Same, different invented navbar.",
+     "causes": [
+      "donor has no desktop navbar",
+      "navbar invented"
+     ]
+    },
+    {
+     "run_id": "20261102-093745-port",
+     "condition": "M",
+     "looks_like_donor": "no",
+     "site_intact": "no",
+     "verdict": "broken",
+     "note": "Donor hero where the site's navbar was.",
+     "causes": [
+      "donor has no desktop navbar"
+     ]
+    }
+   ]
+  }
+ ]
+}

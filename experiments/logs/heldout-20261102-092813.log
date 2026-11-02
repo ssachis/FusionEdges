@@ -1,0 +1,225 @@
+20261101-215348-port: 5/6 -> 5/6
+20261101-215443-port: 6/7 -> 6/6
+Re-scored 71 run(s).
+heldout-port-v3: 20 runs planned, 0 already done
+
+=== heldout-port-v3 · task 1/20 · repeat 1/1 · M deterministic port, no AI · 1/20 ===
+    https://github.com/sanajitjana/React-Portfolio  <-  https://github.com/muhammad-fiaz/portfolio  (navbar)
+    Updating sanajitjana/React-Portfolio in examples/
+    Updating muhammad-fiaz/portfolio in examples/
+    [port] 9 files under src/fusion/navbar, 8 packages, 0 assets; resolved 12, left for AI 2 (version-mismatch, css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 12 files (+388 -1 lines), see changes.diff
+    -> passed 9/9
+
+=== heldout-port-v3 · task 2/20 · repeat 1/1 · M deterministic port, no AI · 2/20 ===
+    https://github.com/sanajitjana/React-Portfolio  <-  https://github.com/timlrx/tailwind-nextjs-starter-blog  (navbar)
+    Updating sanajitjana/React-Portfolio in examples/
+    Updating timlrx/tailwind-nextjs-starter-blog in examples/
+    [port] 10 files under src/fusion/navbar, 3 packages, 1 assets; resolved 11, left for AI 3 (version-mismatch, env-var, env-access); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px) the page is blank (almost no text rendered).; On phone (390px) the page is blank (almost no text rendered).
+    [lessons] proposed (not in the report): Write the mount change first (the file that renders the old component), and make sure the new component is imp
+    Code changes: 14 files (+391 -1 lines), see changes.diff
+    -> partial 8/9
+
+=== heldout-port-v3 · task 3/20 · repeat 1/1 · M deterministic port, no AI · 3/20 ===
+    https://github.com/soumyajit4419/Portfolio  <-  https://github.com/muhammad-fiaz/portfolio  (navbar)
+    Updating soumyajit4419/Portfolio in examples/
+    Updating muhammad-fiaz/portfolio in examples/
+    [port] 9 files under src/fusion/navbar, 8 packages, 0 assets; resolved 12, left for AI 2 (version-mismatch, css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 12 files (+388 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 4/20 · repeat 1/1 · M deterministic port, no AI · 4/20 ===
+    https://github.com/soumyajit4419/Portfolio  <-  https://github.com/timlrx/tailwind-nextjs-starter-blog  (navbar)
+    Updating soumyajit4419/Portfolio in examples/
+    Updating timlrx/tailwind-nextjs-starter-blog in examples/
+    [port] 10 files under src/fusion/navbar, 3 packages, 1 assets; resolved 12, left for AI 3 (version-mismatch, env-var, env-access); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    Code changes: 14 files (+391 -1 lines), see changes.diff
+    -> failed 6/7
+
+=== heldout-port-v3 · task 5/20 · repeat 1/1 · M deterministic port, no AI · 5/20 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664  (navbar)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating aarabii/An@6e3f3afd417013bdd7a508b8d690e4de6727b664 in examples/
+    [browser] building the original site once, to know which errors it already has
+    [port] 18 files under src/fusion/navbar, 6 packages, 2 assets; resolved 11, left for AI 2 (version-mismatch, component-name-collision); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 24 files (+913 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 6/20 · repeat 1/1 · M deterministic port, no AI · 6/20 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7  (navbar)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating Deeds67/blog@11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 0 assets; resolved 10, left for AI 2 (version-mismatch, css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 8 files (+103 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 7/20 · repeat 1/1 · M deterministic port, no AI · 7/20 ===
+    https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating xItzHypeR/portfolio@b2643d8a72bddaf6dfd45b4891058754ea9d9adb in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 7 files under src/fusion/navbar, 0 packages, 0 assets; resolved 10, left for AI 2 (version-mismatch, dependency-version-conflict); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 9 files (+116 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 8/20 · repeat 1/1 · M deterministic port, no AI · 8/20 ===
+    https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb  <-  https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2  (navbar)
+    Updating xItzHypeR/portfolio@b2643d8a72bddaf6dfd45b4891058754ea9d9adb in examples/
+    Updating maxlindquistt/MaxLindquist@831c14e1aac01f42c2457660fe35badca89aefd2 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 2 assets; resolved 8, left for AI 1 (responsive); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px) the navbar shows only 1 link(s) (View My Work): its links are probably hidden.; On desktop (1280px) the navbar is 164px tall: it is probably unstyled.; On phone (390px) the navbar is 184px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Do not express responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have n
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 9 files (+211 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 9/20 · repeat 1/1 · M deterministic port, no AI · 9/20 ===
+    https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating SrPirson/Portfolio@8b77ff3cffb701dc3c09317729c56d7c6bb1794d in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 6 files under src/fusion/navbar, 0 packages, 0 assets; resolved 7, left for AI 4 (version-mismatch, styling-system, styling-config, dependency-version-conflict); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 7 files (+146 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 10/20 · repeat 1/1 · M deterministic port, no AI · 10/20 ===
+    https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d  <-  https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7  (navbar)
+    Updating SrPirson/Portfolio@8b77ff3cffb701dc3c09317729c56d7c6bb1794d in examples/
+    Updating Deeds67/blog@11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7 in examples/
+    [port] 4 files under src/fusion/navbar, 0 packages, 0 assets; resolved 7, left for AI 1 (css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 5 files (+115 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 11/20 · repeat 1/1 · M deterministic port, no AI · 11/20 ===
+    https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e  <-  https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664  (navbar)
+    Updating GrohTech/react-portfolio@dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e in examples/
+    Updating aarabii/An@6e3f3afd417013bdd7a508b8d690e4de6727b664 in examples/
+    [port] 18 files under src/fusion/navbar, 6 packages, 2 assets; resolved 12, left for AI 1 (version-mismatch); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    Code changes: 23 files (+917 -1 lines), see changes.diff
+    -> failed 6/7
+
+=== heldout-port-v3 · task 12/20 · repeat 1/1 · M deterministic port, no AI · 12/20 ===
+    https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e  <-  https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2  (navbar)
+    Updating GrohTech/react-portfolio@dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e in examples/
+    Updating maxlindquistt/MaxLindquist@831c14e1aac01f42c2457660fe35badca89aefd2 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 2 assets; resolved 8, left for AI 1 (version-mismatch); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px) the navbar shows only 1 link(s) (View My Work): its links are probably hidden.; On desktop (1280px) the navbar is 164px tall: it is probably unstyled.; On phone (390px) the navbar is 253px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Do not express responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have n
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 8 files (+215 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 13/20 · repeat 1/1 · M deterministic port, no AI · 13/20 ===
+    https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating JColeCodes/react-portfolio@2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 7 files under src/fusion/navbar, 0 packages, 0 assets; resolved 10, left for AI 2 (version-mismatch, dependency-version-conflict); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 8 files (+116 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 14/20 · repeat 1/1 · M deterministic port, no AI · 14/20 ===
+    https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925  <-  https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7  (navbar)
+    Updating JColeCodes/react-portfolio@2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925 in examples/
+    Updating Deeds67/blog@11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 0 assets; resolved 10, left for AI 2 (version-mismatch, css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 6 files (+103 -1 lines), see changes.diff
+    -> passed 8/8
+
+=== heldout-port-v3 · task 15/20 · repeat 1/1 · M deterministic port, no AI · 15/20 ===
+    https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065  <-  https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664  (navbar)
+    Updating akbarsoft0/React-portfolio@e2dd0f2f0d2a07f068073a5300e0a52edf754065 in examples/
+    Updating aarabii/An@6e3f3afd417013bdd7a508b8d690e4de6727b664 in examples/
+    [port] 18 files under src/fusion/navbar, 6 packages, 2 assets; resolved 11, left for AI 1 (version-mismatch); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px) the navbar is 192px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 23 files (+913 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 16/20 · repeat 1/1 · M deterministic port, no AI · 16/20 ===
+    https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065  <-  https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2  (navbar)
+    Updating akbarsoft0/React-portfolio@e2dd0f2f0d2a07f068073a5300e0a52edf754065 in examples/
+    Updating maxlindquistt/MaxLindquist@831c14e1aac01f42c2457660fe35badca89aefd2 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 2 assets; resolved 8, left for AI 2 (version-mismatch, responsive); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px) the navbar shows only 1 link(s) (View My Work): its links are probably hidden.; On desktop (1280px) the navbar is 1108px tall: it is probably unstyled.; On phone (390px) the navbar is 574px tall: it is probably unstyled.; On phone (390px) the page scrolls sideways (something is wider than the screen).
+    [lessons] proposed (not in the report): Do not express responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have n
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    [lessons] proposed (not in the report): Keep the component within a phone's width: no fixed widths or min-widths above about 360px, and let menus wrap
+    Code changes: 8 files (+211 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 17/20 · repeat 1/1 · M deterministic port, no AI · 17/20 ===
+    https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating Aking16/React-Fast-Food@fe855e6716e8c3a60ed191d2aa196a41b47125a7 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 6 files under src/fusion/navbar, 0 packages, 0 assets; resolved 9, left for AI 1 (styling-config); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 7 files (+112 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 18/20 · repeat 1/1 · M deterministic port, no AI · 18/20 ===
+    https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7  <-  https://github.com/Deeds67/blog/tree/11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7  (navbar)
+    Updating Aking16/React-Fast-Food@fe855e6716e8c3a60ed191d2aa196a41b47125a7 in examples/
+    Updating Deeds67/blog@11e68a6c62a4ed8d7f1c605269a5823ac92a3ed7 in examples/
+    [port] 4 files under src/fusion/navbar, 0 packages, 0 assets; resolved 9, left for AI 3 (version-mismatch, styling-system, css-variable-undefined); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 5 files (+94 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== heldout-port-v3 · task 19/20 · repeat 1/1 · M deterministic port, no AI · 19/20 ===
+    https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f  <-  https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664  (navbar)
+    Updating losier/v4@81f68d151907d42f73ba43b4d608daa73543d21f in examples/
+    Updating aarabii/An@6e3f3afd417013bdd7a508b8d690e4de6727b664 in examples/
+    [port] 18 files under src/fusion/navbar, 5 packages, 2 assets; resolved 11, left for AI 1 (version-mismatch); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On phone (390px) the navbar is 611px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 23 files (+912 -1 lines), see changes.diff
+    -> partial 6/7
+
+=== heldout-port-v3 · task 20/20 · repeat 1/1 · M deterministic port, no AI · 20/20 ===
+    https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f  <-  https://github.com/maxlindquistt/MaxLindquist/tree/831c14e1aac01f42c2457660fe35badca89aefd2  (navbar)
+    Updating losier/v4@81f68d151907d42f73ba43b4d608daa73543d21f in examples/
+    Updating maxlindquistt/MaxLindquist@831c14e1aac01f42c2457660fe35badca89aefd2 in examples/
+    [port] 5 files under src/fusion/navbar, 0 packages, 2 assets; resolved 8, left for AI 2 (version-mismatch, responsive); mount: replaced
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On phone (390px) the navbar is 844px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 8 files (+211 -1 lines), see changes.diff
+    -> partial 6/7
+
+All 20 runs done.
+
+No comparisons yet.
+91 runs in run_metrics
+A   Agent alone              works 4/12  median tokens   17,356  median time    122 s  tokens per working result 54708
+D   Agent + report           works 5/8   median tokens   40,935  median time    193 s  tokens per working result 60687
+M   FusionEdges port         works 7/20  median tokens        0  median time     32 s  tokens per working result -
+M1  FusionEdges port v1      works 7/20  median tokens        0  median time     15 s  tokens per working result -
+M2  FusionEdges port v2      works 1/20  median tokens        0  median time     38 s  tokens per working result -
+NO_KEY: GEMINI_API_KEY is not visible here. Add 'export GEMINI_API_KEY=...' to ~/.zshrc, or run: export GEMINI_API_KEY=... && zsh experiments/run-heldout.command

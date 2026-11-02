@@ -34,7 +34,9 @@ _SPEC = re.compile(r"""(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+|\brequire\s*\(\s*
 _DIRECTIVE = re.compile(r"""^\s*['"]use (client|server)['"];?\s*\n""", re.M)
 _PUBLIC_REF = re.compile(r"""(['"(])(/[\w./-]+\.(?:png|jpe?g|gif|svg|webp|avif|ico))(['")])""", re.I)
 _IS_PKG = re.compile(r"^(?:@[\w.-]+/[\w.-]+|[\w.-]+)")
-VERSION = 2   # 1: first 20 runs (1 Nov); 2: barrels, backend stand-ins, React-compatible versions, old router, CSS-first finds
+VERSION = 3   # 1: first 20 runs; 2: barrels, backend stand-ins, React versions, old router, CSS-first finds;
+              # 3 (after the first browser check): utilities win over site CSS, scoped reset, shells ported with their usage,
+              #   real-nav picking, Headless UI 1 names, <style jsx> removed
 TOOLS = Path(os.environ.get("FUSIONEDGES_TOOLS", Path.home() / ".cache" / "fusionedges"))
 
 
@@ -268,6 +270,53 @@ def donor_theme_css(donor: Path, scope: str) -> tuple:
     return css, "\n".join(utilities), colors
 
 
+def important(css: str) -> str:
+    """Mark every declaration of the compiled utilities !important (custom properties and @keyframes excepted).
+    Scoped as `.fe-x .flex`, they then beat the site's own !important rules (Bootstrap's `.hidden`,
+    `.d-none`) and its element rules, but only inside the ported component."""
+    out, i, n, stack, start = [], 0, len(css), [], 0
+    while i < n:
+        c = css[i]
+        if c == "{":
+            prelude = css[start:i].strip()
+            out.append(css[start:i + 1])
+            stack.append("kf" if prelude.startswith("@keyframes") or (stack and stack[-1] == "kf")
+                         else "at" if prelude.startswith("@") else "rule")
+            start = i + 1
+        elif c == "}":
+            body = css[start:i]
+            if stack and stack[-1] == "rule":
+                decls = []
+                for d in body.split(";"):
+                    if ":" in d and not d.strip().startswith("--") and "!important" not in d:
+                        d = d.rstrip() + "!important"
+                    decls.append(d)
+                body = ";".join(decls)
+            out.append(body + "}")
+            if stack:
+                stack.pop()
+            start = i + 1
+        i += 1
+    out.append(css[start:])
+    return "".join(out)
+
+
+def scoped_reset(scope: str) -> str:
+    """Tailwind's preflight, but only inside the component: donor classes assume it (border-4 needs a solid border
+    style, buttons and links inherit color), and the site's global CSS must not reach in."""
+    s = scope
+    return (f"{s},{s} *,{s} ::before,{s} ::after{{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}}"
+            f"{s} h1,{s} h2,{s} h3,{s} h4,{s} h5,{s} h6,{s} p,{s} ul,{s} ol,{s} li,{s} figure,{s} blockquote,{s} dl,{s} dd"
+            f"{{margin:0;padding:0;font-size:inherit;font-weight:inherit}}"
+            f"{s} ul,{s} ol{{list-style:none}}{s} a{{color:inherit;text-decoration:inherit;background:none}}"
+            f"{s} button,{s} input,{s} select{{font:inherit;color:inherit;background:transparent;margin:0;padding:0;"
+            f"line-height:inherit;text-transform:none;float:none;width:auto;height:auto;box-shadow:none}}"
+            f"{s} button{{cursor:pointer}}{s} img,{s} svg,{s} video{{display:block;vertical-align:middle;max-width:100%}}"
+            f"{s} img,{s} video{{height:auto}}{s} nav,{s} header{{float:none;position:static;width:auto;min-height:0;"
+            f"margin:0;padding:0;background:none;border:0;box-shadow:none}}"
+            f"{s}{{font-family:ui-sans-serif,system-ui,sans-serif;line-height:1.5}}\n")
+
+
 def compile_tailwind(files: list, donor: Path, scope: str, out_css: Path, log=print) -> dict:
     """Generate only the utilities the ported files use, with no preflight (no global reset) and every rule
     behind `scope`, so the donor's styling cannot leak into the rest of the host site."""
@@ -293,7 +342,9 @@ def compile_tailwind(files: list, donor: Path, scope: str, out_css: Path, log=pr
         if r.returncode != 0 or not (work / "out.css").is_file():
             return {"ok": False, "reason": "tailwind CLI failed: " + (r.stderr or r.stdout)[-400:]}
         out_css.write_text("/* FusionEdges: Tailwind utilities used by this component only, scoped to "
-                           f"{scope}, no preflight */\n" + vars_css + (work / "out.css").read_text())
+                           f"{scope}, with a reset that stays inside it; utilities are !important so the site's "
+                           "own CSS cannot override them */\n" + vars_css + scoped_reset(scope)
+                           + important((work / "out.css").read_text()))
         return {"ok": True, "colors": len(colors), "bytes": out_css.stat().st_size, "custom_utilities_dropped": utils_dropped}
     except (OSError, subprocess.SubprocessError) as e:
         return {"ok": False, "reason": str(e)}
@@ -345,21 +396,53 @@ def _replace_imports_of(host: Path, target: str, new_target_abs: str, files: lis
     return changed
 
 
+def _tag_end(text: str, i: int):
+    """Index just past the '>' that closes the JSX tag starting at text[i] == '<' (braces and quotes skipped),
+    and whether it is self-closing."""
+    depth, quote, j = 0, None, i + 1
+    while j < len(text):
+        c = text[j]
+        if quote:
+            if c == quote:
+                quote = None
+        elif c in "\"'`" and depth == 0 or (c in "\"'`" and depth > 0):
+            quote = c
+        elif c == "{":
+            depth += 1
+        elif c == "}":
+            depth -= 1
+        elif c == ">" and depth == 0:
+            return j + 1, text[j - 1] == "/"
+        j += 1
+    return None, False
+
+
 def _element_span(text: str, tag: str):
-    """(start, end) of the first <tag ...>...</tag> element (same-tag nesting counted), or None."""
-    m = re.search(r"<%s\b" % tag, text)
+    """(start, end) of the first <tag ...>...</tag> element (same-tag nesting counted, JSX attributes such as
+    logo={<Logo />} skipped), or None."""
+    m = re.search(r"<%s\b" % re.escape(tag), text)
     if not m:
         return None
-    depth, i = 0, m.start()
-    for t in re.finditer(r"<(/?)%s\b[^>]*?(/?)>" % tag, text[m.start():]):
-        if t.group(2):
-            if depth == 0:
-                return m.start(), m.start() + t.end()
-            continue
-        depth += -1 if t.group(1) else 1
-        if depth == 0:
-            return m.start(), m.start() + t.end()
-    return None
+    end, selfc = _tag_end(text, m.start())
+    if end is None:
+        return None
+    if selfc:
+        return m.start(), end
+    depth, i = 1, end
+    rx = re.compile(r"<(/?)%s\b" % re.escape(tag))
+    while depth:
+        n = rx.search(text, i)
+        if not n:
+            return None
+        e, sc = _tag_end(text, n.start())
+        if e is None:
+            return None
+        if n.group(1):
+            depth -= 1
+        elif not sc:
+            depth += 1
+        i = e
+    return m.start(), i
 
 
 def _add_import(text: str, line: str) -> str:
@@ -412,7 +495,7 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
     source, donor, output = Path(source), Path(donor), Path(output)
     rec = {"version": VERSION, "ok": False, "component": component, "files": [], "packages_added": {}, "assets": [], "mount": {},
            "resolved": [], "unresolved": [], "notes": []}
-    main = rag.find_component_files(donor, component, limit=1)
+    main = pick_component(donor, component)
     if not main:
         rec["reason"] = f"no '{component}' file found in the donor"
         rec["unresolved"].append({"kind": "component-not-found", "text": rec["reason"]})
@@ -422,7 +505,19 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
         rec["resolved"].append({"kind": "server-component", "action": f"{main[0]} only loads data on the server and renders "
                                 f"{ct}; the client component is ported (its props use their defaults)"})
         main = [ct]
-    cl = closure(donor, main)
+    overrides = {}
+    if is_shell(read(donor / main[0])):
+        u = usage_of(donor, main[0])
+        if u:
+            virt, body, used_in = u
+            overrides[virt] = body
+            rec["resolved"].append({"kind": "component-usage", "action": f"{main[0]} is a shell filled by its parent; "
+                                    f"ported the way {used_in} uses it (logo, links and props included)"})
+            main = [virt]
+        else:
+            rec["unresolved"].append({"kind": "component-usage", "text": f"{main[0]} gets its content (links, logo) "
+                                      "from a parent page; ported alone it may render an empty bar"})
+    cl = closure(donor, main, overrides=overrides)
     bad = tainted(cl, donor) - {main[0]}
     donor_files = cl["files"]
     slug = _slug(component)
@@ -536,6 +631,9 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
                 assets[f"public{pm.group(2)}"] = p
         out = output / new_rel
         out.parent.mkdir(parents=True, exist_ok=True)
+        new_text, n_sj = strip_styled_jsx(new_text) if not rel.endswith(STYLE_EXT) else (new_text, 0)
+        if n_sj:
+            rec["notes"].append(f"{Path(rel).name}: removed {n_sj} <style jsx> block(s) (Next-only)")
         out.write_text(new_text)
         rec["files"].append(new_rel)
     if stub_names:
@@ -592,6 +690,17 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
                 pkg["dependencies"] = dict(sorted(pkg["dependencies"].items()))
                 pkg_path.write_text(json.dumps(pkg, indent=2) + "\n")
             rec["packages_added"] = add
+            hv = add.get("@headlessui/react", "")
+            if re.match(r"[\^~]?1\.", hv):      # the site's React needs Headless UI 1.x: rename the 2.x API
+                n_hu = 0
+                for f in rec["files"]:
+                    if f.endswith((".js", ".jsx", ".ts", ".tsx")):
+                        t, k = headlessui_v1(read(output / f))
+                        if k:
+                            (output / f).write_text(t)
+                            n_hu += k
+                if n_hu:
+                    rec["resolved"].append({"kind": "api-version", "action": f"Headless UI 2 names rewritten to the 1.x API ({n_hu})"})
             rec["resolved"].append({"kind": "missing-package", "action": f"{len(add)} packages added from the donor's versions: " + ", ".join(add) if add else "no packages missing"})
 
     # 5. styling: Tailwind utilities compiled and scoped, donor globals not copied
@@ -912,7 +1021,7 @@ def _debarrel(root: Path, rel: str, text: str, amap) -> tuple:
     return _NAMED_IMPORT.sub(sub, text), n
 
 
-def closure(root: Path, starts: list, max_files: int = 60, max_depth: int = 6) -> dict:
+def closure(root: Path, starts: list, max_files: int = 60, max_depth: int = 6, overrides: dict | None = None) -> dict:
     """Donor files the component needs, following imports, with barrel imports split per name first.
     Returns {files: [...], texts: {rel: text (de-barrelled)}, backend: {rel: [backend specs]}, packages: set}."""
     root = Path(root)
@@ -922,7 +1031,7 @@ def closure(root: Path, starts: list, max_files: int = 60, max_depth: int = 6) -
     seen = set(starts)
     while queue:
         rel, depth = queue.pop(0)
-        raw = read(root / rel, 400_000)
+        raw = (overrides or {}).get(rel) or read(root / rel, 400_000)
         text, _ = _debarrel(root, rel, raw, amap) if not rel.endswith(STYLE_EXT) else (raw, 0)
         texts[rel] = text
         order.append(rel)
@@ -1220,3 +1329,120 @@ def existing_component(source: Path, component: str) -> str | None:
             if cand.is_file():
                 return cand.relative_to(source).as_posix()
     return None
+
+
+# ------------------------------------------------------------------ v3 (1 Nov, after the first browser-checked M runs)
+def nav_score(text: str) -> int:
+    """How much a file looks like a navigation bar: <nav> elements and links."""
+    return 3 * len(re.findall(r"<nav\b", text)) + len(re.findall(r"\bhref\s*=|<Link\b|\bto\s*=\s*[\"'{]", text))
+
+
+def pick_component(donor: Path, component: str) -> list:
+    """The donor file to port: among the name matches, prefer one that actually is a nav (a <nav> or 2+ links)."""
+    cands = rag.find_component_files(donor, component, limit=5)
+    code = [c for c in cands if not c.endswith(STYLE_EXT)]
+    good = [c for c in code if nav_score(read(donor / c)) >= 3]
+    return [good[0]] if good else cands[:1]
+
+
+_JS_WORDS = {"true", "false", "null", "undefined", "this", "new", "typeof", "return", "const", "let", "var", "if",
+             "else", "Math", "Date", "String", "Number", "Array", "Object", "JSON", "window", "document", "console"}
+
+
+def _component_name(text: str) -> str | None:
+    m = re.search(r"\bexport\s+default\s+(?:function\s+)?([A-Z]\w*)", text) or \
+        re.search(r"\bexport\s*\{\s*([A-Z]\w*)", text) or re.search(r"\bexport\s+(?:const|function)\s+([A-Z]\w*)", text)
+    return m.group(1) if m else None
+
+
+def is_shell(text: str) -> bool:
+    """A layout component that gets its content from its parent (logo, links as children): ported alone it renders
+    an empty bar."""
+    return bool(re.search(r"\bprops\.children\b|\{\s*children\s*[,}]|\bchildren\s*[:,}]", text)) and \
+        len(re.findall(r"\bhref\s*=\s*['\"]", text)) < 2
+
+
+def usage_of(donor: Path, main: str):
+    """(virtual rel path, text) of a small component that renders `main` the way the donor's page does, children and
+    props included. None when no usage can be copied without code the page defines itself."""
+    name = _component_name(read(donor / main))
+    if not name:
+        return None
+    amap = rag._alias_dirs(donor)  # noqa: SLF001
+    for p in walk(donor, (".tsx", ".jsx", ".js", ".ts")):
+        rel = p.relative_to(donor).as_posix()
+        if rel == main or "node_modules" in rel:
+            continue
+        text = read(p, 300_000)
+        if not re.search(r"<%s\b" % name, text):
+            continue
+        imports = {}
+        for m in re.finditer(r"""^import\s+([^'";]+?)\s+from\s*(['"])([^'"]+)\2;?\s*$""", text, re.M):
+            clause = m.group(1)
+            if clause.startswith("type "):
+                continue
+            locals_ = re.findall(r"(?:^|,|\{)\s*(?:[\w$]+\s+as\s+)?([\w$]+)\s*(?=,|\}|$)", clause.replace("{", "{ ").strip())
+            for l in locals_:
+                imports[l] = m.group(0)
+        span = _element_span(text, name)
+        if not span:
+            continue
+        snippet = text[span[0]:span[1]]
+        tags = {t.split(".")[0] for t in re.findall(r"<([A-Z][\w.]*)", snippet)}
+        code = re.sub(r"(['\"`]).*?\1", "", " ".join(re.findall(r"\{([^{}]*)\}", snippet)))
+        code = re.sub(r"</?[A-Za-z][^<>]*>", " ", code)        # JSX inside braces: its tags are checked above
+        idents = {w for w in re.findall(r"(?<![\w.$])([A-Za-z_$][\w$]*)(?!\s*:)", code)} - _JS_WORDS
+        need = tags | idents
+        if any(n not in imports for n in need):
+            continue
+        if not any(rag.resolve_import(donor, rel, re.search(r"""(['"])([^'"]+)\1""", imports[name]).group(2), amap) == main
+                   for _ in [0] if name in imports):
+            continue
+        lines = sorted({imports[n] for n in need})
+        virt = f"{Path(rel).parent.as_posix()}/FusionUsage{Path(main).suffix}".lstrip("./")
+        body = ("\n".join(lines) + "\n\nexport default function FusionUsage() {\n  return (\n    "
+                + snippet + "\n  );\n}\n")
+        return virt, body, rel
+    return None
+
+
+def strip_styled_jsx(text: str) -> tuple:
+    """Next's <style jsx> blocks need Next's compiler; elsewhere they render as a broken <style jsx> tag."""
+    new, n = re.subn(r"\s*<style\s+jsx(?:\s+global)?\s*>\s*\{`.*?`\}\s*</style>", "", text, flags=re.S)
+    return new, n
+
+
+# Headless UI 2 component names that exist only as dotted names in 1.x (used when the site's React needs 1.x)
+HEADLESSUI_V1 = {
+    "TransitionChild": "Transition.Child", "DialogPanel": "Dialog.Panel", "DialogTitle": "Dialog.Title",
+    "DialogBackdrop": "Dialog.Overlay", "MenuButton": "Menu.Button", "MenuItems": "Menu.Items", "MenuItem": "Menu.Item",
+    "PopoverButton": "Popover.Button", "PopoverPanel": "Popover.Panel", "PopoverGroup": "Popover.Group",
+    "DisclosureButton": "Disclosure.Button", "DisclosurePanel": "Disclosure.Panel",
+    "ListboxButton": "Listbox.Button", "ListboxOptions": "Listbox.Options", "ListboxOption": "Listbox.Option",
+    "ComboboxInput": "Combobox.Input", "ComboboxButton": "Combobox.Button", "ComboboxOptions": "Combobox.Options",
+    "ComboboxOption": "Combobox.Option", "TabGroup": "Tab.Group", "TabList": "Tab.List", "TabPanels": "Tab.Panels",
+    "TabPanel": "Tab.Panel", "RadioGroupOption": "RadioGroup.Option", "SwitchGroup": "Switch.Group",
+}
+
+
+def headlessui_v1(text: str) -> tuple:
+    """Rewrite Headless UI 2 imports/JSX to the 1.x API. Returns (text, n renamed)."""
+    m = re.search(r"""import\s*\{([^}]*)\}\s*from\s*['"]@headlessui/react['"]""", text)
+    if not m:
+        return text, 0
+    names = [x.strip() for x in m.group(1).split(",") if x.strip()]
+    renamed = [x for x in names if x.split(" as ")[0].strip() in HEADLESSUI_V1]
+    if not renamed:
+        return text, 0
+    keep = [x for x in names if x not in renamed]
+    for x in renamed:
+        base = HEADLESSUI_V1[x.split(" as ")[0].strip()].split(".")[0]
+        if base not in [k.split(" as ")[-1].strip() for k in keep]:
+            keep.append(base)
+    text = text.replace(m.group(0), "import { " + ", ".join(keep) + ' } from "@headlessui/react"')
+    for x in renamed:
+        orig = x.split(" as ")[0].strip()
+        local = x.split(" as ")[-1].strip()
+        text = re.sub(r"(</?)%s\b" % re.escape(local), r"\g<1>" + HEADLESSUI_V1[orig], text)
+        text = re.sub(r"(?<![\w.])%s(?=\s*[.,)}\]])" % re.escape(local), HEADLESSUI_V1[orig], text)
+    return text, len(renamed)

@@ -20,6 +20,7 @@ CONDITIONS = {
     "E": ("Report + history", "Report that also sees lessons from earlier runs."),
     "M": ("FusionEdges port", "Rule-based port, no AI at all."),
     "M1": ("FusionEdges port v1", "First version of the rule-based port (superseded on 1 Nov); kept for the record."),
+    "M2": ("FusionEdges port v2", "Second version (superseded after its browser check on 1 Nov); kept for the record."),
     "MA": ("FusionEdges port + AI", "Rule-based port; the AI is called only if the result does not work."),
     "A2": ("Multi-step agent", "Agent with tools, many steps."),
     "D2": ("Multi-step agent + report", "Same, plus the report."),
@@ -83,22 +84,32 @@ def _browser(rec: dict):
 
 
 def _browser_kind(p: str) -> str:
+    """Plain name for a browser-check problem (the check's own sentence stays in data.browser_problems)."""
     p = p.lower()
+    if "blank" in p:
+        return "page blank in the browser"
     if "error" in p:
         return "page errors in the browser"
-    if "unstyled" in p or "tailwind" in p:
+    if "unstyled" in p or "tall" in p:
         return "navbar unstyled"
-    if "hidden" in p or "not visible" in p or "no navbar links" in p:
-        return "navbar or links not visible"
-    if "scroll" in p or "sideways" in p or "overflow" in p:
+    if "no navbar is visible" in p or "no navbar" in p:
+        return "navbar not on the page"
+    if "hidden" in p or "only" in p and "link" in p:
+        return "navbar links hidden"
+    if "no visible link or menu button" in p:
+        return "no menu on a phone"
+    if "sideways" in p or "overflow" in p:
         return "page scrolls sideways on a phone"
-    return "browser problem"
+    return "other browser problem"
 
 
 def condition_of(rec: dict) -> str:
     c = MODE_TO_COND.get((rec.get("mode"), (rec.get("options") or {}).get("edit") or "oneshot"), rec.get("mode", "?"))
-    if c == "M" and (rec.get("port") or {}).get("version", 1) < 2:
-        return "M1"
+    if c in ("M", "MA"):
+        from .port import VERSION
+        v = (rec.get("port") or {}).get("version", 1)
+        if v < VERSION:
+            return f"M{v}" if c == "M" else f"MA{v}"
     return c
 
 
@@ -112,7 +123,8 @@ def from_run(rec: dict, experiment: str = "") -> dict:
     t_rep = (ru.get("input_tokens") or 0) + (ru.get("output_tokens") or 0)
     t_cod = (a.get("input_tokens") or 0) + (a.get("output_tokens") or 0)
     models = sorted(set(rec.get("models") or []))
-    fails = [CHECK_FAILURE.get(k, k) for k, v in checks.items() if v.get("pass") is False]
+    # the "browser" check is summarised by the problems themselves, named below
+    fails = [CHECK_FAILURE.get(k, k) for k, v in checks.items() if v.get("pass") is False and k != "browser"]
     fails += [_browser_kind(p) for p in bprobs]
     if a.get("error"):
         fails.append("AI call failed")
@@ -270,6 +282,15 @@ def task_matrix(rs: list) -> list:
     return out
 
 
+def sign_test(better: int, worse: int) -> float:
+    """Two-sided exact sign test over the tasks that differ (ties dropped)."""
+    from math import comb
+    n, k = better + worse, max(better, worse)
+    if n == 0:
+        return 1.0
+    return min(1.0, 2 * sum(comb(n, i) for i in range(k, n + 1)) / 2 ** n)
+
+
 def paired(rs: list, a: str, b: str) -> dict:
     """Only the tasks both approaches ran: success, tokens and time on the same tasks (a fair comparison)."""
     ok = lambda r: not r["ai_error"]   # noqa: E731
@@ -279,7 +300,13 @@ def paired(rs: list, a: str, b: str) -> dict:
     out = {"tasks": len(tasks), "a": a, "b": b, "better": 0, "worse": 0, "tie": 0}
     for side in (a, b):
         xs = [r for r in rs if r["condition"] == side and r["task"] in tasks and ok(r)]
+        # every task counts once, however many times it was run (a task re-run 9 times must not weigh 9x)
+        rates = []
+        for t in tasks:
+            ys = [r for r in xs if r["task"] == t]
+            rates.append(sum(r["verified_success"] for r in ys) / len(ys))
         out[side] = {"runs": len(xs), "works": sum(r["verified_success"] for r in xs),
+                     "task_rate": round(sum(rates) / len(rates), 3) if rates else 0,
                      "median_tokens": _med([r["tokens_total"] for r in xs]), "median_seconds": _med([r["seconds_total"] for r in xs])}
     for t in tasks:   # per task: success rate of b vs a (the sign test unit)
         rate = lambda c: (lambda xs: sum(r["verified_success"] for r in xs) / len(xs))(   # noqa: E731
@@ -307,12 +334,18 @@ def headline(conds: list, rs: list | None = None) -> dict:
     if A["median_seconds"] and B["median_seconds"]:
         tc = 1 - B["median_seconds"] / A["median_seconds"]
         t = f" and {round(abs(tc) * 100)}% {'less' if tc > 0 else 'more'} time"
-    rate = lambda x: x["works"] / x["runs"] if x["runs"] else 0   # noqa: E731
-    verb = "works more often than" if rate(B) > rate(A) else "works as often as" if rate(B) == rate(A) else "works less often than"
+    ra, rb = A["task_rate"], B["task_rate"]
+    verb = "works more often than" if rb > ra else "works as often as" if rb == ra else "works less often than"
     small = p["tasks"] < 8
-    good = rate(B) >= rate(A) and tok.startswith(", with")
-    return {"answer": "not yet" if small else ("yes" if good else "mixed"), "vs": best, "paired": p,
-            "text": f"On the {p['tasks']} task{'s' if p['tasks'] != 1 else ''} both ran, {CONDITIONS[best][0]} {verb} the agent alone "
-                    f"({B['works']}/{B['runs']} vs {A['works']}/{A['runs']} runs work){tok}{t}. "
-                    f"Per task: better on {p['better']}, worse on {p['worse']}, same on {p['tie']}."
+    good = rb >= ra and tok.startswith(", with")
+    pct = lambda x: f"{round(x * 100)}%"   # noqa: E731
+    pv = sign_test(p["better"], p["worse"])
+    p["sign_test_p"] = round(pv, 3)
+    # "Yes" only when the per-task difference is also unlikely to be chance; cheaper-and-not-worse is "promising"
+    answer = "not yet" if small else ("yes" if good and pv < 0.05 and rb > ra else "promising" if good else "mixed")
+    return {"answer": answer, "vs": best, "paired": p,
+            "text": f"On the {p['tasks']} task{'s' if p['tasks'] != 1 else ''} both ran, {CONDITIONS[best][0]} {verb} the agent alone: "
+                    f"{pct(rb)} vs {pct(ra)} average success per task (each task counts once){tok}{t}. "
+                    f"Per task: better on {p['better']}, worse on {p['worse']}, same on {p['tie']}"
+                    f" (sign test p = {pv:.2f}{': could still be chance' if pv >= 0.05 else ''})."
                     + (" Too few tasks to call it yet (need 8+)." if small else "")}

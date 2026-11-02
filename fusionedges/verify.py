@@ -74,6 +74,9 @@ def run_build(root: Path, timeout: int = 900) -> dict:
     if "react-scripts" in deps:
         env["PUBLIC_URL"] = "."
         env["CI"] = "false"  # CRA treats lint warnings as errors when CI=true
+        # lint is not part of "does it work": an old CRA site's own ESLint config can fail the build with
+        # "jest/globals is unknown" before any change is made. Same for every condition (1 Nov).
+        env["DISABLE_ESLINT_PLUGIN"] = "true"
     inst = ensure_modules(root, timeout)
     out = inst["output"]
     if not inst["ok"]:

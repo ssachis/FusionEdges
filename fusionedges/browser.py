@@ -41,7 +41,14 @@ PROBE = r"""
   let els = selector ? [...document.querySelectorAll(selector)].filter(vis) : [];
   els = els.filter(el => top ? el.getBoundingClientRect().top + scrollY < 160
                              : el.getBoundingClientRect().bottom + scrollY > document.body.scrollHeight - 400);
-  const bar = els.sort((a, b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width)[0];
+  // the navbar is the element that holds the most visible links; among equals the smallest (innermost) one, so a
+  // tall hero <header> that merely contains the nav is not mistaken for it (browser check v2, 1 Nov)
+  const nlinks = el => [...el.querySelectorAll('a, button')].filter(vis).length;
+  const area = el => { const q = el.getBoundingClientRect(); return q.width * q.height; };
+  const ranked = els.map(el => [el, nlinks(el), area(el)]);
+  const most = ranked.reduce((m, x) => Math.max(m, x[1]), 0);
+  const bar = most ? ranked.filter(x => x[1] === most).sort((a, b) => a[2] - b[2])[0][0]
+                   : els.sort((a, b) => b.getBoundingClientRect().width - a.getBoundingClientRect().width)[0];
   const r = bar ? bar.getBoundingClientRect() : null;
   const links = bar ? [...bar.querySelectorAll('a, button')].filter(vis)
     .map(a => (a.innerText || a.getAttribute('aria-label') || '').trim().replace(/\s+/g, ' ')).filter(Boolean) : [];

@@ -248,8 +248,9 @@ class PortV2Test(unittest.TestCase):
             "components/NavbarClient.jsx": '"use client";\nexport default function NavbarClient({ items = [] }) { return <nav>{items.length}</nav>; }\n',
             "lib/data.js": 'import { sql } from "@vercel/postgres";\nexport async function getNav() { return sql`x`; }\n'})
         r, _ = self._run(d)
-        self.assertTrue(any(x["kind"] == "server-component" for x in r["resolved"]))
-        self.assertIn("NavbarClient.jsx", r["entry"] and "".join(r["files"]))
+        # either picked directly (it has the <nav>) or reached through the server wrapper
+        self.assertIn("NavbarClient", (self.tmp / "out" / r["entry"]).read_text())
+        self.assertNotIn("@vercel/postgres", json.dumps(r["packages_added"]))
 
     def test_existing_component_found_through_its_css(self):
         host = self.tmp / "host"
@@ -276,3 +277,82 @@ class PortV2Test(unittest.TestCase):
         src = port.shims_source("react-router-5", hooks=False)
         self.assertNotIn("useLocation", src)
         self.assertIn("RouterLink", src)
+
+
+class PortV3Test(unittest.TestCase):
+    """Fixes from the first browser-checked M runs (1 Nov): site CSS winning, shells, real navs, Headless UI 1."""
+
+    def test_utilities_beat_site_important(self):
+        css = port.important(".fe-navbar .hidden{display:none}@media (min-width:768px){.fe-navbar .md\\:flex{display:flex}}")
+        self.assertIn("display:flex!important", css)
+        self.assertIn("display:none!important", css)
+        self.assertIn(".fe-navbar a{color:inherit", port.scoped_reset(".fe-navbar"))
+
+    def test_shell_ported_with_its_usage(self):
+        tmp = Path(tempfile.mkdtemp())
+        try:
+            d = tmp / "d"
+            (d / "src/navigation").mkdir(parents=True)
+            (d / "src/templates").mkdir(parents=True)
+            (d / "src/navigation/NavbarTwoColumns.jsx").write_text(
+                'import Link from "next/link";\nconst NavbarTwoColumns = (props) => (<div><Link href="/">{props.logo}</Link>'
+                '<nav><ul>{props.children}</ul></nav><style jsx>{`.x{}`}</style></div>);\nexport { NavbarTwoColumns };\n')
+            (d / "src/templates/Logo.jsx").write_text('export const Logo = () => <span>Logo</span>;\n')
+            (d / "src/templates/Hero.jsx").write_text(
+                'import Link from "next/link";\nimport { NavbarTwoColumns } from "../navigation/NavbarTwoColumns";\n'
+                'import { Logo } from "./Logo";\nconst Hero = () => (<section><NavbarTwoColumns logo={<Logo xl />}>'
+                '<li><Link href="/a">A</Link></li><li><Link href="/b">B</Link></li></NavbarTwoColumns><p>hero</p></section>);\n'
+                'export default Hero;\n')
+            (d / "package.json").write_text(json.dumps({"dependencies": {"next": "14.0.0", "react": "18.2.0"}}))
+            out = tmp / "out"
+            shutil.copytree(HOST, out)
+            with unittest.mock.patch.object(port, "strip_types", identity_strip), \
+                    unittest.mock.patch.object(port, "compile_tailwind", lambda *a, **k: {"ok": False, "reason": "offline"}):
+                r = port.port(HOST, d, out, scan_for(HOST, d, False, "navbar"), "navbar", log=lambda m: None)
+            usage = (out / "src/fusion/navbar/src/templates/FusionUsage.jsx") if (out / "src/fusion/navbar/src").exists() \
+                else out / "src/fusion/navbar/templates/FusionUsage.jsx"
+            text = usage.read_text()
+            self.assertIn('<Link href="/a">A</Link>', text)
+            self.assertIn("<Logo xl />", text)
+            self.assertNotIn("hero", text)
+            self.assertNotIn("<style jsx", (out / "src/fusion/navbar/navigation/NavbarTwoColumns.jsx").read_text())
+            self.assertTrue(any(x["kind"] == "component-usage" for x in r["resolved"]))
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
+    def test_headlessui_v1_names(self):
+        t, n = port.headlessui_v1('import { Transition, TransitionChild } from "@headlessui/react";\n<TransitionChild/>')
+        self.assertEqual(n, 1)
+        self.assertIn("<Transition.Child/>", t)
+
+
+class QualitativeTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self._old = (paths.HOME, paths.EXAMPLES, paths.OUTPUT, paths.DB)
+        paths.HOME, paths.OUTPUT = self.tmp, self.tmp / "output"
+        paths.DB = paths.OUTPUT / "runs.db"
+
+    def tearDown(self):
+        paths.HOME, paths.EXAMPLES, paths.OUTPUT, paths.DB = self._old
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_review_file_loaded_once_and_summarised(self):
+        from fusionedges import qualitative
+        (self.tmp / "experiments/reviews").mkdir(parents=True)
+        with store.connect() as db:
+            db.execute("INSERT INTO diff_files VALUES ('r-port','src/App.js','modified','code',1,1,0,'','')")
+            db.execute("INSERT INTO diff_files VALUES ('r-port','src/fusion/navbar/a.jsx','added','code',20,0,0,'','')")
+            db.execute("INSERT INTO diff_files VALUES ('r-prompt','src/components/Navbar.js','modified','code',40,30,0,'','')")
+        rev = {"reviewer": "t", "reviewed_at": "2026-11-02", "set": "sidebyside-test", "tasks": [
+            {"task": "a ← b", "better": "M", "summary": "s", "runs": [
+                {"run_id": "r-port", "condition": "M", "looks_like_donor": "yes", "site_intact": "yes", "verdict": "works"},
+                {"run_id": "r-prompt", "condition": "A", "looks_like_donor": "no", "site_intact": "partly", "verdict": "not-ported"}]}]}
+        (self.tmp / "experiments/reviews/sidebyside-test.json").write_text(json.dumps(rev))
+        self.assertEqual(len(qualitative.load_pending()), 1)
+        self.assertEqual(qualitative.load_pending(), [])          # second time: already in the database
+        s = qualitative.summary()
+        self.assertEqual(s["better"], {"M": 1})
+        self.assertEqual(s["by_condition"]["M"]["good_for_user"], 1)
+        self.assertEqual(s["by_condition"]["M"]["median_site_lines_removed"], 1)
+        self.assertEqual(s["by_condition"]["A"]["median_site_lines_removed"], 30)
