@@ -435,6 +435,7 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
   .verdict{flex-wrap:wrap}.score{margin-left:0}
 }
 #github-repos{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--line);z-index:20;padding:12px;box-sizing:border-box}#github-picker{border:0;width:100%;height:calc(100% - 45px)}body.github-connected .wrap{margin-left:max(280px,calc((100vw - 1120px)/2));margin-right:24px}@media(max-width:760px){#github-repos{width:min(320px,90vw);box-shadow:4px 0 20px #0002}body.github-connected .wrap{margin-left:auto;margin-right:auto}}
+.source-picker{position:relative}.source-picker.has-repos input{padding-right:44px}#source-repo-toggle{position:absolute;right:5px;top:4px;bottom:4px;width:34px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;font-size:20px}#source-github-choice{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px #0002;max-height:280px;overflow:auto}#source-repositories button{display:block;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;background:transparent;color:var(--ink);font:inherit;overflow-wrap:anywhere;cursor:pointer}#source-repositories button:hover,#source-repositories button[aria-selected=true]{background:var(--site-soft)}#source-repositories p{padding:8px;font-size:13px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
@@ -483,8 +484,11 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
   <form class="composer" id="form" autocomplete="off">
     <div class="pair">
       <div class="field site"><label for="source"><i></i>Your site</label>
-        <input id="source" type="text" spellcheck="false" placeholder="github.com/you/my-site">
-        <div id="source-github-choice" class="hidden"><label for="source-repositories">Or select your GitHub repository</label><select id="source-repositories"><option value="">Choose a repository…</option></select></div></div>
+        <div class="source-picker">
+          <input id="source" type="text" spellcheck="false" placeholder="github.com/you/my-site" role="combobox" aria-autocomplete="list" aria-controls="source-repositories" aria-expanded="false">
+          <button id="source-repo-toggle" class="hidden" type="button" aria-label="Choose your GitHub repository" aria-controls="source-repositories" aria-expanded="false">▾</button>
+          <div id="source-github-choice" class="hidden"><div id="source-repositories" role="listbox" aria-label="Your GitHub repositories"></div></div>
+        </div></div>
       <svg class="link" viewBox="0 0 36 36" aria-hidden="true"><path d="M8 13h20m0 0-6-6m6 6-6 6M28 24H8m0 0 6-6m-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       <div class="field donor"><label for="donor"><i></i>Donor repo</label>
         <input id="donor" type="text" spellcheck="false" placeholder="github.com/someone/their-site"></div>
@@ -1250,8 +1254,38 @@ window.addEventListener("hashchange", route);
   $("#ghclose").onclick = () => set(false);
   const sidebar = $("#github-repos"), picker = $("#github-picker");
   let authWindow = null, connected = false;
-  const repoChoice=$("#source-github-choice"), repoSelect=$("#source-repositories");
-  repoSelect.onchange=()=>{if(repoSelect.value){$("#source").value=repoSelect.value;$("#source").dispatchEvent(new Event("input",{bubbles:true}));}};
+  const repoChoice=$("#source-github-choice"), repoSelect=$("#source-repositories"), sourceInput=$("#source"), repoToggle=$("#source-repo-toggle");
+  let repositoryNames=[], activeRepository=-1;
+  function closeRepos(){repoChoice.classList.add("hidden");sourceInput.setAttribute("aria-expanded","false");repoToggle.setAttribute("aria-expanded","false");sourceInput.removeAttribute("aria-activedescendant");activeRepository=-1;}
+  function chooseRepo(name){sourceInput.value="https://github.com/"+name;closeRepos();sourceInput.focus();}
+  function openRepos(query=""){
+    if(!repositoryNames.length)return;
+    const q=query.toLowerCase().replace(/^https?:\/\/(www\.)?github\.com\//,"");
+    repoSelect.replaceChildren();activeRepository=-1;sourceInput.removeAttribute("aria-activedescendant");
+    for(const name of repositoryNames.filter(name=>name.toLowerCase().includes(q))){
+      const item=document.createElement("button");item.type="button";item.role="option";item.id="source-repo-"+repoSelect.children.length;item.textContent=name;item.setAttribute("aria-selected","false");item.onmousedown=e=>e.preventDefault();item.onclick=()=>chooseRepo(name);repoSelect.append(item);
+    }
+    if(!repoSelect.children.length){const hint=document.createElement("p");hint.textContent="No matching repos. You can paste a repository link here.";repoSelect.append(hint);}
+    repoChoice.classList.remove("hidden");sourceInput.setAttribute("aria-expanded","true");repoToggle.setAttribute("aria-expanded","true");
+  }
+  repoToggle.onclick=()=>{if(repoChoice.classList.contains("hidden")){sourceInput.focus();openRepos();}else closeRepos();};
+  sourceInput.addEventListener("click",()=>openRepos());
+  sourceInput.addEventListener("input",()=>openRepos(sourceInput.value));
+  sourceInput.addEventListener("keydown",e=>{
+    if(e.key==="Escape"){closeRepos();return;}
+    if(e.key==="ArrowDown"||e.key==="ArrowUp"){
+      e.preventDefault();if(repoChoice.classList.contains("hidden"))openRepos();
+      const options=[...repoSelect.querySelectorAll('[role="option"]')];if(!options.length)return;
+      activeRepository=(activeRepository+(e.key==="ArrowDown"?1:-1)+options.length)%options.length;
+      options.forEach((item,i)=>item.setAttribute("aria-selected",String(i===activeRepository)));
+      sourceInput.setAttribute("aria-activedescendant",options[activeRepository].id);options[activeRepository].scrollIntoView({block:"nearest"});
+    }
+    if(e.key==="Enter"&&!repoChoice.classList.contains("hidden")){
+      e.preventDefault();e.stopImmediatePropagation();const options=repoSelect.querySelectorAll('[role="option"]');
+      if(activeRepository>=0&&options[activeRepository])chooseRepo(options[activeRepository].textContent);else closeRepos();
+    }
+  },true);
+  document.addEventListener("click",e=>{if(!e.target.closest(".source-picker"))closeRepos();});
   // Restore the browser's existing GitHub session without forcing another login.
   picker.src="http://127.0.0.1:8101/picker?watch=1";
   function connectGithub(){
@@ -1267,14 +1301,12 @@ window.addEventListener("hashchange", route);
   $("#hide-repos").onclick = () => { sidebar.classList.add("hidden"); document.body.classList.remove("github-connected"); };
   window.addEventListener("message", e => {
     if(e.origin !== "http://127.0.0.1:8101" || e.source !== picker.contentWindow) return;
-    if(e.data?.type === "fusionedges-connected") {if(!e.data.connected) connected=false; document.body.classList.toggle("github-connected", !!e.data.connected && !sidebar.classList.contains("hidden")); if(!e.data.connected){repoChoice.classList.add("hidden");repoSelect.replaceChildren(new Option("Choose a repository…", ""));} b.querySelector("span").textContent=e.data.connected ? "GitHub connected" : "Connect GitHub";}
+    if(e.data?.type === "fusionedges-connected") {if(!e.data.connected) connected=false; document.body.classList.toggle("github-connected", !!e.data.connected && !sidebar.classList.contains("hidden")); if(!e.data.connected){closeRepos();repositoryNames=[];repoToggle.classList.add("hidden");sourceInput.parentElement.classList.remove("has-repos");repoSelect.replaceChildren();} b.querySelector("span").textContent=e.data.connected ? "GitHub connected" : "Connect GitHub";}
     if(e.data?.type === "fusionedges-repositories" && Array.isArray(e.data.repositories)) {
-      const previous=repoSelect.value;
-      const names=[...new Set(e.data.repositories.filter(name=>typeof name==="string" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(name)))].slice(0,1000);
-      repoSelect.replaceChildren(new Option("Choose a repository…", ""));
-      for(const name of names)repoSelect.add(new Option(name,"https://github.com/"+name));
-      if([...repoSelect.options].some(o=>o.value===previous))repoSelect.value=previous;
-      repoChoice.classList.toggle("hidden",!names.length);
+      repositoryNames=[...new Set(e.data.repositories.filter(name=>typeof name==="string" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(name)))].slice(0,1000);
+      repoToggle.classList.toggle("hidden",!repositoryNames.length);
+      sourceInput.parentElement.classList.toggle("has-repos",!!repositoryNames.length);
+      if(!repositoryNames.length)closeRepos();
     }
     if(e.data?.type === "fusionedges-ready") {connected=true; if(authWindow && !authWindow.closed) authWindow.close();}
     if(e.data?.type === "fusionedges-repository" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(e.data.repo)) {
