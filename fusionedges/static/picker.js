@@ -1,4 +1,13 @@
 'use strict';
+// A top-level authorization return should never display a second repository UI.
+if(parent===window && !new URLSearchParams(location.search).has('auth_error')) {
+  document.documentElement.style.visibility='hidden';
+  const connectionChannel=new BroadcastChannel('fusionedges-github-connection');
+  connectionChannel.postMessage('refresh');
+  if(window.opener)window.close();
+  location.replace('http://127.0.0.1:8000/');
+} else {
+function initPicker(){
 let session,repos=[], loading=false, watchTimer=null;
 const watching=new URLSearchParams(location.search).has('watch');
 const $=s=>document.querySelector(s), channel=new BroadcastChannel('fusionedges-github-connection');
@@ -16,3 +25,7 @@ load().then(()=>{
   if(parent===window&&session.authenticated)channel.postMessage('refresh');
   if(watching&&!repos.length){let attempts=0;watchTimer=setInterval(()=>{if(++attempts>120){clearInterval(watchTimer);watchTimer=null;return;}refreshConnection();},5000);}
 }).catch(error);
+
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initPicker,{once:true});else initPicker();
+}
