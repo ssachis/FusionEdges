@@ -285,17 +285,19 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(404)
 
 
-def make_server(port=8101):
+def make_server(port=8000, github_workspace=False):
     from .github_http import Product
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server.github_workspace = github_workspace
     server.github = Product(f"http://127.0.0.1:{server.server_address[1]}", paths.HOME / ".github-workspaces")
     return server
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8101)
+    ap.add_argument("--port", type=int, default=8000)
     ap.add_argument("--no-open", action="store_true")
+    ap.add_argument("--github-workspace", action="store_true", help="Run the isolated optional GitHub connection service")
     a = ap.parse_args()
     try:
         from . import diffs
@@ -308,7 +310,14 @@ def main():
             print(f"Marked {n} earlier run(s) that were cut off by a restart as 'interrupted'.")
     except Exception as e:
         print(f"note: could not clean up the run history ({e})")
-    srv = make_server(a.port)
+    srv = make_server(a.port, github_workspace=a.github_workspace)
+    github_service = None
+    if not a.github_workspace and a.port == 8000:
+        try:
+            github_service = make_server(8101, github_workspace=True)
+            threading.Thread(target=github_service.serve_forever, daemon=True).start()
+        except OSError:
+            print("Optional GitHub connection port 8101 is already in use; stop an older FusionEdges workspace if needed.")
     url = f"http://127.0.0.1:{srv.server_address[1]}"
     print(f"FusionEdges running at {url}  (Ctrl+C to stop)")
     print(f"Repos are cloned to {paths.EXAMPLES}; results go to {paths.OUTPUT}")
@@ -322,6 +331,9 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
+        if github_service:
+            github_service.shutdown()
+            github_service.server_close()
         preview.stop()
 
 

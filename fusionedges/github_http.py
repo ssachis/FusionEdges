@@ -14,7 +14,12 @@ class Product:
 
 def handle(handler):
     parsed=urllib.parse.urlparse(handler.path);path=parsed.path
-    public=path in ('/','/projects','/projects.js','/projects.css','/github-setup','/auth/github/start','/auth/github/callback')
+    if not getattr(handler.server, 'github_workspace', False):
+        if path.startswith(('/api/github/', '/auth/github/')) or path in ('/projects', '/picker'):
+            handler._send(b'{"error":"Start the optional GitHub connection service on port 8101."}', 'application/json', 404)
+            return True
+        return False
+    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/callback')
     if path=='/api/status':return False
     if path=='/lab' and handler.command=='GET':
         handler._send(b'','text/plain',303,{'Location':'http://127.0.0.1:8000/'})
@@ -27,11 +32,13 @@ def handle(handler):
     try:
         if handler.headers.get('Host')!=urllib.parse.urlparse(product.origin).netloc:
             raise GitHubError('Use the local address printed by FusionEdges.',403)
-        if handler.command=='GET' and path in ('/','/projects','/projects.js','/projects.css','/github-setup'):
-            file={'/':'projects.html','/projects':'projects.html','/projects.js':'projects.js','/projects.css':'projects.css','/github-setup':'github-setup.html'}[path]
+        if handler.command=='GET' and path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup'):
+            file={'/':'projects.html','/projects':'projects.html','/projects.js':'projects.js','/projects.css':'projects.css','/picker':'picker.html','/picker.js':'picker.js','/picker.css':'picker.css','/github-setup':'github-setup.html'}[path]
             p=Path(__file__).parent/'static'/file
             headers={'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer',
                      'Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https://avatars.githubusercontent.com; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'"}
+            if path == '/picker':
+                headers['Content-Security-Policy'] = headers['Content-Security-Policy'].replace("frame-ancestors 'none'", "frame-ancestors http://127.0.0.1:8000")
             handler._send(p.read_bytes(),mimetypes.guess_type(str(p))[0] or 'text/plain',extra=headers);return True
         session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=handler.command=='GET' and path in ('/api/github/session','/auth/github/start'))
         def respond(data,status=200,s=None):
@@ -46,7 +53,7 @@ def handle(handler):
         if handler.command=='GET' and path=='/auth/github/callback':
             q=urllib.parse.parse_qs(parsed.query)
             new=product.sessions.callback(session,(q.get('code') or [''])[0],(q.get('state') or [''])[0])
-            redirect('/projects',new);return True
+            redirect('/picker',new);return True
         params={}
         if handler.command=='POST':
             product.sessions.csrf(session,handler.headers)

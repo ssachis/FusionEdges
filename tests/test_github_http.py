@@ -17,7 +17,7 @@ class HTTPTests(unittest.TestCase):
     def setUp(self):
         self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
         self.home_patch=patch.object(paths,'HOME',Path(self.temp.name));self.home_patch.start();self.addCleanup(self.home_patch.stop)
-        self.server=make_server(0);threading.Thread(target=self.server.serve_forever,daemon=True).start()
+        self.server=make_server(0, github_workspace=True);threading.Thread(target=self.server.serve_forever,daemon=True).start()
         self.addCleanup(self.server.server_close);self.addCleanup(self.server.shutdown)
         self.origin='http://127.0.0.1:'+str(self.server.server_address[1])
         self.cookies=http.cookiejar.CookieJar();self.browser=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies))
@@ -63,5 +63,19 @@ class ProductOriginTests(unittest.TestCase):
         self.assertEqual(self.call('/api/history')[0],404)
         _,s=self.call('/api/github/session')
         self.assertEqual(self.call('/api/run',{'source':'anything'},s['csrf'])[0],404)
+
+class DefaultInterfaceTests(unittest.TestCase):
+    def test_default_server_keeps_two_link_interface(self):
+        server=make_server(0)
+        threading.Thread(target=server.serve_forever,daemon=True).start()
+        try:
+            origin='http://127.0.0.1:'+str(server.server_address[1])
+            with urllib.request.urlopen(origin+'/') as response:
+                html=response.read().decode()
+                self.assertIn('id="source"',html)
+                self.assertIn('id="donor"',html)
+                self.assertIn('id="ghconnect"',html)
+                self.assertNotIn('COMPONENT WORKSPACE',html)
+        finally:server.shutdown();server.server_close()
 
 if __name__=='__main__':unittest.main()

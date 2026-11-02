@@ -1,18 +1,20 @@
-# GitHub component integrations — local feature branch
+# Optional GitHub connection
 
-Branch: `codex/github-component-pr`. It has its own worktree. The original Desktop pilot folder, experiment files, model settings, progress and running process are not changed by this feature.
+FusionEdges keeps its original interface and two repository-link fields. Login is optional. Selecting a repository in the left sidebar fills “Your site”; the donor link and existing transfer/report/analysis controls stay available.
 
-## Start the separate workspace
+## Start
 
-From the feature worktree, run:
+Start the main app from the Desktop project in your terminal with your existing AI environment:
 
 ```bash
-zsh start-github-feature.command
+python3 -m fusionedges.server --port 8000
 ```
 
-The local app opens at **http://127.0.0.1:8101**. Its workspace is separate from the research server. The `/lab` link points to the separate research server at port 8000; experiment assets/progress remain in the original Desktop folder. Repository-generated HTML and legacy experiment APIs are not served on the authenticated GitHub workspace’s origin.
+The main app also starts the optional connection service on port 8101. `zsh start-github-feature.command` is available if you need to start that service separately.
 
-You can connect GitHub and inspect the UI while the pilot runs. Wait for the pilot to finish or pause before running real AI integrations with the same Gemini key: those would share the provider quota even though the files/processes are separate.
+Open **http://127.0.0.1:8000**. Click **Connect GitHub**. App login or a token unlocks the repository list. You can hide the list and keep pasting links. The connection service uses port 8101 so repository previews cannot access its authenticated APIs. Restart any older server still displaying the replaced workspace before starting these commands.
+
+The original transfer flow is unchanged; selecting a private repository does not add authenticated cloning to that legacy flow. The separately implemented PR review workspace remains available at `http://127.0.0.1:8101/projects` as an optional secondary screen. Its transfer and publication flow is described below; it is not the default app or a required login step. Bringing its private-repository transfer and approval controls into the original result view remains follow-up work.
 
 ## User flow
 
