@@ -19,7 +19,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import browser, compare, diffs, memory, paths, port, rag, records, store
+from . import browser, compare, diffs, memory, metrics, paths, port, rag, records, store
 from .agents import fit_to_limit, report_markdown, run_edit_agent, run_oneshot, run_report_agent
 from .checks import component_checks, run_checks
 from .repos import fetch
@@ -112,6 +112,15 @@ def _git_commit(folder: Path, message: str, log):
 
 def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = None) -> dict:
     t0 = time.time()
+    timings, _started = {}, {}
+    _outer_stage = stage
+
+    def stage(sid, state, note=""):      # same stages as before, now also timed (seconds per stage -> run_metrics)
+        if state == "running":
+            _started[sid] = time.time()
+        elif sid in _started:
+            timings[sid] = round(timings.get(sid, 0) + time.time() - _started.pop(sid), 1)
+        _outer_stage(sid, state, note)
     mode = params.get("mode", "prompt")
     component = (params.get("component") or "").strip() if params.get("add_component") or params.get("component") else ""
     if params.get("add_component") and not component:
@@ -297,10 +306,16 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
     except Exception as e:
         rec["status"], rec["error"] = "error", str(e)
         rec["seconds"] = round(time.time() - t0, 1)
+        rec["timings"] = timings
         save()
         raise
     rec["seconds"] = round(time.time() - t0, 1)
+    rec["timings"] = timings
     save()
+    try:
+        metrics.save(rec, params.get("experiment") or "")
+    except Exception as e:  # noqa: BLE001 - metrics must never fail a run
+        log(f"note: could not record the run metrics ({e})")
     if params.get("auto_compare", True):
         try:
             c = compare.auto_pair(rec, log)

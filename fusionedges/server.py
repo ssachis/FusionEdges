@@ -30,6 +30,11 @@ def _stages(mode):
     s = [("fetch", "Clone both repos"), ("scan", "Scan both codebases")]
     if mode in ("report", "history"):
         s.append(("report", "Retrieve code" + (" + past cases" if mode == "history" else "") + " + write compatibility report"))
+    if mode == "port":
+        return s + [("port", "Port the component by rule (no AI)"), ("agent", "Record the result"), ("check", "Build + check the result")]
+    if mode == "port-ai":
+        return s + [("port", "Port the component by rule (no AI)"), ("agent", "Build; AI fixes only what still fails"),
+                    ("check", "Build + check the result")]
     return s + [("agent", "AI writes the code (+ fixes build errors)"), ("check", "Build + check the result")]
 
 
@@ -220,7 +225,7 @@ class Handler(BaseHTTPRequestHandler):
             if not llm.configured():
                 return self._json({"error": "No AI key is set. Export GROQ_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY "
                                             "or OPENAI_API_KEY in the terminal and restart the server."}, 400)
-            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history") else "prompt"
+            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history", "port", "port-ai") else "prompt"
             job = Job(params["mode"])
             JOBS[job.id] = job
             busy = RUN_LOCK.locked()

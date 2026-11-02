@@ -322,6 +322,29 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
 .why .wk{display:block;font:700 12px var(--sans);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:2px}
 @media (max-width:760px){.why li{font-size:15.5px;padding-left:56px}.why li::before{left:12px}}
 
+/* FusionEdges vs a plain agent */
+.va-head{margin:22px 0 4px}.va-head h2{margin:0;font:700 26px var(--display)}
+.va-answer{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:2px solid var(--ink);border-radius:14px;padding:12px 14px;margin:10px 0 14px}
+.va-answer b{font:700 20px var(--display);white-space:nowrap}.va-answer.yes{border-color:var(--ok);background:var(--ok-soft)}.va-answer.mixed,.va-answer.notyet{border-color:var(--warn);background:var(--warn-soft)}
+.va-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.va-card{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+.va-card.base{border-color:var(--ink)}.va-card h3{margin:0;font:700 16px var(--sans)}.va-card p{margin:2px 0 8px;font-size:12.5px;color:var(--muted)}
+.va-card dl{display:grid;grid-template-columns:1fr auto;gap:3px 10px;margin:8px 0 0;font-size:13.5px}.va-card dt{color:var(--muted)}.va-card dd{margin:0;font-weight:700;text-align:right}
+.va-rate{height:10px;border-radius:6px;background:var(--bad-soft);overflow:hidden;margin:6px 0 2px}.va-rate i{display:block;height:100%;background:var(--ok)}
+.va-big{font:700 26px/1.1 var(--display)}.va-big small{font:500 13px var(--sans);color:var(--muted)}
+.va-fails{margin:8px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--muted)}.va-fails li{display:flex;justify-content:space-between;gap:8px}
+.va-mx{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}.va-mx th,.va-mx td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.va-mx th{font:600 12px var(--sans);color:var(--muted)}.va-mx td.c{white-space:nowrap}
+.cell-ok{color:var(--ok);font-weight:700}.cell-bad{color:var(--bad);font-weight:700}.cell-part{color:var(--warn);font-weight:700}
+.va-mx small{display:block;color:var(--muted);font-size:11.5px;font-weight:400;white-space:normal;max-width:24ch}
+.va-obs{list-style:none;margin:6px 0 0;padding:0}.va-obs li{padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.va-obs .when{color:var(--muted);font-size:12px;margin-right:6px}.va-obs .tk{font-weight:600}
+.cpill{display:inline-block;border-radius:6px;padding:0 6px;font:700 11px var(--sans);margin-right:6px;background:var(--line)}
+.cpill.A{background:var(--site-soft);color:var(--site)}.cpill.D,.cpill.E{background:var(--donor-soft);color:var(--donor)}.cpill.M,.cpill.MA{background:var(--ok-soft);color:var(--ok)}.cpill.M1{background:var(--line);color:var(--muted)}
+.va-filter{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.va-filter button{border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:3px 10px;font:600 12.5px var(--sans);color:var(--ink);cursor:pointer}
+.va-filter button[aria-pressed=true]{border-color:var(--ink)}
+.va-sec{margin-top:22px}.va-sec h3{margin:0 0 2px;font:700 18px var(--sans)}.va-sec>p{margin:0;color:var(--muted);font-size:13px}
+@media (max-width:640px){.va-mx thead{display:none}.va-mx tr{display:block;border-bottom:2px solid var(--line);padding:6px 0}.va-mx td{display:flex;justify-content:space-between;border:0;padding:3px 0}.va-mx td::before{content:attr(data-l);color:var(--muted);font-size:12px}}
 /* tabs + analysis */
 .tabs{display:flex;gap:4px;margin:18px 0 0;border-bottom:2px solid var(--ink)}
 .tabs a{padding:9px 16px;font:700 15px var(--sans);color:var(--muted);text-decoration:none;border:2px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;margin-bottom:-2px}
@@ -456,6 +479,9 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
         <button type="button" role="tab" aria-selected="false" data-mode="history">
           <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="3" width="16" height="20" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 9h8M9 13h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="19" cy="19" r="5" fill="var(--surface)" stroke="currentColor" stroke-width="2"/><path d="M19 16.5V19l1.7 1.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>
           <span>Report + history<small>learns from past reports</small></span></button>
+        <button type="button" role="tab" aria-selected="false" data-mode="port-ai">
+          <svg viewBox="0 0 26 26" aria-hidden="true"><path d="M5 9h7M5 17h7M14 9l7 4-7 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>FusionEdges<small>rules first, AI only if needed</small></span></button>
       </div>
     </div>
     <p class="explain" id="explain"></p>
@@ -508,10 +534,12 @@ let mode = "prompt", prompts = {}, edited = false, poll = null;
 const EXPLAIN = {
   prompt: "The agent gets the component's code and your prompt, nothing else.",
   report: "A compatibility report is written first (what breaks, where it mounts, what to change), then sent to the agent with the same code.",
-  history: "Like Agent + report, but the report also sees past cases from earlier reports on other repos and how those runs turned out. This task's own earlier runs are never used."
+  history: "Like Agent + report, but the report also sees past cases from earlier reports on other repos and how those runs turned out. This task's own earlier runs are never used.",
+  "port-ai": "FusionEdges ports the component by rule (types, imports, Next.js APIs, Tailwind, packages, mounting) with no AI. Only if the result does not build or look right is the AI asked, with a small message about what is left.",
+  port: "FusionEdges ports the component by rule only. No AI call at all."
 };
 const OUTCOME = {"passed":["All checks passed","ok"], "passed-unbuilt":["Checks passed, not built","meh"], "partial":["Some checks failed","meh"], "failed":["Failed","bad"]};
-const SHORT = {fetch:"Clone", scan:"Scan", report:"Report", agent:"Write code", check:"Check"};
+const SHORT = {fetch:"Clone", scan:"Scan", report:"Report", port:"Port by rule", agent:"Write code", check:"Check"};
 
 function key(){ return "component"; }
 function fillPrompt(){ if (!edited) $("#prompt").value = (prompts[key()] || "").split("{name}").join($("#cmp").value.trim() || "component"); }
@@ -527,7 +555,7 @@ document.querySelectorAll(".seg button").forEach(b => b.onclick = () => {
   mode = b.dataset.mode;
   document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-selected", x === b));
   $("#explain").textContent = EXPLAIN[mode];
-  $("#go").textContent = mode === "prompt" ? "Run" : "Write report & run";
+  $("#go").textContent = mode === "prompt" || mode.startsWith("port") ? "Run" : "Write report & run";
 });
 $("#explain").textContent = EXPLAIN.prompt;
 
@@ -686,7 +714,7 @@ async function loadHistory(){
   $("#history").innerHTML = shown.map(r => {
     const [w, c] = OUTCOME[r.outcome] || [r.status === "error" ? "Error" : (r.outcome || r.status), r.status === "error" ? "bad" : "meh"];
     return `<button class="run" data-id="${esc(r.id)}"><span class="when">${esc((r.created||"").replace("T"," ").slice(5,16))}</span>
-      <span class="what"><span class="mode ${r.mode !== "prompt" ? "rep" : ""}" style="margin:0 8px 0 0">${{report: "with report", history: "report + history"}[r.mode] || "agent alone"}</span><b>${esc(r.component || "")}</b><span>${esc(r.source)} ← ${esc(r.donor)}</span></span>
+      <span class="what"><span class="mode ${r.mode !== "prompt" ? "rep" : ""}" style="margin:0 8px 0 0">${{report: "with report", history: "report + history", port: "FusionEdges rules", "port-ai": "FusionEdges"}[r.mode] || "agent alone"}</span><b>${esc(r.component || "")}</b><span>${esc(r.source)} ← ${esc(r.donor)}</span></span>
       <span class="pill ${c}">${esc(w)}${r.score ? " · " + esc(r.score) : ""}</span></button>`; }).join("")
     + (j.runs.length > 5 ? `<button type="button" class="ghost seeall" id="seeall" aria-expanded="${showAllRuns}">${showAllRuns ? "Show fewer" : `See all ${j.runs.length} runs`}</button>` : "");
   const sa = $("#seeall"); if (sa) sa.onclick = () => { showAllRuns = !showAllRuns; loadHistory(); };
@@ -704,7 +732,7 @@ async function getDiff(id, refresh){
   return DIFFS[id] = await r.json();
 }
 const getRun = async id => (await fetch("/api/run/" + encodeURIComponent(id))).json();
-const modeName = m => ({report: "Agent + report", history: "Report + history"})[m] || "Agent alone";
+const modeName = m => ({report: "Agent + report", history: "Report + history", port: "FusionEdges (rules only)", "port-ai": "FusionEdges"})[m] || "Agent alone";
 function bar(a, r){
   const t = a + r; if (!t) return "";
   const n = Math.min(5, Math.max(1, Math.round(Math.log2(t + 1)))), na = Math.round(n * a / t);
@@ -987,18 +1015,87 @@ function verdictBar(counts){
   return `<div class="vbar" role="img" aria-label="${order.map(k => `${counts[k] || 0} ${k}`).join(", ")}">${order.map(k => `<i class="${VCLS(k)}" style="width:${(counts[k] || 0) / tot * 100}%"></i>`).join("")}</div>
     <div class="legend">${order.filter(k => counts[k]).map(k => `<span>${counts[k]} ${k}</span>`).join("")}</div>`;
 }
+
+/* ---------- FusionEdges vs a plain AI agent (run_metrics) ---------- */
+const fmtN = n => n == null ? "–" : Math.round(n).toLocaleString();
+const fmtS = s => s == null ? "–" : s < 90 ? `${Math.round(s)} s` : `${(s / 60).toFixed(1)} min`;
+function vsAgentHTML(v){
+  if (!v || !v.conditions || !v.conditions.length) return `<div class="va-head"><h2>FusionEdges vs a plain AI agent</h2></div><p class="tag">No runs measured yet.</p>`;
+  const h = v.headline, cls = {yes: "yes", mixed: "mixed", "not yet": "notyet"}[h.answer] || "notyet";
+  const ord = ["A", "D", "E", "MA", "M", "M1", "A2", "D2"], conds = v.conditions.slice().sort((a, b) => ord.indexOf(a.condition) - ord.indexOf(b.condition));
+  const base = conds.find(c => c.condition === "A");
+  const vsBase = (c, key, lower) => {
+    if (!base || c.condition === "A" || base[key] == null || c[key] == null || !base[key]) return "";
+    const d = Math.round((c[key] - base[key]) / base[key] * 100);
+    if (!d) return " <small>same as agent</small>";
+    const good = lower ? d < 0 : d > 0;
+    return ` <small style="color:var(--${good ? "ok" : "bad"})">${d > 0 ? "+" : ""}${d}%</small>`;
+  };
+  const card = c => `<div class="va-card ${c.condition === "A" ? "base" : ""}">
+    <h3><span class="cpill ${esc(c.condition)}">${esc(c.condition)}</span>${esc(c.name)}</h3><p>${esc(c.what)}</p>
+    <div class="va-big">${c.works} <small>of ${c.runs} runs work</small></div>
+    <div class="va-rate" role="img" aria-label="${Math.round(c.success_rate * 100)}% work"><i style="width:${c.success_rate * 100}%"></i></div>
+    <dl>
+      <dt>Tasks</dt><dd>${c.tasks}</dd>
+      <dt>Tokens per run (median)</dt><dd>${fmtN(c.median_tokens)}${vsBase(c, "median_tokens", true)}</dd>
+      <dt>Time per run (median)</dt><dd>${fmtS(c.median_seconds)}${vsBase(c, "median_seconds", true)}</dd>
+      <dt>AI calls per run</dt><dd>${c.median_api_calls ?? "–"}</dd>
+      <dt>Tokens per working result</dt><dd>${c.tokens_per_working == null ? (c.works ? "0" : "–") : fmtN(c.tokens_per_working)}</dd>
+      <dt>Broke the site's own page</dt><dd>${c.host_regressions}</dd>
+      <dt>Checked in a browser</dt><dd>${c.browser_checked}/${c.runs}</dd>
+    </dl>
+    ${c.top_failures.length ? `<ul class="va-fails">${c.top_failures.slice(0, 4).map(f => `<li><span>${esc(f.kind)}</span><span>×${f.count}</span></li>`).join("")}</ul>` : ""}</div>`;
+  const cols = conds.map(c => c.condition);
+  const cell = x => {
+    if (!x) return '<span class="tag">–</span>';
+    const k = x.works === x.runs ? "cell-ok" : x.works ? "cell-part" : "cell-bad", mark = x.works === x.runs ? "✓" : x.works ? "◐" : "✗";
+    return `<span class="${k}">${mark} ${x.works}/${x.runs}</span> <span class="tag">${fmtN(x.tokens)} tok · ${fmtS(x.seconds)}</span>${x.failures.length && x.works < x.runs ? `<small>${esc(x.failures.slice(0, 3).join(", "))}</small>` : ""}`;
+  };
+  const matrix = `<table class="va-mx"><thead><tr><th>Task (site ← donor)</th>${cols.map(c => `<th><span class="cpill ${esc(c)}">${esc(c)}</span>${esc(v.names[c] || c)}</th>`).join("")}</tr></thead><tbody>
+    ${v.matrix.map(r => `<tr><td><b>${esc(r.task)}</b></td>${cols.map(c => `<td class="c" data-l="${esc(v.names[c] || c)}">${cell(r.cells[c])}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  const obsList = cond => v.observations.filter(o => !cond || o.condition === cond).slice(0, 60).map(o => `<li><span class="when">${esc((o.created || "").replace("T", " ").slice(5, 16))}</span><span class="cpill ${esc(o.condition)}">${esc(o.condition)}</span><span class="tk">${esc(o.task)}</span> — ${esc(o.observation)} <a href="#run=${encodeURIComponent(o.run_id)}" class="tag">open run</a></li>`).join("") || '<li class="tag">none</li>';
+  return `
+    <div class="va-head"><h2>Does FusionEdges beat a plain AI agent?</h2></div>
+    <div class="va-answer ${cls}"><b>${esc({yes: "Yes", mixed: "Mixed", "not yet": "Not yet"}[h.answer] || h.answer)}</b><span>${esc(h.text)}</span></div>
+    <div class="va-cards">${conds.map(card).join("")}</div>
+    <p class="tag" style="margin-top:8px">A run <b>works</b> when it builds, every check passes and (when checked) the page shows the navbar at desktop and phone width with no new errors. Percentages compare with the agent alone (A); green is better. Runs whose AI call failed are left out.</p>
+    <div class="va-sec"><h3>Task by task</h3><p>Same task, each approach. ✓ all runs worked · ◐ some · ✗ none. Under each: median tokens and time, and what went wrong.</p>${matrix}</div>
+    <div class="va-sec"><h3>What we observed</h3><p>One line per run, newest first. Click “open run” for the code, checks and screenshots.</p>
+      <div class="va-filter" role="group" aria-label="Show runs of">${[""].concat(cols).map(c => `<button type="button" data-c="${esc(c)}" aria-pressed="${c === "" ? "true" : "false"}">${c ? esc(v.names[c] || c) : "All"}</button>`).join("")}</div>
+      <ul class="va-obs" id="vaObs">${obsList("")}</ul></div>
+    <details class="va-sec"><summary><b>How this is measured</b></summary><p class="method">
+      <b>Same task, same model.</b> Every approach gets the same site, donor, component and pinned free-tier model. The only differences are the report (D) or the rule-based port (M, MA).<br>
+      <b>Tokens</b> are what the provider reported (prompt + answer), report step and coding step added together. <b>Time</b> is the whole run: clone, scan, AI, install, build and browser check.<br>
+      <b>Tokens per working result</b> = all tokens spent ÷ runs that work: the cost of getting one usable navbar.<br>
+      <b>Small numbers:</b> until there are 8+ tasks per approach, read this as a direction, not a result. The confirmatory test (sign test over tasks) is in experiments/heldout-plan-2026-10-27.md.</p></details>
+    <hr style="margin:28px 0 0;border:0;border-top:2px solid var(--line)">`;
+}
+function wireVsAgent(box, v){
+  box.querySelectorAll(".va-filter button").forEach(b => b.onclick = () => {
+    box.querySelectorAll(".va-filter button").forEach(x => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
+    const c = b.dataset.c;
+    box.querySelector("#vaObs").innerHTML = v.observations.filter(o => !c || o.condition === c).slice(0, 60).map(o => `<li><span class="when">${esc((o.created || "").replace("T", " ").slice(5, 16))}</span><span class="cpill ${esc(o.condition)}">${esc(o.condition)}</span><span class="tk">${esc(o.task)}</span> — ${esc(o.observation)} <a href="#run=${encodeURIComponent(o.run_id)}" class="tag">open run</a></li>`).join("") || '<li class="tag">none</li>';
+  });
+}
 async function loadAnalysis(exp){
   const box = $("#view-analysis");
   box.innerHTML = '<p class="tag" style="margin-top:24px">Loading…</p>';
   let a; try { a = await (await fetch("/api/analysis" + (exp ? "?experiment=" + encodeURIComponent(exp) : ""))).json(); }
   catch(e){ box.innerHTML = '<div class="err">Could not load the analysis.</div>'; return; }
   const s = a.summary;
-  if (!a.rows.length) { box.innerHTML = `<div class="an-head"><h2>Analysis</h2></div><p class="tag">No comparisons yet. Run the same task with and without the report, or run an experiment.</p>`; return; }
+  const expSel = `<select id="anExp" aria-label="Experiment"><option value="">All experiments</option>${a.experiments.map(e => `<option ${e === a.experiment ? "selected" : ""}>${esc(e)}</option>`).join("")}</select>`;
+  if (!a.rows.length) {
+    box.innerHTML = `<div class="an-head" style="justify-content:flex-end">${expSel}</div>` + vsAgentHTML(a.vs_agent) +
+      `<p class="tag">No report-vs-agent pairs in this selection yet.</p>`;
+    $("#anExp").onchange = e => loadAnalysis(e.target.value);
+    wireVsAgent(box, a.vs_agent);
+    return;
+  }
   const pct = (x, y) => y ? `${x > y ? "+" : ""}${Math.round((x - y) / y * 100)}%` : "";
   const fairImp = (s.fair_final || {}).improved || 0;
   const exps = `<select id="anExp" aria-label="Experiment"><option value="">All experiments</option>${a.experiments.map(e => `<option ${e === a.experiment ? "selected" : ""}>${esc(e)}</option>`).join("")}</select>`;
-  box.innerHTML = `
-    <div class="an-head"><h2>Did the report help?</h2>${exps}</div>
+  box.innerHTML = `<div class="an-head" style="justify-content:flex-end">${exps}</div>` + vsAgentHTML(a.vs_agent) + `
+    <div class="an-head"><h2>Did the report help? <span class="tag" style="font:500 14px var(--sans)">agent alone vs agent + report, run pairs</span></h2></div>
     ${a.answer ? `<div class="yesno ${{yes: "improved", no: "worse"}[a.answer.answer] || "inconclusive"}" style="margin:10px 0 6px"><b>${esc({yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[a.answer.answer] || a.answer.answer)}</b><span>${esc(a.answer.reason)}<small>Pilot numbers. Your answers on the Transfer page count first.</small></span></div>` : ""}
     <p class="tag" style="margin:0">Agent alone (A) vs agent with the compatibility report (D) on the same task. Verdicts after reading the code and checking the page in a browser, where available.</p>
     <div class="tiles">
@@ -1030,6 +1127,7 @@ async function loadAnalysis(exp){
       ${a.lessons.map(l => `<div class="lesson"><span class="kind ${l.kind === "do" ? "do" : "avoid"}">${l.kind === "do" ? "Do" : "Avoid"}</span>${esc(l.text)} <span class="tag">· ${esc(l.trust)} · from ${esc(l.task)}</span></div>`).join("") || '<p class="tag">No lessons yet.</p>'}</div>
     <p class="method"><b>How to read this.</b> Automatic verdicts come from static checks (build, rendered, script selectors, packages). Reviewed verdicts come from reading the diff and opening the page in Chromium at 1280px and 390px; when they differ, the review wins. Small numbers: treat this as a pilot, not a result.</p>`;
   $("#anExp").onchange = e => loadAnalysis(e.target.value);
+  wireVsAgent(box, a.vs_agent);
   wireFeedback(box, () => loadAnalysis(a.experiment));
 }
 

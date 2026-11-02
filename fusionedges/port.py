@@ -34,6 +34,7 @@ _SPEC = re.compile(r"""(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+|\brequire\s*\(\s*
 _DIRECTIVE = re.compile(r"""^\s*['"]use (client|server)['"];?\s*\n""", re.M)
 _PUBLIC_REF = re.compile(r"""(['"(])(/[\w./-]+\.(?:png|jpe?g|gif|svg|webp|avif|ico))(['")])""", re.I)
 _IS_PKG = re.compile(r"^(?:@[\w.-]+/[\w.-]+|[\w.-]+)")
+VERSION = 2   # 1: first 20 runs (1 Nov); 2: barrels, backend stand-ins, React-compatible versions, old router, CSS-first finds
 TOOLS = Path(os.environ.get("FUSIONEDGES_TOOLS", Path.home() / ".cache" / "fusionedges"))
 
 
@@ -107,11 +108,14 @@ def strip_types(files: dict, log=print) -> dict | None:
 
 
 # ------------------------------------------------------------------ shims for Next.js APIs
-def shims_source(router: str) -> str:
-    """next/link, next/image, next/navigation ... on top of whatever routing the host has."""
+def shims_source(router: str, hooks: bool = True) -> str:
+    """next/link, next/image, next/navigation ... on top of whatever routing the host has. `hooks` False for
+    react-router-dom before 5.1 (no useLocation): links still use the router, the pathname is read from the URL."""
     v6 = router.startswith("react-router-6") or router.startswith("react-router-7")
     v5 = router.startswith("react-router-5") or router.startswith("react-router-4")
     rr = v5 or v6
+    if rr and not hooks:
+        return _shims_old_router()
     lines = ['// Written by FusionEdges (deterministic port): Next.js APIs mapped onto this site.',
              'import React from "react";']
     if rr:
@@ -172,6 +176,19 @@ export function Script({ src, strategy, onLoad, ...rest }) {
 export function Head() { return null; }
 """)
     return "\n".join(lines) + "\n"
+
+
+def _shims_old_router() -> str:
+    base = shims_source("", True).replace('import React from "react";',
+                                          'import React from "react";\nimport { Link as RouterLink } from "react-router-dom";')
+    base = base.replace('  return <a href={to} {...rest}>{children}</a>;\n}',
+                        '  if (EXTERNAL.test(to) || rest.target === "_blank") return <a href={to} {...rest}>{children}</a>;\n'
+                        '  return <RouterLink to={to} replace={replace} {...rest}>{children}</RouterLink>;\n}', 1)
+    return base.replace('export function usePathname() { return typeof window === "undefined" ? "/" : window.location.pathname; }',
+                        'export function usePathname() {\n'
+                        '  const [p, setP] = React.useState(typeof window === "undefined" ? "/" : window.location.pathname);\n'
+                        '  React.useEffect(() => { const t = setInterval(() => setP(window.location.pathname), 250); return () => clearInterval(t); }, []);\n'
+                        '  return p;\n}')
 
 
 def _shim_import(spec: str, clause: str) -> str | None:
@@ -393,15 +410,21 @@ def _insert_into_app(host: Path, app_rel: str, entry_abs: str, name: str) -> boo
 def port(source: Path, donor: Path, output: Path, scan: dict, component: str, log=print) -> dict:
     t0 = time.time()
     source, donor, output = Path(source), Path(donor), Path(output)
-    rec = {"ok": False, "component": component, "files": [], "packages_added": {}, "assets": [], "mount": {},
+    rec = {"version": VERSION, "ok": False, "component": component, "files": [], "packages_added": {}, "assets": [], "mount": {},
            "resolved": [], "unresolved": [], "notes": []}
     main = rag.find_component_files(donor, component, limit=1)
     if not main:
         rec["reason"] = f"no '{component}' file found in the donor"
         rec["unresolved"].append({"kind": "component-not-found", "text": rec["reason"]})
         return rec
-    closure, _ = rag.import_closure(donor, main, max_files=30, max_depth=4)
-    donor_files = [r for r, _, _ in closure]
+    ct = client_target(donor, main[0])
+    if ct:
+        rec["resolved"].append({"kind": "server-component", "action": f"{main[0]} only loads data on the server and renders "
+                                f"{ct}; the client component is ported (its props use their defaults)"})
+        main = [ct]
+    cl = closure(donor, main)
+    bad = tainted(cl, donor) - {main[0]}
+    donor_files = cl["files"]
     slug = _slug(component)
     src = "src/" if (output / "src").is_dir() else ""
     base = f"{src}fusion/{slug}"
@@ -422,7 +445,31 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
     shim_rel = f"{base}/next-shims.jsx"
 
     # 1. TypeScript -> JavaScript (types only; JSX kept)
-    texts = {r: read(donor / r, 400_000) for r in donor_files}
+    texts = dict(cl["texts"])
+    if bad:
+        for r in bad:
+            why = ", ".join(cl["backend"].get(r) or ["imports a file that needs one"])
+            texts[r] = stub_for(texts[r], r, why)
+        rec["resolved"].append({"kind": "backend-feature", "action": "replaced by stand-ins (need a backend): "
+                                + ", ".join(f"{Path(r).stem} ({', '.join(cl['backend'].get(r) or ['via import'])})" for r in sorted(bad))})
+        # files only the stubs imported are no longer needed
+        keep, need = set(), [main[0]]
+        while need:
+            r = need.pop()
+            if r in keep:
+                continue
+            keep.add(r)
+            if r in bad:
+                continue
+            for m in _SPEC.finditer(texts[r]):
+                h = rag.resolve_import(donor, r, m.group(3), cl["aliases"])
+                if h in texts:
+                    need.append(h)
+        donor_files = [r for r in donor_files if r in keep]
+        mapping = {r: mapping[r] for r in donor_files}
+    if main[0] in cl["backend"]:
+        rec["unresolved"].append({"kind": "backend-feature", "text": f"the {component} itself needs a backend: "
+                                  + ", ".join(cl["backend"][main[0]])})
     ts_files = {r: t for r, t in texts.items() if r.endswith((".ts", ".tsx")) and not host_ts}
     if ts_files:
         stripped = strip_types(ts_files, log)
@@ -436,11 +483,14 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
 
     # 2. imports: closure files -> new locations, Next.js -> shims, packages -> package.json
     used_shims, packages, unknown_next, missing_local, assets = set(), {}, set(), set(), {}
+    stub_rel, stub_names, leaf_files = f"{base}/backend-stubs.js", set(), []
     for rel in donor_files:
         new_rel = mapping[rel]
         text = _DIRECTIVE.sub("", texts[rel]) if not rel.endswith(STYLE_EXT) else texts[rel]
 
-        def fix(m, rel=rel, new_rel=new_rel):
+        live = {m.group(3) for m in _SPEC.finditer(re.sub(r"/\*.*?\*/|(?<![:'\"])//[^\n]*", "", text, flags=re.S))}
+
+        def fix(m, rel=rel, new_rel=new_rel, live=live):
             head, q, spec = m.group(1), m.group(2), m.group(3)
             if spec in SHIMS or spec.startswith("next/font/"):
                 used_shims.add(spec)
@@ -464,7 +514,7 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
                 missing_local.add(f"{rel}: {spec}")
                 return m.group(0)
             pm = _IS_PKG.match(spec)
-            if pm and not spec.startswith(("http", "data:")):
+            if pm and not spec.startswith(("http", "data:")) and spec in live:
                 packages[pm.group(0)] = True
             return m.group(0)
 
@@ -474,6 +524,12 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
             new_text = _SPEC.sub(fix, text)
             # `import Image from "<shim>"`: the shim's default export is Link, so name the other shims explicitly
             new_text = _rewrite_shim_clauses(texts[rel], new_text, new_rel, shim_rel)
+            if rel not in bad:
+                before_leaf = new_text
+                new_text, nm = leaf_stubs(new_text, new_rel, stub_rel)
+                if new_text != before_leaf:
+                    stub_names |= nm | {"empty"}
+                    leaf_files.append(rel)
         for pm in _PUBLIC_REF.finditer(new_text):
             p = donor / "public" / pm.group(2).lstrip("/")
             if p.is_file():
@@ -482,8 +538,16 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(new_text)
         rec["files"].append(new_rel)
+    if stub_names:
+        (output / stub_rel).write_text(stub_module(stub_names))
+        rec["files"].append(stub_rel)
+        rec["resolved"].append({"kind": "backend-feature", "action": "backend calls in " + ", ".join(Path(r).stem for r in leaf_files)
+                                + " point to stand-ins (" + stub_rel.rsplit("/", 1)[-1] + "); their plain data is kept"})
     if used_shims:
-        (output / shim_rel).write_text(shims_source(router))
+        hooks = router_has_hooks(output)
+        (output / shim_rel).write_text(shims_source(router, hooks))
+        if not hooks:
+            rec["notes"].append("the site's react-router-dom is older than 5.1 (no hooks): the shim reads the URL instead")
         rec["files"].append(shim_rel)
     if used_shims or any(f.get("kind") in ("framework-api", "routing-model") for f in scan.get("facts", [])):
         if unknown_next:
@@ -518,7 +582,11 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
             have = {**pkg.get("devDependencies", {}), **pkg.get("dependencies", {})}
             ddeps = rag._deps(donor)  # noqa: SLF001
             add = {n: ddeps.get(n, "*") for n in sorted(packages) if n not in have and n not in HOST_PROVIDED
-                   and not n.startswith("@types/")}
+                   and not n.startswith("@types/") and not _is_backend_spec(n)}
+            add, vnotes = fit_versions(add, host_react(output), log)
+            rec["notes"] += vnotes
+            if any("using" in n for n in vnotes):
+                rec["resolved"].append({"kind": "dependency-version-conflict", "action": "; ".join(n for n in vnotes if "using" in n)})
             if add:
                 pkg.setdefault("dependencies", {}).update(add)
                 pkg["dependencies"] = dict(sorted(pkg["dependencies"].items()))
@@ -574,7 +642,7 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
         rec["resolved"].append({"kind": "host-script-coupling", "action": f"wrapper keeps {', '.join(['.' + c for c in keep_cls] + (['#' + keep_id] if keep_id else []))} for the site's scripts"})
 
     # 7. mount: replace the site's existing component everywhere it is imported, else add it to App
-    existing = rag.find_component_files(source, component, limit=1)
+    existing = [e] if (e := existing_component(source, component)) else []
     code_files = [p.relative_to(output).as_posix() for p in walk(output, (".js", ".jsx", ".ts", ".tsx"))
                   if "node_modules" not in p.parts and not p.relative_to(output).as_posix().startswith(base)]
     changed = _replace_imports_of(output, existing[0], entry, code_files) if existing else []
@@ -750,3 +818,405 @@ def no_ai(rec: dict) -> dict:
             "files_written": rec.get("files", []), "files_deleted": [], "files_copied": rec.get("assets", []),
             "apply_errors": [], "tool_calls": 0, "context": {"mode": "deterministic-port"},
             "port": {k: rec.get(k) for k in ("resolved", "unresolved", "mount", "packages_added", "seconds")}}
+
+
+# ================================================================== v2 (1 Nov, after the first 20 M runs)
+# Barrel files, backend-only features, peer-compatible package versions, old react-router, existing component.
+
+BACKEND_PKGS = ("better-auth", "next-auth", "@auth/", "@prisma/", "prisma", "drizzle-orm", "@sanity/", "next-sanity",
+                "sanity", "@supabase/", "firebase-admin", "stripe", "mongoose", "mongodb", "pg", "mysql2", "@vercel/kv",
+                "@vercel/postgres", "@upstash/", "resend", "nodemailer", "server-only", "pliny/search", "contentlayer",
+                "next-contentlayer", "@clerk/", "openai", "@anthropic-ai/", "googleapis")
+BACKEND_NEXT = ("next/headers", "next/server", "next/cache")
+_NAMED_IMPORT = re.compile(r"""import\s+(type\s+)?(?:([\w$]+)\s*,\s*)?\{([^}]*)\}\s*from\s*(['"])([^'"]+)\4\s*;?""")
+_EXPORT_FROM = re.compile(r"""export\s+(type\s+)?(\*|\{[^}]*\})\s*from\s*(['"])([^'"]+)\3""")
+
+
+def _is_backend_spec(spec: str) -> bool:
+    return spec in BACKEND_NEXT or any(spec == p.rstrip("/") or spec.startswith(p if p.endswith("/") else p + "/")
+                                       or spec == p for p in BACKEND_PKGS)
+
+
+def _is_barrel(text: str) -> bool:
+    body = re.sub(r"/\*.*?\*/|//[^\n]*", "", text, flags=re.S)
+    stmts = [s.strip() for s in re.split(r";|\n", body) if s.strip()]
+    return bool(stmts) and all(s.startswith("export") and " from " in s for s in stmts)
+
+
+def _defines(text: str, name: str) -> bool:
+    n = re.escape(name)
+    return bool(re.search(r"\bexport\s+(?:default\s+)?(?:declare\s+)?(?:async\s+)?(?:const|let|var|function\*?|class|enum|"
+                          r"interface|type|abstract\s+class)\s+%s\b" % n, text)
+                or re.search(r"\bexport\s*\{[^}]*\b%s\b[^}]*\}(?!\s*from)" % n, text))
+
+
+def _find_in_barrel(root: Path, barrel: str, name: str, amap, depth: int = 0):
+    """(file, name inside that file) that the barrel re-exports as `name`, or None."""
+    if depth > 4:
+        return None
+    text = read(root / barrel)
+    for m in _EXPORT_FROM.finditer(text):
+        what, spec = m.group(2), m.group(4)
+        hit = rag.resolve_import(root, barrel, spec, amap)
+        if not hit:
+            continue
+        if what == "*":
+            sub = read(root / hit)
+            if _defines(sub, name):
+                return hit, name
+            if _is_barrel(sub):
+                r = _find_in_barrel(root, hit, name, amap, depth + 1)
+                if r:
+                    return r
+        else:
+            for part in what.strip("{} ").split(","):
+                part = part.strip().replace("type ", "")
+                if not part:
+                    continue
+                orig, _, alias = part.partition(" as ")
+                if (alias or orig).strip() == name:
+                    return hit, orig.strip()
+    return None
+
+
+def _debarrel(root: Path, rel: str, text: str, amap) -> tuple:
+    """Rewrite `import { a, b } from "<barrel>"` into one import per defining file. Returns (text, n_rewritten)."""
+    n = 0
+
+    def sub(m):
+        nonlocal n
+        typeonly, default, names, q, spec = m.groups()
+        hit = rag.resolve_import(root, rel, spec, amap)
+        if typeonly or default or not hit or not _is_barrel(read(root / hit)):
+            return m.group(0)
+        lines = []
+        for part in names.split(","):
+            part = part.strip()
+            if not part:
+                continue
+            is_type = part.startswith("type ")
+            part = part[5:] if is_type else part
+            imported, _, local = part.partition(" as ")
+            imported, local = imported.strip(), (local or imported).strip()
+            found = _find_in_barrel(root, hit, imported, amap)
+            if not found:
+                return m.group(0)          # cannot place one name: keep the barrel import as it is
+            target, inner = found
+            spec2 = _strip_ext(_rel(rel, target))
+            kw = "import type" if is_type else "import"
+            lines.append(f'{kw} {local} from "{spec2}";' if inner == "default" else
+                         f'{kw} {{ {inner}{" as " + local if local != inner else ""} }} from "{spec2}";')
+        n += 1
+        return "\n".join(lines)
+
+    return _NAMED_IMPORT.sub(sub, text), n
+
+
+def closure(root: Path, starts: list, max_files: int = 60, max_depth: int = 6) -> dict:
+    """Donor files the component needs, following imports, with barrel imports split per name first.
+    Returns {files: [...], texts: {rel: text (de-barrelled)}, backend: {rel: [backend specs]}, packages: set}."""
+    root = Path(root)
+    amap = rag._alias_dirs(root)  # noqa: SLF001
+    texts, order, backend, packages = {}, [], {}, set()
+    queue = [(s, 0) for s in starts]
+    seen = set(starts)
+    while queue:
+        rel, depth = queue.pop(0)
+        raw = read(root / rel, 400_000)
+        text, _ = _debarrel(root, rel, raw, amap) if not rel.endswith(STYLE_EXT) else (raw, 0)
+        texts[rel] = text
+        order.append(rel)
+        if rel.endswith(STYLE_EXT):
+            continue
+        code = re.sub(r"/\*.*?\*/|(?<![:'\"])//[^\n]*", "", text, flags=re.S)   # imports in comments/JSDoc do not count
+        specs = [m.group(3) for m in _SPEC.finditer(code)]
+        bad = [s for s in specs if _is_backend_spec(s)]
+        if bad or re.search(r"""^\s*['"]use server['"]""", text, re.M):
+            backend[rel] = bad or ["'use server'"]
+        for spec in specs:
+            hit = rag.resolve_import(root, rel, spec, amap)
+            if hit:
+                if hit not in seen and depth + 1 <= max_depth and len(seen) < max_files and (
+                        hit.endswith(STYLE_EXT) or rag._usable(root / hit, root)):  # noqa: SLF001
+                    seen.add(hit)
+                    queue.append((hit, depth + 1))
+            elif not spec.startswith((".", "/", "http", "data:")) and not any(spec.startswith(a) for a in amap):
+                pm = _IS_PKG.match(spec)
+                if pm:
+                    packages.add(pm.group(0))
+    return {"files": order, "texts": texts, "backend": backend, "packages": packages, "aliases": amap}
+
+
+def _is_component_name(n: str) -> bool:
+    return bool(re.match(r"[A-Z][a-z0-9]", n or ""))     # PascalCase; ALL_CAPS constants are data
+
+
+def _has_component_export(text: str) -> bool:
+    jsx = "</" in text or "/>" in text
+    return jsx and bool(re.search(r"\bexport\s+(?:default\s+)?(?:async\s+)?(?:const|let|function|class)\s+[A-Z][a-z0-9]", text)
+                        or re.search(r"\bexport\s+default\s+[A-Z][a-z0-9]\w*\s*;?\s*$", text, re.M))
+
+
+def _pure_backend(text: str) -> bool:
+    """A data module that only wraps a backend (auth client, CMS client, queries): no plain data exported."""
+    return not re.search(r"\bexport\s+const\s+\w+\s*(?::[^=]+)?=\s*(?:\[|\{|['\"`\d]|true|false)", text)
+
+
+def tainted(cl: dict, root: Path) -> set:
+    """Files replaced by stand-ins because their feature needs a backend:
+      - a data module that only wraps a backend (better-auth client, Sanity client, CMS queries);
+      - a component that imports a backend package, or such a data module (the sign-in button, a search box).
+    Mixed data modules (static nav items + CMS getters) are kept; their backend imports get stand-ins instead.
+    Taint stops there: the navbar that shows a sign-in button stays, only the button goes."""
+    deps = {}
+    for rel, text in cl["texts"].items():
+        deps[rel] = {h for s in (m.group(3) for m in _SPEC.finditer(text))
+                     if (h := rag.resolve_import(root, rel, s, cl["aliases"])) in cl["texts"]}
+    pure = {r for r in cl["backend"] if not _has_component_export(cl["texts"][r]) and _pure_backend(cl["texts"][r])}
+    # a data module that only re-wraps pure backend modules is backend too (queries/index -> client)
+    changed = True
+    while changed:
+        changed = False
+        for rel, ds in deps.items():
+            t = cl["texts"][rel]
+            if rel not in pure and ds & pure and not _has_component_export(t) and _pure_backend(t):
+                pure.add(rel)
+                changed = True
+    comps = {r for r, ds in deps.items() if _has_component_export(cl["texts"][r]) and (r in cl["backend"] or ds & pure)}
+    return pure | comps
+
+
+def leaf_stubs(text: str, rel_out: str, stub_rel: str) -> tuple:
+    """Point a kept file's backend-package imports at the local stand-in module. Returns (text, names)."""
+    names = set()
+    rx = re.compile(r"""import\s+(type\s+)?([^'";]+?)\s+from\s*(['"])([^'"]+)\3\s*;?""")
+
+    def sub(m):
+        if not _is_backend_spec(m.group(4)):
+            return m.group(0)
+        if m.group(1):
+            return ""
+        clause = m.group(2).strip()
+        default, _, named = clause.partition("{")
+        default = default.strip().rstrip(",").strip()
+        parts = []
+        if default.startswith("* as"):
+            parts.append(default)
+            names.add("*")
+        elif default:
+            parts.append(f"{{ empty as {default} }}")
+        if named:
+            items = []
+            for x in named.rstrip("} ").split(","):
+                x = x.strip()
+                if not x or x.startswith("type "):
+                    continue
+                orig, _, local = x.partition(" as ")
+                names.add(orig.strip())
+                items.append(f"{orig.strip()} as {(local or orig).strip()}")
+            if items:
+                parts.append("{ " + ", ".join(items) + " }")
+        spec = _strip_ext(_rel(rel_out, stub_rel))
+        return "\n".join(f'import {p} from "{spec}";' for p in parts)
+
+    return rx.sub(sub, text), names
+
+
+def stub_module(names: set) -> str:
+    out = ["// FusionEdges: stand-ins for backend packages this site does not have (auth, CMS, database).",
+           'import React from "react";', "const noop = () => {};",
+           "export const empty = new Proxy(noop, { get: (t, k) => (k === Symbol.toPrimitive ? () => \"\" : k === \"then\" ? undefined : empty), apply: () => empty });"]
+    for n in sorted(names - {"*", "empty", "default"}):
+        out.append(f"export function {n}() {{ return null; }}" if _is_component_name(n) else f"export const {n} = empty;")
+    out.append("export default empty;")
+    return "\n".join(out) + "\n"
+
+
+def client_target(root: Path, main: str) -> str | None:
+    """Next.js split: an async server component that loads data and renders one 'use client' component. The client
+    component is the navbar a browser sees; its props fall back to their defaults."""
+    text = read(root / main)
+    if not (re.search(r"\basync\b", text) and "await" in text):
+        return None
+    amap = rag._alias_dirs(root)  # noqa: SLF001
+    for m in re.finditer(r"import\s+(?:([A-Z]\w*)|\{\s*([A-Z]\w*)[^}]*\})\s+from\s*['\"]([^'\"]+)['\"]", text):
+        name = m.group(1) or m.group(2)
+        hit = rag.resolve_import(root, main, m.group(3), amap)
+        if hit and re.search(r"<%s\b" % name, text) and re.search(r"""^\s*['"]use client['"]""", read(root / hit), re.M):
+            return hit
+    return None
+
+
+def stub_for(text: str, rel: str, why: str) -> str:
+    """A stand-in for a file whose feature needs a backend: components render nothing, hooks return empty data,
+    anything else is a harmless no-op. Same export names, so the importers do not change."""
+    names = set(re.findall(r"\bexport\s+(?:declare\s+)?(?:async\s+)?(?:const|let|var|function\*?|class)\s+([A-Za-z_$][\w$]*)", text))
+    for b in re.findall(r"export\s*\{([^}]*)\}(?!\s*from)", text):
+        names |= {p.split(" as ")[-1].strip() for p in b.split(",") if p.strip() and not p.strip().startswith("type ")}
+    has_default = bool(re.search(r"\bexport\s+default\b", text))
+    out = [f"// FusionEdges: this donor feature needs a backend this site does not have ({why}).",
+           "// It is replaced by a stand-in with the same exports, so the component works without it.",
+           'import React from "react";',
+           "const noop = () => {};",
+           "const empty = new Proxy(noop, { get: (t, k) => (k === Symbol.toPrimitive ? () => \"\" : k === \"then\" ? undefined : empty), apply: () => empty });"]
+    for n in sorted(names):
+        if _is_component_name(n):
+            out.append(f"export function {n}() {{ return null; }}")
+        elif n.startswith("use"):
+            out.append(f"export function {n}() {{ return {{ data: null, error: null, isPending: false, isLoading: false }}; }}")
+        else:
+            out.append(f"export const {n} = empty;")
+    if has_default:
+        out.append("export default function Stub() { return null; }")
+    return "\n".join(out) + "\n"
+
+
+# ------------------------------------------------------------------ package versions that fit the site's React
+_SEMVER = re.compile(r"^v?(\d+)(?:\.(\d+|x|\*))?(?:\.(\d+|x|\*))?(?:-([\w.]+))?$")
+
+
+def _vt(v: str):
+    m = _SEMVER.match(v.strip())
+    if not m:
+        return None
+    nums = [int(x) if x and x.isdigit() else None for x in m.groups()[:3]]
+    return nums, m.group(4)
+
+
+def _cmp(a, b):
+    return (a > b) - (a < b)
+
+
+def satisfies(version: str, rng: str) -> bool:
+    """Small semver range check: ||, spaces (and), ^ ~ >= > <= < =, x-ranges, *."""
+    vt = _vt(version)
+    if not vt or vt[1]:
+        return False
+    v = [x or 0 for x in vt[0]]
+    for alt in (rng or "*").split("||"):
+        alt = alt.strip()
+        if alt in ("", "*", "x", "latest"):
+            return True
+        ok = True
+        for c in re.findall(r"(\^|~|>=|<=|>|<|=)?\s*v?([\dx*]+(?:\.[\dx*]+){0,2}(?:-[\w.]+)?)", alt):
+            op, ver = c
+            t = _vt(ver)
+            if not t:
+                ok = False
+                break
+            parts = t[0]
+            base = [x or 0 for x in parts]
+            known = sum(1 for x in parts if x is not None)
+            if op == "^":
+                hi = [base[0] + 1, 0, 0] if base[0] else ([0, base[1] + 1, 0] if base[1] else [0, 0, base[2] + 1])
+                ok &= _cmp(v, base) >= 0 and _cmp(v, hi) < 0
+            elif op == "~":
+                hi = [base[0], base[1] + 1, 0] if known >= 2 else [base[0] + 1, 0, 0]
+                ok &= _cmp(v, base) >= 0 and _cmp(v, hi) < 0
+            elif op == ">=":
+                ok &= _cmp(v, base) >= 0
+            elif op == ">":
+                ok &= _cmp(v, base) > 0
+            elif op == "<=":
+                ok &= _cmp(v, base) <= 0
+            elif op == "<":
+                ok &= _cmp(v, base) < 0
+            else:  # exact or x-range
+                ok &= all(p is None or v[i] == p for i, p in enumerate(parts))
+            if not ok:
+                break
+        if ok:
+            return True
+    return False
+
+
+def _packument(name: str, timeout: int = 15):
+    import urllib.request
+    url = "https://registry.npmjs.org/" + name.replace("/", "%2F")
+    req = urllib.request.Request(url, headers={"Accept": "application/vnd.npm.install-v1+json"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:   # noqa: S310 - fixed registry host
+        return json.loads(r.read())
+
+
+def host_react(output: Path) -> str:
+    """The React version the site will install: package-lock first, else the lowest version of its range."""
+    lock = output / "package-lock.json"
+    if lock.is_file():
+        try:
+            d = json.loads(read(lock, 5_000_000))
+            v = ((d.get("packages") or {}).get("node_modules/react") or {}).get("version") or \
+                ((d.get("dependencies") or {}).get("react") or {}).get("version")
+            if v:
+                return v
+        except ValueError:
+            pass
+    try:
+        rng = (json.loads(read(output / "package.json")).get("dependencies") or {}).get("react", "")
+    except ValueError:
+        rng = ""
+    m = re.search(r"(\d+)(?:\.(\d+))?(?:\.(\d+))?", rng)
+    return ".".join(x or "0" for x in m.groups()) if m else ""
+
+
+def fit_versions(packages: dict, react_version: str, log=print, fetch=None) -> tuple:
+    """For each package, the newest version whose peer `react` range accepts the site's React, preferring the donor's
+    own range. Returns ({name: version spec}, notes). Offline or no React: unchanged."""
+    if not react_version:
+        return dict(packages), []
+    fetch = fetch or _packument
+    out, notes = {}, []
+    for name, spec in packages.items():
+        try:
+            doc = fetch(name)
+        except Exception as e:  # noqa: BLE001 - offline: keep the donor's version
+            out[name] = spec
+            notes.append(f"{name}: registry not reachable ({str(e)[:60]}); kept {spec}")
+            continue
+        vers = doc.get("versions") or {}
+
+        def fits(v):
+            peer = ((vers.get(v) or {}).get("peerDependencies") or {})
+            return all(satisfies(react_version, peer[k]) for k in ("react", "react-dom") if k in peer)
+
+        stable = sorted((v for v in vers if _vt(v) and not _vt(v)[1]), key=lambda v: [x or 0 for x in _vt(v)[0]], reverse=True)
+        in_range = [v for v in stable if satisfies(v, spec)]
+        pick = next((v for v in in_range if fits(v)), None)
+        if pick and in_range and pick == in_range[0]:
+            out[name] = spec
+            continue
+        pick = pick or next((v for v in stable if fits(v)), None)
+        if pick:
+            out[name] = f"^{pick}" if not pick.startswith("0.") else pick
+            notes.append(f"{name}: {spec} needs a newer React than the site's {react_version}; using {out[name]}")
+        else:
+            out[name] = spec
+            notes.append(f"{name}: no version works with React {react_version}; kept {spec}")
+    return out, notes
+
+
+def router_has_hooks(output: Path) -> bool:
+    """react-router-dom 5.0.x has no useLocation/useHistory hooks (added in 5.1)."""
+    lock = output / "package-lock.json"
+    v = ""
+    if lock.is_file():
+        try:
+            d = json.loads(read(lock, 5_000_000))
+            v = ((d.get("packages") or {}).get("node_modules/react-router-dom") or {}).get("version") or \
+                ((d.get("dependencies") or {}).get("react-router-dom") or {}).get("version") or ""
+        except ValueError:
+            v = ""
+    t = _vt(v) if v else None
+    return not (t and t[0][0] == 5 and (t[0][1] or 0) < 1) and not (t and t[0][0] is not None and t[0][0] < 5)
+
+
+def existing_component(source: Path, component: str) -> str | None:
+    """The site's current component as a CODE file (Navigation/Navigation.css -> Navigation/index.js)."""
+    for hit in rag.find_component_files(source, component, limit=3):
+        if not hit.endswith(STYLE_EXT):
+            return hit
+        folder = (Path(source) / hit).parent
+        for cand in [folder / f"index{e}" for e in (".jsx", ".js", ".tsx", ".ts")] + \
+                [folder / f"{Path(hit).stem}{e}" for e in (".jsx", ".js", ".tsx", ".ts")]:
+            if cand.is_file():
+                return cand.relative_to(source).as_posix()
+    return None

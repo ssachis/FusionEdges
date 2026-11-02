@@ -255,7 +255,7 @@ def donor_identifiers(donor: Path, component: str, source: Path) -> list:
     return sorted(n for n in names if not re.search(r"\b%s\b" % re.escape(n), own))
 
 
-CHECKS_VERSION = 4   # v2 (2026-10-27 pilot review): reachability for 'rendered', camelCase words for 'single',
+CHECKS_VERSION = 5   # v2 (2026-10-27 pilot review): reachability for 'rendered', camelCase words for 'single',
                      # adapted donor code (its distinctive strings) counts for 'donor_code'
                      # v3: the site's own scripts still find the classes/ids they look up (host-script-coupling)
                      # v4: optional 'browser' check (browser.py) when Playwright is available
@@ -349,7 +349,9 @@ def component_checks(source: Path, out: Path, component: str, build: dict, frame
     # mounted: the new code is reachable from the app's entry through imports. This counts an in-place rewrite of the
     # site's existing component (still imported by App) and catches new files that nothing imports.
     live = reachable(out)
-    new_ui = [p for p in touched_code if Path(p).name.split(".")[0] not in ("index", "main", "reportWebVitals", "setupTests")]
+    # the app's entry files are not UI; a component folder's index.jsx (components/NavBar/index.jsx) is (checks v5)
+    new_ui = [p for p in touched_code if not (Path(p).name.split(".")[0] in ("index", "main", "reportWebVitals", "setupTests")
+                                              and len(Path(p).parts) <= 2)]
     has_evidence = bool(donor and (idents or strings))
     carriers = [p for p in new_ui if (found and any(_name_in(n, after[p]) for n in found))
                 or (carried and any(t in after[p] for t in carried))]

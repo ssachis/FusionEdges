@@ -101,7 +101,7 @@ def _run(spec: dict, log, conditions, repeats, seed, build) -> list:
                 mode, edit = CONDITIONS.get(cond, (cond, "oneshot"))
                 params = {"mode": mode, "edit": edit, "source": task["source"], "donor": task["donor"], "add_component": True,
                           "component": comp, "prompt": task.get("prompt") or default_prompt(False, False, comp),
-                          "build": build, "auto_compare": False}
+                          "build": build, "auto_compare": False, "experiment": name}
                 try:
                     rec = run(params, log=lambda m: log("    " + m),
                               run_id=f"{time.strftime('%Y%m%d-%H%M%S')}-{cond.replace('+', '-')}")

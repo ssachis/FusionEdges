@@ -209,11 +209,32 @@ def analysis(experiment: str = "") -> dict:
     tok = [(x["tokens_alone"], x["tokens_report"]) for x in rows if x["tokens_alone"] and x["tokens_report"]]
     with store.connect() as db:
         exps = [e[0] for e in db.execute("SELECT DISTINCT experiment FROM comparisons WHERE experiment<>'' ORDER BY 1")]
+        try:
+            exps = sorted(set(exps) | {e[0] for e in db.execute("SELECT DISTINCT experiment FROM run_metrics WHERE experiment<>''")})
+        except Exception:  # noqa: BLE001 - no run_metrics table yet
+            pass
     for x in rows:
         x["final"] = final(x)
         if x["fair"] is None:
             x["fair"] = x["same_model"]
+    from . import metrics
+    try:
+        with store.connect() as db:
+            n_runs = db.execute("SELECT COUNT(*) FROM runs WHERE status='done' AND COALESCE(component,'')<>''").fetchone()[0]
+        with metrics.connect() as db:
+            n_met = db.execute("SELECT COUNT(*) FROM run_metrics").fetchone()[0]
+        if n_met < n_runs:
+            metrics.backfill()
+        mrows = metrics.rows(experiment.split(" [")[0] if experiment else "")
+    except Exception:  # noqa: BLE001 - the pair view must still load
+        mrows = []
+    conds = metrics.by_condition(mrows)
     return {
+        "vs_agent": {"headline": metrics.headline(conds, mrows), "conditions": conds, "matrix": metrics.task_matrix(mrows),
+                     "observations": [{k: r[k] for k in ("run_id", "created", "condition", "task", "observation", "failures",
+                                                          "tokens_total", "seconds_total", "verified_success", "browser_pass",
+                                                          "experiment")} for r in sorted(mrows, key=lambda r: r["created"] or "", reverse=True)],
+                     "names": {k: v[0] for k, v in metrics.CONDITIONS.items()}},
         "answer": answer(rows),
         "waiting": [{"id": x["id"], "prompt_run": x["prompt_run"], "report_run": x["report_run"], "task": x["task"]}
                     for x in sorted(rows, key=lambda x: not x["fair"]) if not x["your_answer"]],   # fair pairs first

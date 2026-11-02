@@ -62,6 +62,7 @@ def main(argv=None):
     rs = sub.add_parser("rescore", help="re-run the checks on finished runs (no AI calls)")
     rs.add_argument("ids", nargs="*")
     res = sub.add_parser("results", help="verdicts recorded so far")
+    sub.add_parser("metrics", help="fill run_metrics for every earlier run and print the per-condition table")
     res.add_argument("--experiment")
     a = ap.parse_args(argv)
 
@@ -86,6 +87,13 @@ def main(argv=None):
         else:
             print(f"Wrote {records.export(a.name, a.date)}")
         return 0
+    if a.cmd == "metrics":
+        from . import metrics
+        print(f"{metrics.backfill()} runs in run_metrics")
+        for c in metrics.by_condition(metrics.rows()):
+            print(f"{c['condition']:<3} {c['name']:<24} works {c['works']}/{c['runs']:<3} median tokens {c['median_tokens'] or 0:>8,.0f}  "
+                  f"median time {c['median_seconds'] or 0:>6.0f} s  tokens per working result {c['tokens_per_working'] or '-'}")
+        return
     if a.cmd == "rescore":
         from . import rescore
         print(f"Re-scored {rescore.rescore_all(a.ids or None)} run(s).")

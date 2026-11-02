@@ -169,3 +169,110 @@ class PortPipelineTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PortV2Test(unittest.TestCase):
+    """Fixes from the first 20 real M runs (1 Nov): barrels, backend features, versions, old router, CSS-first finds."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp())
+        self.p = [unittest.mock.patch.object(port, "strip_types", identity_strip),
+                  unittest.mock.patch.object(port, "compile_tailwind", lambda *a, **k: {"ok": False, "reason": "offline"}),
+                  unittest.mock.patch.object(port, "_packument", lambda n, timeout=15: (_ for _ in ()).throw(OSError("offline")))]
+        for x in self.p:
+            x.start()
+
+    def tearDown(self):
+        for x in self.p:
+            x.stop()
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def _donor(self, files: dict, deps=None):
+        d = self.tmp / "donor"
+        for rel, text in files.items():
+            (d / rel).parent.mkdir(parents=True, exist_ok=True)
+            (d / rel).write_text(text)
+        (d / "package.json").write_text(json.dumps({"dependencies": {"next": "15.0.0", "react": "19.0.0", **(deps or {})}}))
+        (d / "tsconfig.json").write_text(json.dumps({"compilerOptions": {"paths": {"@/*": ["./*"]}}}))
+        return d
+
+    def _run(self, donor, host=HOST):
+        out = self.tmp / "out"
+        shutil.copytree(host, out)
+        r = port.port(host, donor, out, scan_for(host, donor, False, "navbar"), "navbar", log=lambda m: None)
+        return r, out
+
+    def test_barrel_import_is_split_per_name(self):
+        d = self._donor({
+            "components/Navbar.jsx": 'import { NAV, NAME } from "@/constant";\nexport default function Navbar() { return <nav>{NAME}{NAV.length}</nav>; }\n',
+            "constant/index.js": 'export * from "./nav";\nexport * from "./person";\nexport * from "./seo";\n',
+            "constant/nav.js": 'export const NAV = [1, 2];\n',
+            "constant/person.js": 'export const NAME = "x";\n',
+            "constant/seo.js": 'import big from "./huge";\nexport const SEO = big;\n',
+            "constant/huge.js": 'export default 1;\n'})
+        r, out = self._run(d)
+        nav = (out / "src/fusion/navbar/components/Navbar.jsx").read_text()
+        self.assertIn('import { NAV } from "../constant/nav"', nav)
+        self.assertIn('import { NAME } from "../constant/person"', nav)
+        self.assertFalse((out / "src/fusion/navbar/constant/seo.js").exists())   # not needed, not copied
+        self.assertFalse(any(u["kind"] == "missing-import" for u in r["unresolved"]))
+
+    def test_backend_component_becomes_stand_in(self):
+        d = self._donor({
+            "components/Navbar.jsx": 'import { SignIn } from "./SignIn";\nexport default function Navbar() { return <nav><a href="/">Home</a><SignIn /></nav>; }\n',
+            "components/SignIn.jsx": 'import { auth } from "@/lib/auth";\nexport function SignIn() { const s = auth.useSession(); return <button>{s.data.user}</button>; }\n',
+            "lib/auth.js": 'import { createAuthClient } from "better-auth/react";\nexport const auth = createAuthClient({});\n'},
+            {"better-auth": "^1.0.0"})
+        r, out = self._run(d)
+        signin = (out / "src/fusion/navbar/components/SignIn.jsx").read_text()
+        self.assertIn("export function SignIn() { return null; }", signin)
+        self.assertNotIn("better-auth", json.loads((out / "package.json").read_text()).get("dependencies", {}))
+        self.assertFalse((out / "src/fusion/navbar/lib/auth.js").exists())
+        self.assertIn("Home", (out / "src/fusion/navbar/components/Navbar.jsx").read_text())   # the navbar itself stays
+
+    def test_mixed_data_module_kept_with_leaf_stubs(self):
+        d = self._donor({
+            "components/Navbar.jsx": 'import { mainNav } from "@/constant/navigation";\nexport default function Navbar() { return <nav>{mainNav.map(n => <a key={n}>{n}</a>)}</nav>; }\n',
+            "constant/navigation.js": 'import { createClient } from "next-sanity";\nconst client = createClient({});\n'
+                                      'export const mainNav = ["Home", "Blog"];\nexport async function getBlogs() { return client.fetch("q"); }\n'})
+        r, out = self._run(d)
+        nav = (out / "src/fusion/navbar/constant/navigation.js").read_text()
+        self.assertIn('export const mainNav = ["Home", "Blog"]', nav)
+        self.assertNotIn("next-sanity", nav)
+        self.assertIn("createClient", (out / "src/fusion/navbar/backend-stubs.js").read_text())
+
+    def test_server_wrapper_retargets_to_client_component(self):
+        d = self._donor({
+            "components/Navbar.jsx": 'import NavbarClient from "./NavbarClient";\nimport { getNav } from "@/lib/data";\n'
+                                     'export default async function Navbar() { const n = await getNav(); return <NavbarClient items={n} />; }\n',
+            "components/NavbarClient.jsx": '"use client";\nexport default function NavbarClient({ items = [] }) { return <nav>{items.length}</nav>; }\n',
+            "lib/data.js": 'import { sql } from "@vercel/postgres";\nexport async function getNav() { return sql`x`; }\n'})
+        r, _ = self._run(d)
+        self.assertTrue(any(x["kind"] == "server-component" for x in r["resolved"]))
+        self.assertIn("NavbarClient.jsx", r["entry"] and "".join(r["files"]))
+
+    def test_existing_component_found_through_its_css(self):
+        host = self.tmp / "host"
+        shutil.copytree(HOST, host)
+        (host / "src/components/Navigation").mkdir(parents=True)
+        (host / "src/components/Navigation/Navigation.css").write_text(".nav{}")
+        (host / "src/components/Navigation/index.js").write_text('import "./Navigation.css";\nexport default function Navigation(){ return <nav/>; }\n')
+        self.assertEqual(port.existing_component(host, "navbar"), "src/components/Navigation/index.js")
+
+    def test_versions_fit_site_react(self):
+        doc = {"versions": {"2.2.9": {"peerDependencies": {"react": "^18 || ^19"}},
+                            "1.7.19": {"peerDependencies": {"react": "^16 || ^17 || ^18"}},
+                            "1.7.0": {"peerDependencies": {"react": "^16 || ^17 || ^18"}}}}
+        got, notes = port.fit_versions({"@headlessui/react": "2.2.9"}, "17.0.2", fetch=lambda n: doc)
+        self.assertEqual(got["@headlessui/react"], "^1.7.19")
+        got, _ = port.fit_versions({"@headlessui/react": "^2.0.0"}, "18.3.1", fetch=lambda n: doc)
+        self.assertEqual(got["@headlessui/react"], "^2.0.0")          # donor's range already fits: unchanged
+
+    def test_old_router_has_no_hooks(self):
+        out = self.tmp / "o"
+        out.mkdir()
+        (out / "package-lock.json").write_text(json.dumps({"packages": {"node_modules/react-router-dom": {"version": "5.0.1"}}}))
+        self.assertFalse(port.router_has_hooks(out))
+        src = port.shims_source("react-router-5", hooks=False)
+        self.assertNotIn("useLocation", src)
+        self.assertIn("RouterLink", src)

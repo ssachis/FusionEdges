@@ -4,12 +4,14 @@
 cd "$(dirname "$0")/.."
 LOG="experiments/logs/heldout-$(date +%Y%m%d-%H%M%S).log"
 echo "FusionEdges held-out experiment. Log: $LOG"
+# checks v5 + per-run metrics for every earlier run (no AI calls), then condition M (port v2): no quota needed
+python3 -u -m fusionedges rescore 2>&1 | tail -3 | tee -a "$LOG"
+python3 -u -m fusionedges experiment experiments/heldout-port-v2.json 2>&1 | tee -a "$LOG"
+python3 -u -m fusionedges metrics 2>&1 | tee -a "$LOG"
 if ! python3 -m fusionedges providers | grep -q '^ON   gemini'; then
   echo "NO_KEY: GEMINI_API_KEY is not visible here. Add 'export GEMINI_API_KEY=...' to ~/.zshrc, or run: export GEMINI_API_KEY=... && zsh experiments/run-heldout.command" | tee -a "$LOG"; exit 1
 fi
 python3 -c "import playwright" 2>/dev/null || echo "NOTE: Playwright missing, so no browser check. Install once: pip3 install playwright && python3 -m playwright install chromium" | tee -a "$LOG"
-# condition M first: deterministic, no AI call, so it never touches the quota
-python3 -u -m fusionedges experiment experiments/heldout-port.json 2>&1 | tee -a "$LOG"
 for stage in screening main multistep; do
   f="experiments/heldout-$stage.json"
   if grep -q '"FILL FROM SCREENING"' "$f"; then

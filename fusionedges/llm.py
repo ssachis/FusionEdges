@@ -383,6 +383,7 @@ class Session:
                 "input_tokens": sum(c["in"] for c in self.calls),
                 "output_tokens": sum(c["out"] for c in self.calls),
                 "est_cost_usd": round(sum(c["cost"] for c in self.calls), 5),
+                "ai_seconds": round(sum(c.get("seconds") or 0 for c in self.calls), 1),
                 "models": models, "fallbacks": list(self.fallbacks)}
 
 

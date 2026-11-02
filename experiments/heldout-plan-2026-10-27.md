@@ -58,3 +58,12 @@ A host regression: 1 and 2 hold but 3 or 4 fails.
     If MA wins on tokens but loses on success, H2 fails and that is reported.
   - M runs first on all 16 candidates (no quota needed). Screening still uses agent-alone runs only, so M's
     results cannot influence which tasks are kept.
+- **1 Nov 2026, evening: checks v5 and port v2, before any A/D held-out run.**
+  - Checks v5: a component folder's `index.jsx` (e.g. `components/NavBar/index.jsx`) now counts as UI for "rendered";
+    only the app's own entry files (`src/index.js`, `src/main.jsx`) are skipped. v4 failed 3 correct runs because of
+    this. Every run is re-scored with `python3 -m fusionedges rescore` (no AI calls); old results stay in `checks_history`.
+    It applies to every condition alike.
+  - Port v2 (`fusionedges/port.py`, VERSION = 2), from the 14 failures of the first 20 M runs (`analysis-2026-11-01.md`
+    section 6). Those 20 runs are kept and shown as **M1**; only v2 runs count as M / MA.
+  - Every run now writes one row to `run_metrics` (tokens per step, AI calls, time per stage, repairs, build, checks,
+    browser, verified success, host regression, failure kinds, a one-line observation). The Analysis tab reads it.
