@@ -89,6 +89,12 @@ class HTTPTests(unittest.TestCase):
         self.assertIn('Set-Cookie',caught.exception.headers)
         self.assertTrue(self.call('/api/github/session')[1]['authenticated'])
 
+    def test_sidebar_login_does_not_loop_back_to_installation(self):
+        with self.browser.open(self.origin+'/picker') as response:
+            html=response.read().decode()
+            self.assertIn('id="login" href="/auth/github/start"',html)
+            self.assertNotIn('id="login" href="/auth/github/connect"',html)
+
     def test_dns_rebinding_host_is_rejected(self):
         req=urllib.request.Request(self.origin+'/api/github/session',headers={'Host':'evil.example'})
         with self.assertRaises(urllib.error.HTTPError) as e:self.browser.open(req)

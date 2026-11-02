@@ -95,3 +95,7 @@ The registered app separates user authorization from installation permissions. T
 ## Installation-first connection
 
 Connect GitHub opens the app's GitHub installation screen first. Set the existing registered app's **Setup URL** in GitHub Developer Settings to `http://127.0.0.1:8101/auth/github/installed` (keep **Request user authorization during installation** unchecked). Newly created app manifests include this setting automatically. After installation, that endpoint starts user authorization when necessary and verifies repository access before displaying the picker. The existing app was registered before this return URL was added, so its setting requires one developer update on GitHub; local code cannot change the registered setting by itself.
+
+## Live verification — 2 November 2026
+
+The registered app's Setup URL is now saved as `http://127.0.0.1:8101/auth/github/installed`, with Redirect on update enabled. Real GitHub authorization was exercised in the in-app browser as ssachis: the callback succeeded, repositories loaded from GitHub, and selecting ssachis/FusionEdges populated Your site in the original UI. No integration, commit, branch or PR was created. Chrome has a separate cookie store; its login must complete in Chrome. The sidebar Log in link now starts authorization directly rather than reopening installation.
