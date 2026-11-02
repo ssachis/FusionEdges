@@ -1,0 +1,14 @@
+[
+  {
+    "selector": "#about .main-content h3",
+    "text": "My name is Jennifer Cole and..."
+  },
+  {
+    "selector": "#info-1 h4",
+    "text": "A.A. Degree"
+  },
+  {
+    "selector": "header .title h1",
+    "text": "Cole Codes"
+  }
+]

@@ -65,6 +65,7 @@ PROBE = r"""
     width: r ? Math.round(r.width) : null,
     links: [...new Set(links)].slice(0, 30),
     sideways: document.documentElement.scrollWidth > innerWidth + 2,
+    overflow_px: Math.max(0, document.documentElement.scrollWidth - innerWidth),
     text: (document.body.innerText || '').trim().length,
   };
 }
@@ -113,7 +114,7 @@ def _errors(lst):
     return [e for e in lst if not any(n in e for n in NETWORK_NOISE)]
 
 
-def inspect(root: Path, component: str = "navbar", shots: Path | None = None, wait_ms: int = 2500) -> dict:
+def inspect(root: Path, component: str = "navbar", shots: Path | None = None, wait_ms: int = 2500, contract: dict | None = None) -> dict:
     """Open the site at both widths. Returns {viewport: {...}} plus 'skipped' when it could not run."""
     ok, why = available()
     if not ok:
@@ -141,10 +142,19 @@ def inspect(root: Path, component: str = "navbar", shots: Path | None = None, wa
                     errs["load"].append("navigation: " + str(e).split("\n")[0][:200])
                 page.wait_for_timeout(wait_ms)
                 probe = page.evaluate(PROBE, [selector, top])
+                if contract:
+                    from .contracts import evaluate
+                    probe["contract_problems"] = evaluate(page, contract, shots=shots / vp if shots else None)
                 shot = None
                 if shots:
                     shots.mkdir(parents=True, exist_ok=True)
                     shot = shots / f"{vp}.png"
+                    if contract and page.locator(contract["selector"]).count() == 1:
+                        target = page.locator(contract["selector"])
+                        if target.is_visible():
+                            target.screenshot(path=str(shots / f"{vp}-component.png"))
+                    page.screenshot(path=str(shots / f"{vp}-full.png"), full_page=True)
+                    page.evaluate("window.scrollTo(0,0)")
                     page.screenshot(path=str(shot))
                 phase[0] = "scroll"
                 for dy in (300, 900, -5000):
@@ -181,6 +191,7 @@ def problems(result: dict, baseline: dict | None = None, component: str = "navba
     vps = result.get("viewports", {})
     for vp, v in vps.items():
         label = "desktop (1280px)" if vp == "desktop" else "phone (390px)"
+        out.extend(f"On {label}: {p}" for p in v.get("contract_problems", []))
         if v.get("text", 0) < 20:
             out.append(f"On {label} the page is blank (almost no text rendered).")
             continue
@@ -200,6 +211,10 @@ def problems(result: dict, baseline: dict | None = None, component: str = "navba
         base_vp = ((baseline or {}).get("viewports") or {}).get(vp) or {}
         if vp == "mobile" and v.get("sideways") and not base_vp.get("sideways"):   # the original site may already do this
             out.append(f"On {label} the page scrolls sideways (something is wider than the screen).")
+        elif (vp == "mobile" and v.get("sideways") and base_vp.get("sideways")
+              and v.get("overflow_px") is not None and base_vp.get("overflow_px") is not None
+              and v["overflow_px"] > base_vp["overflow_px"] + 4):
+            out.append(f"On {label} horizontal overflow increased from {base_vp['overflow_px']}px to {v['overflow_px']}px.")
         for phase, key in (("when the page loads", "errors_load"), ("while scrolling", "errors_scroll")):
             new = [e for e in v.get(key, []) if _norm(e) not in known]
             if new:
@@ -255,12 +270,12 @@ def baseline(repo: dict, component: str, log=print) -> dict | None:
         shutil.rmtree(tmp, ignore_errors=True)
 
 
-def check(project: Path, component: str, shots: Path | None = None, base: dict | None = None) -> dict:
+def check(project: Path, component: str, shots: Path | None = None, base: dict | None = None, contract: dict | None = None) -> dict:
     """inspect + problems, for the pipeline. Returns {'skipped', 'reason'} or the result with 'problems' and 'pass'."""
     root = site_root(Path(project))
     if root is None:
         return {"skipped": True, "reason": "no built site to open (no build/, dist/ or out/ with index.html)"}
-    res = inspect(root, component, shots)
+    res = inspect(root, component, shots, contract=contract)
     if res.get("skipped"):
         return res
     res["problems"] = problems(res, base, component)

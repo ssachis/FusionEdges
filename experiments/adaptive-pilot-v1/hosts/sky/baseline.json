@@ -1,0 +1,50 @@
+{
+  "skipped": false,
+  "url": "http://127.0.0.1:58441/",
+  "component": "host-baseline",
+  "viewports": {
+    "desktop": {
+      "found": false,
+      "hidden": [],
+      "tag": null,
+      "classes": null,
+      "height": null,
+      "width": null,
+      "links": [],
+      "sideways": false,
+      "overflow_px": 0,
+      "text": 1146,
+      "contract_problems": [],
+      "errors_load": [],
+      "errors_scroll": [],
+      "network_errors": 0,
+      "screenshot": "/Users/sachisingh/Documents/Codex/2026-11-02/referenced-chatgpt-conversation-this-is-an/outputs/pilot-baselines/sky/desktop.png",
+      "screenshot_sha256": "620756717cfc7d8d06eed81e884a7e19d597083ad25b8edd75dbfbf976b063c3"
+    },
+    "mobile": {
+      "found": false,
+      "hidden": [],
+      "tag": null,
+      "classes": null,
+      "height": null,
+      "width": null,
+      "links": [],
+      "sideways": true,
+      "overflow_px": 97,
+      "text": 1146,
+      "contract_problems": [],
+      "errors_load": [],
+      "errors_scroll": [],
+      "network_errors": 0,
+      "screenshot": "/Users/sachisingh/Documents/Codex/2026-11-02/referenced-chatgpt-conversation-this-is-an/outputs/pilot-baselines/sky/mobile.png",
+      "screenshot_sha256": "ac80c8c9c5aa78a1c8a12bf10ab57afe20f9302c12d3216f5b2518b96b38b302"
+    }
+  },
+  "problems": [
+    "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+  ],
+  "passed": true,
+  "existing_defects": [
+    "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+  ]
+}

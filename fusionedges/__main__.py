@@ -5,6 +5,7 @@
   python3 -m fusionedges providers                                     (which AI keys are set)
 """
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -21,6 +22,7 @@ def main(argv=None):
     r = sub.add_parser("run")
     r.add_argument("--source", required=True, help="your site (GitHub link or folder)")
     r.add_argument("--donor", required=True, help="donor codebase (GitHub link or folder)")
+    r.add_argument("--mode", choices=["prompt", "report", "history", "port", "port-ai", "port-report", "port-report-memory", "adaptive"])
     r.add_argument("--report", action="store_true", help="write a compatibility report first (tab 2)")
     r.add_argument("--history", action="store_true", help="report + past cases from other tasks (condition E)")
     r.add_argument("--port", action="store_true", help="deterministic port only, no AI call (condition M)")
@@ -30,6 +32,8 @@ def main(argv=None):
     r.add_argument("--component", help="add this component from the donor (e.g. navbar) instead of migrating")
     r.add_argument("--agent", action="store_true", help="use the multi-step agent instead of one-shot + repairs")
     r.add_argument("--prompt-file", help="use this prompt instead of the default")
+    r.add_argument("--inputs-file", help="JSON props and data attributes for deterministic component wiring")
+    r.add_argument("--acceptance-file", help="JSON component/host/behavior acceptance contract")
     r.add_argument("--no-build", action="store_true")
     s = sub.add_parser("scan")
     s.add_argument("--source", required=True)
@@ -129,7 +133,7 @@ def main(argv=None):
         return 0
     mig, sty = not a.no_migration, not a.no_style
     prompt = Path(a.prompt_file).read_text() if a.prompt_file else default_prompt(mig, sty, a.component or "")
-    rec = run({"mode": "port-ai" if a.port_ai else "port" if a.port else "history" if a.history else "report" if a.report else "prompt", "source": a.source, "donor": a.donor,
+    rec = run({"component_inputs": json.loads(Path(a.inputs_file).read_text()) if a.inputs_file else None, "acceptance": json.loads(Path(a.acceptance_file).read_text()) if a.acceptance_file else None, "mode": a.mode or ("port-ai" if a.port_ai else "port" if a.port else "history" if a.history else "report" if a.report else "prompt"), "source": a.source, "donor": a.donor,
                "migration": mig, "style": sty, "add_component": bool(a.component), "component": a.component or "",
                "edit": "agent" if a.agent else "oneshot", "prompt": prompt, "build": not a.no_build},
               log=print, stage=lambda sid, state, note="": print(f"-- {sid}: {state} {note}"))

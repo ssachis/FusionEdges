@@ -20,15 +20,19 @@ from . import compare
 from .pipeline import run
 from .prompts import default_prompt
 
-NAMES = {"prompt": "A agent alone", "report": "D with report", "history": "E report + history",
+NAMES = {"adaptive": "AD adaptive rules/report/agent", "prompt": "A agent alone", "report": "D with report", "history": "E report + history",
          "agent": "A2 multi-step agent alone", "agent+report": "D2 multi-step agent + report",
-         "port": "M deterministic port, no AI", "port-ai": "MA deterministic port + AI only on failure"}
+         "port": "M deterministic port, no AI", "port-ai": "MA deterministic port + AI only on failure", "port-report": "MR rules + report + AI",
+         "port-report-memory": "MRM rules + report + frozen memory + AI"}
 # condition -> (pipeline mode, edit mode). Each treated condition is compared with the baseline of the same harness.
-CONDITIONS = {"prompt": ("prompt", "oneshot"), "report": ("report", "oneshot"), "history": ("history", "oneshot"),
+CONDITIONS = {"adaptive": ("adaptive", "oneshot"), "prompt": ("prompt", "oneshot"), "report": ("report", "oneshot"), "history": ("history", "oneshot"),
               "agent": ("prompt", "agent"), "agent+report": ("report", "agent"),
-              "port": ("port", "oneshot"), "port-ai": ("port-ai", "oneshot")}
-PAIRS = [("prompt", "report", ""), ("prompt", "history", ""), ("agent", "agent+report", " [multi-step]"),
-         ("prompt", "port", " [deterministic]"), ("prompt", "port-ai", " [deterministic + AI]")]
+              "port": ("port", "oneshot"), "port-ai": ("port-ai", "oneshot"), "port-report": ("port-report", "oneshot"),
+              "port-report-memory": ("port-report-memory", "oneshot")}
+PAIRS = [("prompt", "adaptive", " [adaptive]"), ("prompt", "report", ""), ("prompt", "history", ""), ("agent", "agent+report", " [multi-step]"),
+         ("prompt", "port", " [deterministic]"), ("prompt", "port-ai", " [deterministic + AI]"),
+         ("prompt", "port-report-memory", " [full stack]"), ("port-ai", "port-report", " [report ablation]"),
+         ("port-report", "port-report-memory", " [memory ablation]")]
 
 
 def run_experiment(spec: dict, log=print, conditions=None, repeats=None, seed=None, build=True) -> list:
@@ -63,11 +67,22 @@ def _run(spec: dict, log, conditions, repeats, seed, build) -> list:
     """Runs every (repeat, task, condition) once. Finished runs are recorded in experiments/progress/<name>.json,
     so running the same command again skips them: a free-tier quota can spread an experiment over several days."""
     from . import store
+    if spec.get("evidence_version"):
+        from .evidence import validate_spec
+        validate_spec(spec, conditions=conditions, repeats=repeats, build=build)
     conditions = conditions or spec.get("conditions") or ["prompt", "report"]
     repeats = repeats or spec.get("repeats") or 1
     name = spec.get("name") or "experiment"
     prog_file = _progress_path(name)
     progress = json.loads(prog_file.read_text()) if prog_file.exists() else {}
+    if spec.get("evidence_version"):
+        from .evidence import digest
+        identity = digest({"spec": spec, "conditions": conditions, "repeats": repeats, "seed": seed, "build": build})
+        lock = prog_file.with_suffix(".manifest.json")
+        if lock.exists() and json.loads(lock.read_text())["sha256"] != identity:
+            raise ValueError("Experiment changed since start; use a new name")
+        lock.parent.mkdir(parents=True, exist_ok=True)
+        lock.write_text(json.dumps({"sha256": identity, "spec": spec}, indent=2))
     runs_in = lambda: sum(1 for k in progress if not k.startswith("pair|"))   # noqa: E731
     done_before = runs_in()
     total = repeats * len(spec["tasks"]) * len(conditions)
@@ -101,17 +116,34 @@ def _run(spec: dict, log, conditions, repeats, seed, build) -> list:
                 mode, edit = CONDITIONS.get(cond, (cond, "oneshot"))
                 params = {"mode": mode, "edit": edit, "source": task["source"], "donor": task["donor"], "add_component": True,
                           "component": comp, "prompt": task.get("prompt") or default_prompt(False, False, comp),
-                          "build": build, "auto_compare": False, "experiment": name}
+                          "build": build, "auto_compare": False, "experiment": name, "acceptance": task.get("acceptance"), "source_setup": task.get("source_setup"), "constraints": task.get("constraints"), "component_inputs": task.get("component_inputs")}
+                requested_id = f"{time.strftime('%Y%m%d-%H%M%S')}-{cond.replace('+', '-')}"
+                if spec.get("evidence_version"):
+                    with prog_file.with_suffix(".attempts.jsonl").open("a") as audit:
+                        audit.write(json.dumps({"event": "started", "cell": key, "run_id": requested_id, "condition": cond}) + "\n")
                 try:
                     rec = run(params, log=lambda m: log("    " + m),
-                              run_id=f"{time.strftime('%Y%m%d-%H%M%S')}-{cond.replace('+', '-')}")
+                              run_id=requested_id)
                 except Exception as e:
+                    if spec.get("evidence_version"):
+                        with prog_file.with_suffix(".attempts.jsonl").open("a") as audit:
+                            audit.write(json.dumps({"event": "exception", "cell": key, "run_id": requested_id,
+                                                    "condition": cond, "error": str(e)[:300], "usage": "inspect saved run record; do not assume zero"}) + "\n")
                     log(f"    -> stopped: {e}")
                     if QUOTA.search(str(e)):
                         stop = QuotaReached(str(e)[:300])
                     time.sleep(1)
                     continue
                 agent_err = (rec.get("agent") or {}).get("error") or ""
+                if spec.get("evidence_version"):
+                    # Preserve retry attempts as costs, even when quota errors do not complete a cell.
+                    usage = [rec.get("agent") or {}, rec.get("report_usage") or {}]
+                    attempt = {"event": "recorded", "cell": key, "run_id": rec["id"], "condition": cond,
+                               "quota_retry": bool(QUOTA.search(agent_err)),
+                               "tokens": sum((u.get("input_tokens") or 0) + (u.get("output_tokens") or 0) for u in usage),
+                               "seconds": rec.get("seconds"), "status": rec.get("status")}
+                    with prog_file.with_suffix(".attempts.jsonl").open("a") as audit:
+                        audit.write(json.dumps(attempt) + "\n")
                 if QUOTA.search(agent_err):       # the AI call itself ran out of quota: not a real result, redo it later
                     log(f"    -> quota reached during this run; it will be redone when you resume")
                     stop = QuotaReached(agent_err[:300])
@@ -141,7 +173,7 @@ def _run(spec: dict, log, conditions, repeats, seed, build) -> list:
         log(f"\nQUOTA REACHED after {runs_done - done_before} new run(s) today ({runs_done}/{total} done). "
             f"Run the same command again after the quota resets (midnight Pacific) to continue.")
     else:
-        log(f"\nAll {total} runs done.")
+        log(f"\nAll {total} runs done." if runs_done == total else f"\nIncomplete: {runs_done}/{total} runs; resume missing runs.")
     if screening and set(conditions) <= {"prompt", "agent"}:
         log("\n" + screen_table(screening))
     return results

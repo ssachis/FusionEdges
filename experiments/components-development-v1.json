@@ -1,0 +1,169 @@
+{
+  "name": "components-development-v1",
+  "evidence_version": 1,
+  "status": "DRAFT: acceptance contracts and baseline eligibility not yet frozen",
+  "scope": "16 development tasks across four component families; previously seen repos, not a held-out benchmark. Accordion has only one donor: report separately.",
+  "conditions": [
+    "prompt",
+    "port-ai",
+    "port-report",
+    "port-report-memory"
+  ],
+  "repeats": 2,
+  "seed": 261102,
+  "env": {
+    "FUSIONEDGES_PROVIDERS": "gemini",
+    "FUSIONEDGES_GEMINI_MODEL": "gemini-3.5-flash-lite",
+    "FUSIONEDGES_GEMINI_MAX_TOKENS": "4096",
+    "FUSIONEDGES_BROWSER": "1",
+    "FUSIONEDGES_MEMORY_SNAPSHOT": "experiments/memory-development-v1.json"
+  },
+  "memory_sha256": "ca9960a9b0826e9184baf461290e0d2fab46e29a2267ab84f25a04195444c4ac",
+  "code_sha256": "5dd0849c4844a022955db674219f569b1f98e93031339791a233ee3d558b718f",
+  "tasks": [
+    {
+      "id": "navbar-1",
+      "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+      "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+      "component": "navbar",
+      "donor_component_file": "src/components/common/Navbar.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "navbar-2",
+      "source": "https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb",
+      "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+      "component": "navbar",
+      "donor_component_file": "src/navigation/NavbarTwoColumns.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "navbar-3",
+      "source": "https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d",
+      "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c",
+      "component": "navbar",
+      "donor_component_file": "components/Header.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "navbar-4",
+      "source": "https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "navbar",
+      "donor_component_file": "src/components/layout/navbar.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "footer-1",
+      "source": "https://github.com/SrPirson/Portfolio/tree/8b77ff3cffb701dc3c09317729c56d7c6bb1794d",
+      "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+      "component": "footer",
+      "donor_component_file": "src/components/common/Footer.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "footer-2",
+      "source": "https://github.com/GrohTech/react-portfolio/tree/dc0a36c9ac4f0a5b6ad6f1ba89b64a593caf719e",
+      "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+      "component": "footer",
+      "donor_component_file": "src/footer/CenteredFooter.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "footer-3",
+      "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+      "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c",
+      "component": "footer",
+      "donor_component_file": "components/Footer.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "footer-4",
+      "source": "https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "footer",
+      "donor_component_file": "src/components/layout/footer.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "card-1",
+      "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+      "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+      "component": "card",
+      "donor_component_file": "src/components/cards/BlogCard.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "card-2",
+      "source": "https://github.com/akbarsoft0/React-portfolio/tree/e2dd0f2f0d2a07f068073a5300e0a52edf754065",
+      "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c",
+      "component": "card",
+      "donor_component_file": "components/Card.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "card-3",
+      "source": "https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "card",
+      "donor_component_file": "src/components/retroui/Card.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "card-4",
+      "source": "https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f",
+      "donor": "https://github.com/aarabii/An/tree/6e3f3afd417013bdd7a508b8d690e4de6727b664",
+      "component": "card",
+      "donor_component_file": "src/components/cards/BlogCard.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "accordion-1",
+      "source": "https://github.com/Aking16/React-Fast-Food/tree/fe855e6716e8c3a60ed191d2aa196a41b47125a7",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "accordion",
+      "donor_component_file": "src/components/retroui/Accordion.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "accordion-2",
+      "source": "https://github.com/losier/v4/tree/81f68d151907d42f73ba43b4d608daa73543d21f",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "accordion",
+      "donor_component_file": "src/components/retroui/Accordion.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "accordion-3",
+      "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "accordion",
+      "donor_component_file": "src/components/retroui/Accordion.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    },
+    {
+      "id": "accordion-4",
+      "source": "https://github.com/xItzHypeR/portfolio/tree/b2643d8a72bddaf6dfd45b4891058754ea9d9adb",
+      "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+      "component": "accordion",
+      "donor_component_file": "src/components/retroui/Accordion.tsx",
+      "acceptance": null,
+      "eligibility": "pending: confirm React/Next versions, props, source/donor baselines, selectors and intended behavior before freezing"
+    }
+  ]
+}

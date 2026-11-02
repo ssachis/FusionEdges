@@ -1,0 +1,12 @@
+{
+ "pair|20261102-134646-prompt__20261102-134501-adaptive": "inconclusive",
+ "pair|20261102-135926-prompt__20261102-135028-adaptive": "inconclusive",
+ "pair|20261102-141305-prompt__20261102-140531-adaptive": "inconclusive",
+ "r1|t1|adaptive": "20261102-134501-adaptive",
+ "r1|t1|prompt": "20261102-134646-prompt",
+ "r1|t2|adaptive": "20261102-135028-adaptive",
+ "r1|t2|prompt": "20261102-135926-prompt",
+ "r1|t3|adaptive": "20261102-140531-adaptive",
+ "r1|t3|prompt": "20261102-141305-prompt",
+ "r1|t4|adaptive": "20261102-141600-adaptive"
+}

@@ -1,0 +1,18 @@
+[
+  {
+    "selector": "#showcase h1",
+    "text": "Professional Web Design"
+  },
+  {
+    "selector": "#boxes",
+    "text": "HTML Markup"
+  },
+  {
+    "selector": "#boxes",
+    "text": "CSS 3 Styling"
+  },
+  {
+    "selector": "#boxes",
+    "text": "Graphic Design"
+  }
+]

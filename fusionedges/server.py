@@ -32,6 +32,12 @@ def _stages(mode):
         s.append(("report", "Retrieve code" + (" + past cases" if mode == "history" else "") + " + write compatibility report"))
     if mode == "port":
         return s + [("port", "Port the component by rule (no AI)"), ("agent", "Record the result"), ("check", "Build + check the result")]
+    if mode == "adaptive":
+        return s + [("port", "Apply rules"), ("report", "Compatibility record; investigate only if needed"),
+                    ("agent", "Escalate only unresolved work"), ("check", "Verify component and host")]
+    if mode in ("port-report", "port-report-memory"):
+        return s + [("port", "Port by rule"), ("report", "Explain unresolved compatibility"),
+                    ("agent", "Apply only necessary fixes"), ("check", "Build + check the result")]
     if mode == "port-ai":
         return s + [("port", "Port the component by rule (no AI)"), ("agent", "Build; AI fixes only what still fails"),
                     ("check", "Build + check the result")]
@@ -222,10 +228,10 @@ class Handler(BaseHTTPRequestHandler):
                 return self._json({"error": "Pick codebase migration, style transfer, or add a component"}, 400)
             if not (params.get("prompt") or "").strip():
                 return self._json({"error": "The prompt is empty"}, 400)
-            if not llm.configured():
+            if not llm.configured() and params.get("mode") not in ("port", "adaptive"):
                 return self._json({"error": "No AI key is set. Export GROQ_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY "
                                             "or OPENAI_API_KEY in the terminal and restart the server."}, 400)
-            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history", "port", "port-ai") else "prompt"
+            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history", "port", "port-ai", "port-report", "port-report-memory", "adaptive") else "prompt"
             job = Job(params["mode"])
             JOBS[job.id] = job
             busy = RUN_LOCK.locked()

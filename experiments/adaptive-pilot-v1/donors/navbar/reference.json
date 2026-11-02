@@ -1,0 +1,18 @@
+{
+  "family": "navbar",
+  "fixture": "ixartz",
+  "viewports": {
+    "desktop": {
+      "problems": [],
+      "page_errors": [],
+      "pass": true
+    },
+    "mobile": {
+      "problems": [],
+      "page_errors": [],
+      "pass": true
+    }
+  },
+  "implementation_modified": false,
+  "passed": true
+}

@@ -1,0 +1,46 @@
+{
+  "skipped": false,
+  "url": "http://127.0.0.1:58458/",
+  "component": "host-baseline",
+  "viewports": {
+    "desktop": {
+      "found": false,
+      "hidden": [],
+      "tag": null,
+      "classes": null,
+      "height": null,
+      "width": null,
+      "links": [],
+      "sideways": false,
+      "overflow_px": 0,
+      "text": 1686,
+      "contract_problems": [],
+      "errors_load": [],
+      "errors_scroll": [],
+      "network_errors": 0,
+      "screenshot": "/Users/sachisingh/Documents/Codex/2026-11-02/referenced-chatgpt-conversation-this-is-an/outputs/pilot-baselines/jcole/desktop.png",
+      "screenshot_sha256": "45bfe4804d345ed426509d4e70d694c83ec276c5017ddd3536227644241eddce"
+    },
+    "mobile": {
+      "found": false,
+      "hidden": [],
+      "tag": null,
+      "classes": null,
+      "height": null,
+      "width": null,
+      "links": [],
+      "sideways": false,
+      "overflow_px": 0,
+      "text": 1520,
+      "contract_problems": [],
+      "errors_load": [],
+      "errors_scroll": [],
+      "network_errors": 0,
+      "screenshot": "/Users/sachisingh/Documents/Codex/2026-11-02/referenced-chatgpt-conversation-this-is-an/outputs/pilot-baselines/jcole/mobile.png",
+      "screenshot_sha256": "2a95d6c26bf69be28aaf45c316765ab6717a1e13e497ba2377eea24b3ac22bfb"
+    }
+  },
+  "problems": [],
+  "passed": true,
+  "existing_defects": []
+}

@@ -215,3 +215,69 @@ budget, same for both conditions, so the report stays the only difference). The 
 pip install playwright && python -m playwright install chromium   # one time; without it the check is skipped
 export FUSIONEDGES_BROWSER=0                                        # turn it off
 ```
+
+## Evidence upgrade (2 Nov 2026)
+
+New experiment conditions `port-report` and `port-report-memory` run rules first, rescan the actual ported output,
+write its compatibility report, and ask the agent only for remaining work. Memory evaluation requires a frozen
+`FUSIONEDGES_MEMORY_SNAPSHOT` JSON file; shared source OR donor repositories are excluded.
+
+Strict evidence specs (`evidence_version: 1`) require immutable commit URLs, one Gemini model, builds and browser
+checks, at least two repeats, code/memory hashes, and task-specific acceptance contracts. The new
+`experiments/components-development-v1.json` is a **draft inventory**, not an executable benchmark until its
+contracts and original-site baselines are validated. Do not remove those guards to manufacture results.
+
+To use a single new condition from the command line, pass `run --mode port-report` or
+`run --mode port-report-memory` together with the source, donor, component, and normal options. These are experimental
+pipeline modes; the existing browser interface has not been redesigned around them.
+
+## Adaptive integration (experimental)
+
+`adaptive` applies rules first and saves a compatibility record without an AI call. It accepts the automated
+result only when an explicit component contract and build/static/browser checks pass. Missing verification goes
+to review; it is not treated as a successful transfer. Failed or uncertain integrations get a focused report
+using current-code retrieval. Local problems receive at most one small AI edit; complex or still-failing cases
+receive a tool agent capped at eight steps. Each route and reason is saved in `run.json` and shown when viewing
+that run. Final visual fidelity still needs independent review.
+
+```bash
+python3 -m fusionedges run --mode adaptive --component card \
+  --source <source-repo-or-folder> --donor <donor-repo-or-folder> \
+  --acceptance-file <validated-contract.json>
+```
+
+Acceptance contracts specify a unique component selector, unrelated host text/selectors to preserve, and
+click/keyboard assertions for interactive components. Freeze these per task before evaluation. The router
+is a heuristic policy, not a trained or validated difficulty predictor. All report and repair costs count.
+
+Historical memory RAG is **disabled in adaptive policy v1**, even when a memory snapshot exists. Current-code
+retrieval in the report is already available. After enough reviewed, independent development evidence exists,
+freeze a curated snapshot and run a separate memory ablation on disjoint repositories before enabling it.
+No benchmark results have been generated for this adaptive policy yet.
+
+## Frozen 8-task adaptive pilot
+
+The prepared development pilot compares `prompt` and `adaptive` on eight tasks (two React hosts × four
+component families), two repeats per condition: 32 runs. Identical task prompts, explicit props, preserved
+host-content assertions, pinned Gemini 3.6 Flash, matching warm dependencies, native donor references, and
+a fixed seed are archived under `experiments/adaptive-pilot-v1/`. Historical memory is disabled.
+
+From the terminal with `GEMINI_API_KEY` exported, run:
+
+```bash
+zsh experiments/run-adaptive-pilot.command
+```
+
+Quota exhaustion pauses the batch; run the same command later to resume. The append-only attempts ledger
+retains retry attempts and their recorded costs. Missing/exceptional usage must be audited, not assumed zero.
+The code and reference hashes must still match. This is a development pilot on known repos, not a held-out
+generalization result. See the protocol for the known host defect and reference-fixture qualifications.
+
+After all cells complete, create a review packet with:
+
+```bash
+python3 -m fusionedges.pilot experiments/adaptive-pilot-v1.json --review-packet output/adaptive-pilot-review
+```
+
+Share only its `reviewer` directory with reviewers; keep `PRIVATE-arm-key.json` separate. Naming hides arm
+labels, but implementation style may still reveal a guess. Record reviewer guesses and disagreements.

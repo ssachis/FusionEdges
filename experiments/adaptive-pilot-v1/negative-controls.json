@@ -1,0 +1,102 @@
+{
+  "ai_calls": 0,
+  "transfer_experiment_runs": 0,
+  "checks": [
+    {
+      "task": "sky-navbar",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-footer",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-card",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-accordion",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-navbar",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-footer",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-card",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "sky-accordion",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-navbar",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-footer",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-card",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-accordion",
+      "viewport": "desktop",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-navbar",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-footer",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-card",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    },
+    {
+      "task": "jcole-accordion",
+      "viewport": "mobile",
+      "host_preservation_pass": true,
+      "missing_transfer_correctly_rejected": true
+    }
+  ]
+}

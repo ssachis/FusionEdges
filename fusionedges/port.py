@@ -836,11 +836,11 @@ def _files_for_ai(rec: dict, output: Path, error_text: str, room: int = 10000) -
 
 
 def finish_with_ai(task: str, rec: dict, output: Path, component: str, build_enabled: bool, log,
-                   after_build=None, max_repairs: int = 2) -> dict:
+                   after_build=None, max_repairs: int = 2, report: dict | None = None) -> dict:
     """Build (and browser-check) the deterministic port; only when something fails, or a fact the port could not
     resolve needs code, ask the model, with a small message: what was already done, what is left, the errors,
     and only the files involved. No failure -> no AI call at all."""
-    from .agents import Workspace, apply_blocks
+    from .agents import Workspace, apply_blocks, report_for_agent, useful_conflicts
     from .llm import LLMError, Session
     from .prompts import ONESHOT_SYSTEM
     from .verify import run_build
@@ -849,6 +849,8 @@ def finish_with_ai(task: str, rec: dict, output: Path, component: str, build_ena
     ws = Workspace({"output": output}, writable="output", build_enabled=build_enabled)
     written, builds, failures, attempts, browser_failures, browser_repairs, browser_log = [], 0, 0, 0, 0, 0, []
     open_facts = [u for u in rec.get("unresolved", []) if u["kind"] in NEEDS_CODE]
+    if report and useful_conflicts(report.get("conflicts") or []):
+        open_facts.append({"kind": "report-guidance", "text": "Act on verified unresolved compatibility findings"})
     error_kind, error_text, run_error = "", "", ""
     for attempt in range(1 + max_repairs):
         problems = []
@@ -882,7 +884,7 @@ def finish_with_ai(task: str, rec: dict, output: Path, component: str, build_ena
             browser_repairs += 1
         done = "\n".join(f"- {r['kind']}: {r['action']}" for r in rec.get("resolved", []))
         left = "\n".join(f"- {u['kind']}: {u['text']}" for u in rec.get("unresolved", [])) or "- none"
-        msg = (f"TASK: {task}\n\nA deterministic tool already ported the donor's {component} into the OUTPUT project "
+        msg = (f"TASK: {task}\n\nCOMPATIBILITY REPORT (only unresolved guidance):\n{report_for_agent(report) if report else 'none'}\n\nA deterministic tool already ported the donor's {component} into the OUTPUT project "
                f"(a copy of the site). Do NOT rewrite it from scratch; make the smallest change that makes it work.\n\n"
                f"ALREADY DONE (keep):\n{done}\n\nNOT DONE BY THE TOOL (your job if it matters):\n{left}\n\n"
                + (f"PROBLEMS NOW ({error_kind}):\n{error_text}\n\n" if error_text else
@@ -917,6 +919,7 @@ def finish_with_ai(task: str, rec: dict, output: Path, component: str, build_ena
               "port": {k: rec.get(k) for k in ("resolved", "unresolved", "mount", "packages_added", "seconds")}})
     if run_error:
         t["repair_error"] = run_error[:600]
+        t["error"] = run_error[:600]
     return t
 
 
@@ -1446,3 +1449,38 @@ def headlessui_v1(text: str) -> tuple:
         text = re.sub(r"(</?)%s\b" % re.escape(local), r"\g<1>" + HEADLESSUI_V1[orig], text)
         text = re.sub(r"(?<![\w.])%s(?=\s*[.,)}\]])" % re.escape(local), HEADLESSUI_V1[orig], text)
     return text, len(renamed)
+
+
+def bind_inputs(output: Path, rec: dict, inputs: dict) -> dict:
+    """Wire declared JSON props and non-styling data attributes into our generated entry, without AI.
+
+    No acceptance result is inferred here: verification must still establish the actual donor code,
+    mounting, content, behavior, and host preservation. React-node composition remains agent work.
+    """
+    import html
+    props = inputs.get('props') or {}
+    attrs = inputs.get('data_attributes') or {}
+    if not isinstance(props, dict) or not isinstance(attrs, dict):
+        raise ValueError('Component inputs require props and data_attributes objects')
+    if any(not re.fullmatch(r'data-[a-z0-9-]+', k) or not isinstance(v, str) for k,v in attrs.items()):
+        raise ValueError('Only string data-* attributes are accepted for mechanical wiring')
+    encoded = json.dumps(props, ensure_ascii=True, allow_nan=False).replace('<', '\\u003c')
+    root = Path(output).resolve()
+    entry = (root / rec.get('entry', '')).resolve()
+    if root not in entry.parents or not entry.is_file():
+        rec.setdefault('unresolved', []).append({'kind':'component-inputs','text':'No generated entry available for declared inputs'})
+        return rec
+    text = entry.read_text()
+    marker = re.search(r'<div\s+className="[^"]*"[^>]*>', text)
+    if not marker or '<Donor {...props} />' not in text:
+        rec.setdefault('unresolved', []).append({'kind':'component-inputs','text':'Generated entry structure could not accept declared inputs'})
+        return rec
+    additions = ''.join(f' {k}="{html.escape(v, quote=True)}"' for k,v in sorted(attrs.items()))
+    text = text[:marker.end()-1] + additions + text[marker.end()-1:]
+    if props:
+        text = text.replace('export default function ', f'const PROVIDED_PROPS = {encoded};\n\nexport default function ', 1)
+        text = text.replace('<Donor {...props} />', '<Donor {...props} {...PROVIDED_PROPS} />', 1)
+    entry.write_text(text)
+    rec.setdefault('resolved', []).append({'kind':'component-inputs','action':f'Wired {len(props)} declared JSON props and {len(attrs)} data attributes without AI'})
+    rec['component_inputs'] = inputs
+    return rec

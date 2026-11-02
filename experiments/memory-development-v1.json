@@ -1,0 +1,1617 @@
+{
+  "version": 1,
+  "frozen_at": "2026-11-02",
+  "note": "Development memory from existing reports, not evaluation outcomes. Shared source OR donor excluded at query time. Do not call these human-reviewed.",
+  "training_report_tokens": 138813,
+  "lessons": [
+    {
+      "id": "20261015-202031-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js directives and APIs in React CRA environment. Suggested adaptation: Remove 'use client' directives and replace any Next.js framework modules with standard React code.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-202031-report",
+        "facts": [
+          "F1",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R2"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 1,
+            "snippet": "\"use client\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "package.json",
+            "line": 14,
+            "snippet": "\"react-scripts\": \"^5.0.1\",",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-202031-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Next.js App Router vs React Router 5. Suggested adaptation: Convert `next/link` to `Link` or `NavLink` from `react-router-dom`. Replace `usePathname` with `useLocation().pathname` from `react-router-dom` and `useRouter` with `useHistory` from `react-router-dom`.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-202031-report",
+        "facts": [
+          "F2",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R9"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 3,
+            "snippet": "import { useRouter } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "package.json",
+            "line": 13,
+            "snippet": "\"react-router-dom\": \"^5.2.0\",",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-202031-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "naming",
+      "text": "Path alias @/ unresolvable in source. Suggested adaptation: Rewrite all alias paths to relative paths (e.g. `../` or `./`).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-202031-report",
+        "facts": [
+          "F6"
+        ],
+        "chunks": [
+          "R1"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-202031-report:C4",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS utility classes in source plain CSS environment. Suggested adaptation: Convert Tailwind utility classes to plain CSS rules (e.g., in a dedicated `Navbar.css` file or CSS module) or add Tailwind processing.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-202031-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R11"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/index.css",
+            "line": 1,
+            "snippet": "body {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-202031-report:C7",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "naming",
+      "text": "Language mismatch (TypeScript vs JavaScript). Suggested adaptation: Strip TypeScript interface/type definitions and convert `.tsx` / `.ts` files to `.js` / `.jsx`.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-202031-report",
+        "facts": [
+          "F5"
+        ],
+        "chunks": [
+          "R1",
+          "R4"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/theme-toggle.tsx",
+            "line": 11,
+            "snippet": "interface AnimatedThemeTogglerProps",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js imports and routing APIs in DONOR component. Suggested adaptation: Replace Next.js `Link` with `react-router-dom` `Link`, `usePathname` with `useLocation().pathname`, and remove `useRouter`.. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F1",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R4"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 3,
+            "snippet": "import { useRouter } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Navigation links mismatch between DONOR and SOURCE routes. Suggested adaptation: Update `navItems` array to point to valid SOURCE routes (`/`, `/react-hooks`, `/ui-ux`, `/form-example`) or fallback to `#`.. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R9"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 14,
+            "snippet": "{ href: \"/\", label: \"Home\" },",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 28,
+            "snippet": "<Route exact path=\"/\" component={Home} />",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 29,
+            "snippet": "<Route exact path=\"/react-hooks\" component={ReactHooks} />",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "config",
+      "text": "Path alias `@/` used in DONOR imports. Suggested adaptation: Rewrite all `@/` paths to relative import paths (e.g., `./sign-in-button`).. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R3"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C4",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS classes used in DONOR without Tailwind setup in SOURCE. Suggested adaptation: Extract and write explicit CSS styles for the retro navbar in CSS or adapt to SOURCE styling.. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R5",
+          "R11"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/index.css",
+            "line": 1,
+            "snippet": "body {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C5",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "behavior",
+      "text": "Host script expectations for legacy CSS classes `.navbar` and `.navbar-default`. Suggested adaptation: Keep `.navbar` and `.navbar-default` classes on the top-level outer wrapper element of the new Navbar component.. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R1",
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/component/Header.js",
+            "line": 8,
+            "snippet": "<nav className=\"navbar navbar-default navbar-fixed-top\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-203420-report:C8",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "TypeScript syntax in DONOR files on JavaScript SOURCE project. Suggested adaptation: Convert DONOR `.tsx` and `.ts` files to `.jsx` and `.js`, removing type interfaces and annotations.. Whole-run outcome: failed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-203420-report",
+        "facts": [
+          "F5"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R5"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 21,
+            "snippet": "export function Navbar() {",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/index.js",
+            "line": 1,
+            "snippet": "import React from \"react\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-204353-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Next.js Navigation vs React Router v5. Suggested adaptation: Replace `Link` from `next/link` with `Link` from `react-router-dom` and replace `usePathname()` with `useLocation().pathname`.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-204353-report",
+        "facts": [
+          "F2",
+          "F8"
+        ],
+        "chunks": [
+          "R1"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-204353-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind Utility Classes in Non-Tailwind Source. Suggested adaptation: Extract retro styling into a plain CSS file (e.g. `src/component/Navbar.css`) and apply styling via CSS classes.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-204353-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R5"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-204353-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "behavior",
+      "text": "Host Script Coupling with Header Selectors. Suggested adaptation: Retain `navbar` and `navbar-default` CSS class names on the outer container element in the new component.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-204353-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/component/Header.js",
+            "line": 8,
+            "snippet": "<nav className=\"navbar navbar-default navbar-fixed-top\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-204353-report:C7",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Donor Next.js Auth and Theme Dependencies. Suggested adaptation: Replace theme toggle implementation with document class toggling and replace auth button with client-side session state mock or simple action handler.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-204353-report",
+        "facts": [
+          "F8"
+        ],
+        "chunks": [
+          "R3",
+          "R4"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/theme-toggle.tsx",
+            "line": 3,
+            "snippet": "import { useTheme } from \"next-themes\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 7,
+            "snippet": "import { authClient } from \"@/lib/auth-client\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-204353-report:C8",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "config",
+      "text": "TypeScript and Path Aliases. Suggested adaptation: Strip TS annotations, convert files to `.js`/`.jsx`, and convert `@/` aliases to relative paths.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-204353-report",
+        "facts": [
+          "F5",
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R7"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-210430-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js App Router imports incompatible with React CRA. Suggested adaptation: Replace next/link with react-router-dom Link, replace usePathname() with useLocation().pathname from react-router-dom, and remove Next.js specific router hooks.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-210430-report",
+        "facts": [
+          "F1",
+          "F2",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R4"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 3,
+            "snippet": "import { useRouter } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-210430-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS classes not supported in source project. Suggested adaptation: Convert Tailwind utility classes (e.g. shadow-retro, border-4, flex, backdrop-blur) into a dedicated CSS file (e.g. Navbar.css) or standard CSS inline/module styles.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-210430-report",
+        "facts": [
+          "F7",
+          "F9",
+          "F10"
+        ],
+        "chunks": [
+          "R1",
+          "R11",
+          "R12"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-210430-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "behavior",
+      "text": "Host script DOM query coupling on .navbar class. Suggested adaptation: Ensure the top-level <nav> or header element in the replacement navbar includes the class name 'navbar'.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-210430-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/component/Header.js",
+            "line": 8,
+            "snippet": "<nav className=\"navbar navbar-default navbar-fixed-top\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-210430-report:C6",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "other",
+      "text": "Donor files use TypeScript syntax in JS project. Suggested adaptation: Strip all TypeScript interfaces, types, and generic annotations when converting donor components to JavaScript (.jsx).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-210430-report",
+        "facts": [
+          "F5"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R4",
+          "R5",
+          "R6"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 21,
+            "snippet": "export function Navbar() {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261015-210430-report:C8",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "data",
+      "text": "Nav items link to routes that differ from source application. Suggested adaptation: Update navItems to map to existing source routes (/react-hooks, /ui-ux, /form-example) or anchor hashes (/#about, /#contact).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261015-210430-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R9"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 13,
+            "snippet": "const navItems = [",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 28,
+            "snippet": "<Route exact path=\"/\" component={Home} />",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js directives and framework APIs in CRA environment. Suggested adaptation: Remove 'use client' directives and replace 'next/link' imports with react-router-dom Link components.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F1",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R4"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 1,
+            "snippet": "\"use client\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Next App Router vs React Router v5. Suggested adaptation: Replace usePathname with useLocation from react-router-dom (location.pathname). Map navItems hrefs to source routes ('/', '/react-hooks', '/ui-ux', '/form-example').. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R9"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 5,
+            "snippet": "import { BrowserRouter as Router, Route, Switch } from \"react-router-dom\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS v4 utility classes missing in Source CSS. Suggested adaptation: Add custom CSS rules for the retro theme styling (shadow-retro, retro-border, colors) to source stylesheets or create a CSS module for the Navbar.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R5",
+          "R11"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\"",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C4",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "behavior",
+      "text": "Host script jQuery/DOM coupling with .navbar classes. Suggested adaptation: Ensure the top-level <header> or <nav> container of the replacement Navbar includes the classes 'navbar navbar-default navbar-fixed-top'.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R1",
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/component/Header.js",
+            "line": 8,
+            "snippet": "<nav className=\"navbar navbar-default navbar-fixed-top\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C7",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "config",
+      "text": "TypeScript language and path aliases (@/) unsupported in CRA JS setup. Suggested adaptation: Strip TypeScript annotations, rename files to .js/.jsx, and convert '@/' path imports to relative imports.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F5",
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R7"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261018-141639-report:C8",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "dependency",
+      "text": "Missing donor npm libraries (next-themes, better-auth, hugeicons). Suggested adaptation: Replace theme toggle logic with basic DOM theme toggle or state, stub/mock auth handlers in sign-in-button, and replace icon imports with clean SVG components.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261018-141639-report",
+        "facts": [
+          "F8"
+        ],
+        "chunks": [
+          "R3",
+          "R4",
+          "R6"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/theme-toggle.tsx",
+            "line": 3,
+            "snippet": "import { useTheme } from \"next-themes\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 7,
+            "snippet": "import { authClient } from \"@/lib/auth-client\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-020703-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js App Router navigation APIs are incompatible with Create React App and React Router 5. Suggested adaptation: Replace `next/link` with `Link` from `react-router-dom`, `usePathname()` with `useLocation().pathname` from `react-router-dom`, and `useRouter()` with `useHistory()`.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-020703-report",
+        "facts": [
+          "F1",
+          "F2",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/sign-in-button.tsx",
+            "line": 3,
+            "snippet": "import { useRouter } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-020703-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Donor uses Tailwind CSS utility classes which are not configured in Source. Suggested adaptation: Convert Tailwind classes (border-b-4, shadow-retro, flex, top-0, etc.) into CSS classes in a dedicated navbar stylesheet imported into the component.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-020703-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R5",
+          "R11"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/index.css",
+            "line": 1,
+            "snippet": "body {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-020703-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "config",
+      "text": "TypeScript syntax and path aliases (@/) cannot be parsed directly in source JS files. Suggested adaptation: Strip TypeScript annotations and convert files to `.jsx`/`.js`. Convert `@/` aliases to standard relative paths.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-020703-report",
+        "facts": [
+          "F5",
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R3",
+          "R7"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 11,
+            "snippet": "import { cn } from \"@/lib/utils\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-020703-report:C4",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "behavior",
+      "text": "Source main.js targets jQuery/DOM selectors like .navbar and .navbar-default. Suggested adaptation: Retain key legacy selector classes like `navbar` and `navbar-default` on the outer element of the new navbar.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-020703-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/component/Header.js",
+            "line": 8,
+            "snippet": "<nav className=\"navbar navbar-default navbar-fixed-top\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-021125-report:C1",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js to React CRA framework mismatch. Suggested adaptation: Rewrite imports to use standard React patterns and react-router-dom Link.. Whole-run outcome: partial. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-021125-report",
+        "facts": [
+          "F1",
+          "F15"
+        ],
+        "chunks": [
+          "R1",
+          "R5"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Link.tsx",
+            "line": 2,
+            "snippet": "import Link from 'next/link'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-021125-report:C2",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Next.js Router vs React Router v5. Suggested adaptation: Convert <Link href=\"...\"> to react-router-dom's <Link to=\"...\">.. Whole-run outcome: partial. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-021125-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R5"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 17,
+            "snippet": "<Link href=\"/\" aria-label={siteMetadata.headerTitle}>",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-021125-report:C3",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS styling system missing in source. Suggested adaptation: Install Tailwind CSS in the source repository or convert Tailwind utility classes to standard CSS / CSS modules matching the source.. Whole-run outcome: partial. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-021125-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R3"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "package.json",
+            "line": 5,
+            "snippet": "\"dependencies\": {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-021125-report:C5",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "config",
+      "text": "Path aliases @/ not configured in source. Suggested adaptation: Rewrite all @/ imports to relative paths (e.g., ../data/siteMetadata).. Whole-run outcome: partial. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-021125-report",
+        "facts": [
+          "F6"
+        ],
+        "chunks": [
+          "R1"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 1,
+            "snippet": "import siteMetadata from '@/data/siteMetadata'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-021125-report:C7",
+      "source": "sanajitjana/React-Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "naming",
+      "text": "TypeScript vs JavaScript mismatch. Suggested adaptation: Convert all donor files to plain JavaScript (.js or .jsx) and strip out TypeScript type annotations.. Whole-run outcome: partial. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-021125-report",
+        "facts": [
+          "F5"
+        ],
+        "chunks": [
+          "R1",
+          "R2",
+          "R4",
+          "R5",
+          "R6",
+          "R7",
+          "R8"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 9,
+            "snippet": "const Header = () => {",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022124-report:C1",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js APIs in React CRA project. Suggested adaptation: Remove 'use client' directives. Replace Next.js imports with react-router-dom APIs (Link, useLocation).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022124-report",
+        "facts": [
+          "F1",
+          "F8"
+        ],
+        "chunks": [
+          "R1",
+          "R3"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 4,
+            "snippet": "import Link from \"next/link\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 5,
+            "snippet": "import { usePathname } from \"next/navigation\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022124-report:C2",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Routing API Mismatch and Unmatched Navigation Links. Suggested adaptation: Update navItems array to match SOURCE routes ('/', '/about', '/project', '/resume') and fallback unsupported routes to '#'.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022124-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R9"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 13,
+            "snippet": "const navItems = [\n  { href: \"/\", label: \"Home\" },\n  { href: \"/about\", label: \"About\" },\n  { href: \"/project\", label: \"Projects\" },\n  { href: \"/blog\", label: \"Blog\" },\n  { href: \"/contact\", label: \"Contact\" },\n];",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 38,
+            "snippet": "<Route path=\"/\" element={<Home />} />\n<Route path=\"/project\" element={<Projects />} />\n<Route path=\"/about\" element={<About />} />\n<Route path=\"/resume\" element={<Resume />} />",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022124-report:C3",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind Utility Classes in Plain CSS Project. Suggested adaptation: Convert Tailwind classes to standard CSS styles in a dedicated stylesheet or inline styles matching SOURCE setup.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022124-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R11"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 26,
+            "snippet": "<header className=\"fixed top-0 z-50 w-full border-b-4 border-black bg-background/95 backdrop-blur\">",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022124-report:C6",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "config",
+      "text": "TypeScript and Path Aliases. Suggested adaptation: Convert files from `.tsx`/`.ts` to `.jsx`/`.js`, strip TypeScript type annotations, and convert `@/` aliases to relative path imports.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022124-report",
+        "facts": [
+          "F5",
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R3"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "src/components/layout/navbar.tsx",
+            "line": 7,
+            "snippet": "import { SignInButton } from \"@/components/layout/sign-in-button\";",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022124-report:C7",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "muhammad-fiaz/portfolio",
+      "component": "navbar",
+      "topic": "other",
+      "text": "Existing Navbar Component Collision. Suggested adaptation: Replace `src/components/Navbar.js` content with the adapted DONOR navbar component tree.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022124-report",
+        "facts": [
+          "F11"
+        ],
+        "chunks": [
+          "R9",
+          "R10"
+        ],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 3,
+            "snippet": "import Navbar from \"./components/Navbar\";",
+            "verified": true,
+            "problem": ""
+          },
+          {
+            "repo": "source",
+            "path": "src/App.js",
+            "line": 35,
+            "snippet": "<Navbar />",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C1",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "framework",
+      "text": "Next.js to React CRA framework mismatch. Suggested adaptation: Rewrite components to standard React JS and use react-router-dom <Link to={...}>.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [
+          "F1",
+          "F15"
+        ],
+        "chunks": [
+          "R1",
+          "R5",
+          "R6",
+          "R7",
+          "R8"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Link.tsx",
+            "line": 2,
+            "snippet": "import Link from 'next/link'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C2",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "routing",
+      "text": "Next.js routing vs React Router v6. Suggested adaptation: Map internal links to use `to={link.href}` with react-router-dom's Link.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [
+          "F2"
+        ],
+        "chunks": [
+          "R1",
+          "R5",
+          "R6"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 38,
+            "snippet": "href={link.href}",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C3",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "version",
+      "text": "React 19 vs React 17 version mismatch. Suggested adaptation: Ensure compatible React 17 syntax (e.g., standard useRef, useState, useEffect).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [
+          "F3",
+          "F4"
+        ],
+        "chunks": [],
+        "file_evidence": [
+          {
+            "repo": "source",
+            "path": "package.json",
+            "line": 12,
+            "snippet": "\"react\": \"^17.0.2\"",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C4",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "styling",
+      "text": "Tailwind CSS classes in Donor vs CRA styling system. Suggested adaptation: Convert Tailwind classes to equivalent Bootstrap classes or custom CSS rules in App.css / index.css.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [
+          "F7"
+        ],
+        "chunks": [
+          "R1",
+          "R6",
+          "R7",
+          "R8"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 10,
+            "snippet": "let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C5",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "config",
+      "text": "Path aliases (@/) not configured in CRA. Suggested adaptation: Rewrite all @/ imports to relative paths (e.g., `../../data/headerNavLinks`).. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [
+          "F6"
+        ],
+        "chunks": [
+          "R1",
+          "R2",
+          "R4",
+          "R6",
+          "R8"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/Header.tsx",
+            "line": 1,
+            "snippet": "import siteMetadata from '@/data/siteMetadata'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    },
+    {
+      "id": "20261027-022341-report:C6",
+      "source": "soumyajit4419/Portfolio",
+      "donor": "timlrx/tailwind-nextjs-starter-blog",
+      "component": "navbar",
+      "topic": "dependency",
+      "text": "Missing HeadlessUI, body-scroll-lock, and next-themes dependencies. Suggested adaptation: Replace HeadlessUI and next-themes/body-scroll-lock with standard React state toggles, simple dropdowns, or remove unsupported advanced features like theme switching / kbar search if unneeded.. Whole-run outcome: passed. This does not establish that this adaptation caused the outcome.",
+      "trust": "AI-generated, citation-verified; adaptation not causally validated",
+      "evidence": {
+        "run": "20261027-022341-report",
+        "facts": [],
+        "chunks": [
+          "R6",
+          "R7"
+        ],
+        "file_evidence": [
+          {
+            "repo": "donor",
+            "path": "components/ThemeSwitch.tsx",
+            "line": 4,
+            "snippet": "import { useTheme } from 'next-themes'",
+            "verified": true,
+            "problem": ""
+          }
+        ]
+      }
+    }
+  ]
+}
