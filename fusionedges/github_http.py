@@ -15,7 +15,14 @@ class Product:
 def handle(handler):
     parsed=urllib.parse.urlparse(handler.path);path=parsed.path
     public=path in ('/','/projects','/projects.js','/projects.css','/github-setup','/auth/github/start','/auth/github/callback')
-    if not public and not path.startswith('/api/github/'):return False
+    if path=='/api/status':return False
+    if path=='/lab' and handler.command=='GET':
+        handler._send(b'','text/plain',303,{'Location':'http://127.0.0.1:8000/'})
+        return True
+    if not public and not path.startswith('/api/github/'):
+        # Never serve repository-generated HTML/scripts on the authenticated GitHub origin.
+        handler._send(b'{"error":"Use the separate research server for experiment endpoints."}','application/json',404)
+        return True
     product=handler.server.github
     try:
         if handler.headers.get('Host')!=urllib.parse.urlparse(product.origin).netloc:

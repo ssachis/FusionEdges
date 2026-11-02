@@ -10,7 +10,7 @@ From the feature worktree, run:
 zsh start-github-feature.command
 ```
 
-The local app opens at **http://127.0.0.1:8101**. Its workspace is separate from the research server. The original experiment interface is available at `/lab` on the feature server, but experiment assets/progress remain in the original Desktop folder.
+The local app opens at **http://127.0.0.1:8101**. Its workspace is separate from the research server. The `/lab` link points to the separate research server at port 8000; experiment assets/progress remain in the original Desktop folder. Repository-generated HTML and legacy experiment APIs are not served on the authenticated GitHub workspace’s origin.
 
 You can connect GitHub and inspect the UI while the pilot runs. Wait for the pilot to finish or pause before running real AI integrations with the same Gemini key: those would share the provider quota even though the files/processes are separate.
 
@@ -68,7 +68,7 @@ Draft creation uses GitHub’s [pull request API](https://docs.github.com/en/res
 
 This is a **local development prototype**, not a hosted multi-user deployment. GitHub sessions exist only in memory. Project metadata, private source archives, logs and generated results are stored under the feature worktree’s ignored `.github-workspaces/<GitHub-user-id>/…` folders; there is no public link to those files. Product endpoints enforce account ownership. They are not placed in the legacy lab’s public output database or files route.
 
-A separate subprocess runs each integration with its own `FUSIONEDGES_HOME`, output database and tools folder. GitHub credentials never enter that worker. Build subprocesses have provider/token/secret environment variables removed, but this is **not an operating-system sandbox**. Trusted repository scripts still run as the local user. Hosted deployment would require isolated execution, durable encrypted credentials/session storage, HTTPS and hardening of the legacy lab endpoints.
+A separate subprocess runs each integration with its own `FUSIONEDGES_HOME`, output database and tools folder. GitHub credentials never enter that worker. Build subprocesses have provider/token/secret environment variables removed, but this is **not an operating-system sandbox**. Trusted repository scripts still run as the local user. Hosted deployment would require isolated execution, durable encrypted credentials/session storage, HTTPS and a complete production security review. Legacy experiment execution/output routes are deliberately disabled on this authenticated product server.
 
 The product currently uses rules → residual compatibility report → targeted AI repairs. It does not reuse the pilot’s output/progress or turn on historical memory RAG. No automatic result should be represented as independently visually reviewed. Source baseline checks are used when available; unsupported Next SSR preview paths remain unverified. Local browser screenshots do not become public GitHub attachments.
 

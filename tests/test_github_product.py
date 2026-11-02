@@ -135,7 +135,6 @@ class OwnershipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaises(gh.GitHubError):Projects(d).publish({'token':TOKEN,'user':{'id':1}},'a'*24,'b'*24,{})
 
-if __name__=='__main__':unittest.main()
 
 class WorkerBoundaryTests(unittest.TestCase):
     def test_build_children_do_not_inherit_api_secrets(self):
@@ -171,3 +170,5 @@ class WorkerBoundaryTests(unittest.TestCase):
                 service._work(s,job,('other','donor','',''))
             self.assertEqual(job['status'],'review');self.assertEqual(calls,[('me/site',TOKEN),('other/donor',None)])
             self.assertNotIn(TOKEN,(folder/'job.json').read_text());self.assertNotIn(TOKEN,(folder/'worker-input.json').read_text())
+
+if __name__=='__main__':unittest.main()

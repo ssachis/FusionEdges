@@ -53,4 +53,15 @@ class HTTPTests(unittest.TestCase):
         with self.assertRaises(urllib.error.HTTPError) as e:self.browser.open(req)
         self.assertEqual(e.exception.code,403)
 
+
+class ProductOriginTests(unittest.TestCase):
+    setUp=HTTPTests.setUp
+    call=HTTPTests.call
+    def test_generated_sites_and_legacy_execution_are_not_on_authenticated_origin(self):
+        self.assertEqual(self.call('/site/untrusted/index.html')[0],404)
+        self.assertEqual(self.call('/output/anything')[0],404)
+        self.assertEqual(self.call('/api/history')[0],404)
+        _,s=self.call('/api/github/session')
+        self.assertEqual(self.call('/api/run',{'source':'anything'},s['csrf'])[0],404)
+
 if __name__=='__main__':unittest.main()
