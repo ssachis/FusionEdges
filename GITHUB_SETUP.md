@@ -1,6 +1,6 @@
 # Optional GitHub connection
 
-FusionEdges keeps its original interface and two repository-link fields. Login is optional. Selecting a repository in the left sidebar fills “Your site”; the donor link and existing transfer/report/analysis controls stay available.
+FusionEdges keeps its original interface and two repository-link fields. Login is optional. The top-right Connect GitHub button handles sign-in; the repository dropdown is attached directly to “Your site”. Selecting a repository fills that field; the donor link and existing transfer/report/analysis controls stay available.
 
 ## One-time developer registration
 
@@ -99,3 +99,7 @@ Connect GitHub opens the app's GitHub installation screen first. Set the existin
 ## Live verification — 2 November 2026
 
 The registered app's Setup URL is now saved as `http://127.0.0.1:8101/auth/github/installed`, with Redirect on update enabled. Real GitHub authorization was exercised in the in-app browser as ssachis: the callback succeeded, repositories loaded from GitHub, and selecting ssachis/FusionEdges populated Your site in the original UI. No integration, commit, branch or PR was created. Chrome has a separate cookie store; its login must complete in Chrome. The sidebar Log in link now starts authorization directly rather than reopening installation.
+
+## Simplified connection flow
+
+There is no left login panel and no second login button. The top-right **Connect GitHub** opens GitHub authorization directly. If repository installation is needed, the callback continues automatically to GitHub's installation permissions and returns afterward. Once connected, the existing Your site field becomes a searchable repository dropdown while remaining editable for pasted links. The authenticated bridge remains invisible on its separate local origin. Existing browser sessions restore automatically. The top-right button shows Connecting or Loading repos while GitHub responds.

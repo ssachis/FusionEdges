@@ -434,12 +434,11 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
   .run{grid-template-columns:1fr auto}.run .when{display:none}
   .verdict{flex-wrap:wrap}.score{margin-left:0}
 }
-#github-repos{position:fixed;left:0;top:0;bottom:0;width:260px;background:var(--surface);border-right:1px solid var(--line);z-index:20;padding:12px;box-sizing:border-box}#github-picker{border:0;width:100%;height:calc(100% - 45px)}body.github-connected .wrap{margin-left:max(280px,calc((100vw - 1120px)/2));margin-right:24px}@media(max-width:760px){#github-repos{width:min(320px,90vw);box-shadow:4px 0 20px #0002}body.github-connected .wrap{margin-left:auto;margin-right:auto}}
 .source-picker{position:relative}.source-picker.has-repos input{padding-right:44px}#source-repo-toggle{position:absolute;right:5px;top:4px;bottom:4px;width:34px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;font-size:20px}#source-github-choice{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:30;padding:5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px #0002;max-height:280px;overflow:auto}#source-repositories button{display:block;width:100%;text-align:left;border:0;border-radius:6px;padding:10px 12px;background:transparent;color:var(--ink);font:inherit;overflow-wrap:anywhere;cursor:pointer}#source-repositories button:hover,#source-repositories button[aria-selected=true]{background:var(--site-soft)}#source-repositories p{padding:8px;font-size:13px;color:var(--muted);margin:0}
 </style>
 </head>
 <body>
-<aside id="github-repos" class="hidden" aria-label="GitHub repositories"><button class="ghost" id="hide-repos" type="button">Hide repositories</button><iframe id="github-picker" title="Your GitHub repositories"></iframe></aside>
+<iframe id="github-picker" hidden title="GitHub connection" aria-hidden="true" tabindex="-1"></iframe>
 <div class="wrap">
   <header class="top">
     <div class="brand">
@@ -449,13 +448,8 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
     <div class="topright">
       <div class="ai" id="ai"><i></i>Checking AI keys…</div>
       <div class="ghwrap">
-        <button type="button" class="ghbtn" id="ghbtn" aria-expanded="false" aria-controls="ghpanel"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>Connect GitHub</span></button>
-        <div class="ghpanel hidden" id="ghpanel" role="dialog" aria-label="Optional GitHub connection">
-          <b>Connect GitHub (optional)</b><p>Choose your repository from GitHub, or keep pasting both links below.</p>
-          <button type="button" class="ghost" id="ghconnect">Connect & choose a repository</button>
-          <p class="tag">The GitHub connection service runs locally on port 8101.</p>
-          <button type="button" class="ghost" id="ghclose">Close</button>
-        </div>
+        <button type="button" class="ghbtn" id="ghbtn"><svg viewBox="0 0 16 16" aria-hidden="true" width="16" height="16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>Connect GitHub</span></button>
+        <p id="github-connection-message" class="tag hidden" role="status"></p>
       </div>
     </div>
   </header>
@@ -1248,11 +1242,10 @@ async function route(){
 }
 window.addEventListener("hashchange", route);
 
-(() => { const b = $("#ghbtn"), pnl = $("#ghpanel");
-  const set = open => { pnl.classList.toggle("hidden", !open); b.setAttribute("aria-expanded", open); };
+(() => { const b = $("#ghbtn"), connectionMessage=$("#github-connection-message");
+  function connectionNotice(text){connectionMessage.textContent=text;connectionMessage.classList.toggle("hidden",!text);}
   b.onclick = e => { e.stopPropagation(); connectGithub(); };
-  $("#ghclose").onclick = () => set(false);
-  const sidebar = $("#github-repos"), picker = $("#github-picker");
+  const picker = $("#github-picker");
   let authWindow = null, connected = false;
   const repoChoice=$("#source-github-choice"), repoSelect=$("#source-repositories"), sourceInput=$("#source"), repoToggle=$("#source-repo-toggle");
   let repositoryNames=[], activeRepository=-1;
@@ -1289,34 +1282,29 @@ window.addEventListener("hashchange", route);
   // Restore the browser's existing GitHub session without forcing another login.
   picker.src="http://127.0.0.1:8101/picker?watch=1";
   function connectGithub(){
-    set(false);
-    if(!connected) {
-      authWindow = window.open("http://127.0.0.1:8101/auth/github/connect", "fusionedges-github", "popup,width=900,height=760");
-      if(!authWindow) {set(true); return;}
-    }
-    sidebar.classList.remove("hidden");
-    picker.src = "http://127.0.0.1:8101/picker?watch=1";
+    connectionNotice("");
+    if(connected){sourceInput.focus();openRepos();return;}
+    authWindow = window.open("http://127.0.0.1:8101/auth/github/start", "fusionedges-github", "popup,width=900,height=760");
+    if(!authWindow){connectionNotice("Allow the GitHub sign-in window, then click Connect GitHub again.");return;}
+    b.querySelector("span").textContent="Connecting…";
+    picker.src="http://127.0.0.1:8101/picker?watch=1&attempt="+Date.now();
   }
-  $("#ghconnect").onclick = connectGithub;
-  $("#hide-repos").onclick = () => { sidebar.classList.add("hidden"); document.body.classList.remove("github-connected"); };
   window.addEventListener("message", e => {
     if(e.origin !== "http://127.0.0.1:8101" || e.source !== picker.contentWindow) return;
-    if(e.data?.type === "fusionedges-connected") {if(!e.data.connected) connected=false; document.body.classList.toggle("github-connected", !!e.data.connected && !sidebar.classList.contains("hidden")); if(!e.data.connected){closeRepos();repositoryNames=[];repoToggle.classList.add("hidden");sourceInput.parentElement.classList.remove("has-repos");repoSelect.replaceChildren();} b.querySelector("span").textContent=e.data.connected ? "GitHub connected" : "Connect GitHub";}
+    if(e.data?.type === "fusionedges-connected") {if(!e.data.connected) connected=false; if(!e.data.connected){closeRepos();repositoryNames=[];repoToggle.classList.add("hidden");sourceInput.parentElement.classList.remove("has-repos");repoSelect.replaceChildren();} b.querySelector("span").textContent=e.data.connected ? (repositoryNames.length ? "GitHub connected" : "Loading repos…") : (authWindow && !authWindow.closed ? "Connecting…" : "Connect GitHub");}
     if(e.data?.type === "fusionedges-repositories" && Array.isArray(e.data.repositories)) {
       repositoryNames=[...new Set(e.data.repositories.filter(name=>typeof name==="string" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(name)))].slice(0,1000);
       repoToggle.classList.toggle("hidden",!repositoryNames.length);
       sourceInput.parentElement.classList.toggle("has-repos",!!repositoryNames.length);
       if(!repositoryNames.length)closeRepos();
     }
-    if(e.data?.type === "fusionedges-ready") {connected=true; if(authWindow && !authWindow.closed) authWindow.close();}
+    if(e.data?.type === "fusionedges-ready") {connected=true;b.querySelector("span").textContent="GitHub connected";connectionNotice("");if(authWindow && !authWindow.closed){authWindow.close();sourceInput.focus();openRepos();}}
+    if(e.data?.type === "fusionedges-error") {connectionNotice(e.data.message || "GitHub connection could not finish. Please try again.");}
     if(e.data?.type === "fusionedges-repository" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(e.data.repo)) {
       $("#source").value = "https://github.com/" + e.data.repo;
       $("#source").dispatchEvent(new Event("input", {bubbles:true}));
-      if(window.innerWidth <= 760) {sidebar.classList.add("hidden");document.body.classList.remove("github-connected");}
     }
   });
-  document.addEventListener("click", e => { if (!pnl.contains(e.target)) set(false); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") set(false); });
 })();
 loadStatus(); loadExperiments(); loadHistory().then(route); setInterval(loadStatus, 20000);
 </script>
