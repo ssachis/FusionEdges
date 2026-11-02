@@ -46,4 +46,15 @@ A host regression: 1 and 2 hold but 3 or 4 fails.
   automatic verdict, both are reported.
 
 ## Changes after freezing
-(none yet)
+- **1 Nov 2026: two conditions added, before any held-out run (screening not started).** Reason: the professor's
+  feedback (27 Oct) to make the integration more deterministic and cut token cost, and the pilot finding that all 5
+  observed failures were mechanical (see `analysis-2026-11-01.md`). Nothing above changes: tasks, A/D conditions,
+  model, success criteria (checks v4) and the H1 analysis stay as frozen.
+  - **M**: deterministic port (`fusionedges/port.py`), no AI call. Deterministic, so 1 run per task, not 3.
+  - **MA**: M, then the same pinned model is called only if the build or browser check fails, or a fact M could not
+    resolve needs code; at most 2 calls. 3 repeats like A and D.
+  - **H2 (confirmatory, fixed now):** MA's verified success rate is not lower than A's (paired by task, same sign test
+    and bootstrap as H1) **and** MA uses at least 50% fewer tokens per run than A (median over all runs).
+    If MA wins on tokens but loses on success, H2 fails and that is reported.
+  - M runs first on all 16 candidates (no quota needed). Screening still uses agent-alone runs only, so M's
+    results cannot influence which tasks are kept.

@@ -23,6 +23,8 @@ def main(argv=None):
     r.add_argument("--donor", required=True, help="donor codebase (GitHub link or folder)")
     r.add_argument("--report", action="store_true", help="write a compatibility report first (tab 2)")
     r.add_argument("--history", action="store_true", help="report + past cases from other tasks (condition E)")
+    r.add_argument("--port", action="store_true", help="deterministic port only, no AI call (condition M)")
+    r.add_argument("--port-ai", action="store_true", help="deterministic port, AI only when it fails (condition MA)")
     r.add_argument("--no-migration", action="store_true")
     r.add_argument("--no-style", action="store_true")
     r.add_argument("--component", help="add this component from the donor (e.g. navbar) instead of migrating")
@@ -36,7 +38,7 @@ def main(argv=None):
     sub.add_parser("providers")
     e = sub.add_parser("experiment", help="run every task of an experiment file under each condition")
     e.add_argument("file")
-    e.add_argument("--conditions", help="comma-separated: prompt,report,history")
+    e.add_argument("--conditions", help="comma-separated: prompt,report,history,port,port-ai")
     e.add_argument("--repeats", type=int)
     e.add_argument("--no-build", action="store_true")
     ri = sub.add_parser("import-reviews", help="store manual code reviews from a JSON file in runs.db")
@@ -113,7 +115,7 @@ def main(argv=None):
         return 0
     mig, sty = not a.no_migration, not a.no_style
     prompt = Path(a.prompt_file).read_text() if a.prompt_file else default_prompt(mig, sty, a.component or "")
-    rec = run({"mode": "history" if a.history else "report" if a.report else "prompt", "source": a.source, "donor": a.donor,
+    rec = run({"mode": "port-ai" if a.port_ai else "port" if a.port else "history" if a.history else "report" if a.report else "prompt", "source": a.source, "donor": a.donor,
                "migration": mig, "style": sty, "add_component": bool(a.component), "component": a.component or "",
                "edit": "agent" if a.agent else "oneshot", "prompt": prompt, "build": not a.no_build},
               log=print, stage=lambda sid, state, note="": print(f"-- {sid}: {state} {note}"))

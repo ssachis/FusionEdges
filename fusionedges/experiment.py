@@ -21,11 +21,14 @@ from .pipeline import run
 from .prompts import default_prompt
 
 NAMES = {"prompt": "A agent alone", "report": "D with report", "history": "E report + history",
-         "agent": "A2 multi-step agent alone", "agent+report": "D2 multi-step agent + report"}
+         "agent": "A2 multi-step agent alone", "agent+report": "D2 multi-step agent + report",
+         "port": "M deterministic port, no AI", "port-ai": "MA deterministic port + AI only on failure"}
 # condition -> (pipeline mode, edit mode). Each treated condition is compared with the baseline of the same harness.
 CONDITIONS = {"prompt": ("prompt", "oneshot"), "report": ("report", "oneshot"), "history": ("history", "oneshot"),
-              "agent": ("prompt", "agent"), "agent+report": ("report", "agent")}
-PAIRS = [("prompt", "report", ""), ("prompt", "history", ""), ("agent", "agent+report", " [multi-step]")]
+              "agent": ("prompt", "agent"), "agent+report": ("report", "agent"),
+              "port": ("port", "oneshot"), "port-ai": ("port-ai", "oneshot")}
+PAIRS = [("prompt", "report", ""), ("prompt", "history", ""), ("agent", "agent+report", " [multi-step]"),
+         ("prompt", "port", " [deterministic]"), ("prompt", "port-ai", " [deterministic + AI]")]
 
 
 def run_experiment(spec: dict, log=print, conditions=None, repeats=None, seed=None, build=True) -> list:

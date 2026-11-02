@@ -51,6 +51,18 @@ def _checks(rec):
     return {k: v for k, v in c.items() if v.get("pass") is not None}
 
 
+COND_OF = {"history": "E", "port": "M", "port-ai": "MA"}   # treated mode -> condition letter (default D)
+PORT_MODES = ("port", "port-ai")
+
+
+def _same_model(mp: list, mr: list, treated_mode: str) -> bool:
+    """A deterministic port uses no model (M) or only for repairs (MA): fair when it used no model other than the
+    baseline's. Otherwise both runs must have used exactly the same model(s)."""
+    if treated_mode in PORT_MODES:
+        return bool(mp) and set(mr) <= set(mp)
+    return bool(mp) and mp == mr
+
+
 def _tokens(rec):
     t = 0
     for u in (rec.get("agent"), rec.get("report_usage")):
@@ -105,7 +117,7 @@ def judge(p: dict, r: dict, dp: dict, dr: dict) -> dict:
     elif agent_err:
         verdict = "inconclusive"
         head = f"Inconclusive: the AI call failed for {' and '.join(agent_err)}, so nothing was written to compare."
-    elif mp != mr:
+    elif not _same_model(mp, mr, r.get("mode", "")):
         verdict = "inconclusive"
         head = (f"Inconclusive: the runs used different models (agent alone: {', '.join(mp) or '?'}; "
                 f"with the report: {', '.join(mr) or '?'}), so the difference may be the model, not the report. "
@@ -186,7 +198,7 @@ def record(prompt_id: str, report_id: str, experiment: str = "", human_note: str
            "source": p["source"].get("label") or p["source"].get("spec"), "donor": p["donor"].get("label") or p["donor"].get("spec"),
            "component": p["options"].get("component") or "", "source_framework": p.get("source_framework"),
            "donor_framework": p.get("donor_framework"), "prompt_run": p["id"], "report_run": r["id"],
-           "condition": "E" if r["mode"] == "history" else "D",
+           "condition": COND_OF.get(r["mode"], "D"),
            "prompt_score": (p.get("checks") or {}).get("score"), "report_score": (r.get("checks") or {}).get("score"),
            "prompt_files": tp.get("files"), "report_files": tr.get("files"),
            "prompt_added": tp.get("added"), "prompt_removed": tp.get("removed"),
@@ -195,7 +207,7 @@ def record(prompt_id: str, report_id: str, experiment: str = "", human_note: str
            "models": ", ".join(sorted(set(p.get("models", [])) | set(r.get("models", [])))),
            "human_note": human_note if human_note is not None else (old or {}).get("human_note") or "", **j}
     mp, mr = sorted(set(p.get("models") or [])), sorted(set(r.get("models") or []))
-    row["fair"] = int(bool(mp) and mp == mr)
+    row["fair"] = int(_same_model(mp, mr, r.get("mode", "")))
     last = (reviews_for(cid) or [None])[-1] if old else None
     row["helped"], row["helped_basis"] = helped(j["verdict"], (last or {}).get("verdict"))
     fb = feedback_for(cid) if old else []
@@ -259,12 +271,12 @@ def auto_pair(rec: dict, log=lambda m: None):
     if rec.get("status") != "done" or not rec.get("checks"):
         return None
     treated = rec["mode"] != "prompt"
-    others = ("prompt",) if treated else ("report", "history")
+    others = ("prompt",) if treated else ("report", "history") + PORT_MODES
     with connect() as db:
         if treated:
             if db.execute("SELECT 1 FROM comparisons WHERE report_run=?", (rec["id"],)).fetchone():
                 return None
-            cond = "E" if rec["mode"] == "history" else "D"   # an agent-alone run can serve one D and one E comparison
+            cond = COND_OF.get(rec["mode"], "D")   # an agent-alone run can serve one comparison per condition
             used = {x[0] for x in db.execute("SELECT prompt_run FROM comparisons WHERE condition=?", (cond,))}
         else:
             used = {x[0] for x in db.execute("SELECT report_run FROM comparisons")}

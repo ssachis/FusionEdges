@@ -19,7 +19,7 @@ import time
 import zipfile
 from pathlib import Path
 
-from . import browser, compare, diffs, memory, paths, rag, records, store
+from . import browser, compare, diffs, memory, paths, port, rag, records, store
 from .agents import fit_to_limit, report_markdown, run_edit_agent, run_oneshot, run_report_agent
 from .checks import component_checks, run_checks
 from .repos import fetch
@@ -213,8 +213,24 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
                         log(f"[browser] not checked: {r.get('reason')}")
                         return []
                     return r["problems"]
+        port_rec = None
+        if mode in ("port", "port-ai") and component:
+            stage("port", "running")
+            port_rec = port.port(source.path, donor.path, project, sc, component, log)
+            (folder / "port.json").write_text(json.dumps(port_rec, indent=1))
+            rec["port"] = port_rec
+            _git_commit(project, f"FusionEdges deterministic port of the {component} (no AI)", log)
+            stage("port", "done" if port_rec["ok"] else "failed",
+                  f"{len(port_rec['resolved'])} facts resolved without AI, {len(port_rec['unresolved'])} left")
+            save()
         try:
-            if opts["edit"] == "agent":
+            if port_rec is not None and not port_rec["ok"]:
+                agent = {**port.no_ai(port_rec), "error": port_rec.get("reason", "deterministic port failed")}
+            elif port_rec is not None and mode == "port":
+                agent = port.no_ai(port_rec)
+            elif port_rec is not None:
+                agent = port.finish_with_ai(prompt, port_rec, project, component, can_build, log, after_build=after_build)
+            elif opts["edit"] == "agent":
                 agent = run_edit_agent(prompt, source.path, donor.path, project, sc, can_build, log, report=report)
             else:
                 agent = fit_to_limit(lambda b: run_oneshot(
