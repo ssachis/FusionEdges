@@ -48,6 +48,22 @@ class HTTPTests(unittest.TestCase):
             with self.browser.open(self.origin+path) as response:
                 self.assertIn("frame-ancestors 'none'",response.headers['Content-Security-Policy'])
                 self.assertEqual(response.status,200)
+    def test_connect_routes_existing_user_to_repository_access_or_picker(self):
+        from fusionedges.github_api import NoRedirect
+        import os
+        _,session=self.call('/api/github/session')
+        with patch.object(Client,'profile',return_value={'id':7,'login':'tester'}):
+            _,connected=self.call('/api/github/token',{'token':TOKEN},session['csrf'])
+        for current in self.server.github.sessions.items.values():
+            if current.get('token'):current['kind']='app'
+        browser=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies),NoRedirect())
+        with patch.dict(os.environ,{'FUSIONEDGES_GITHUB_APP_SLUG':'fusionedges-test'}):
+            for repos,destination in [([], 'https://github.com/apps/fusionedges-test/installations/new'),([{'id':1}],'/picker?connected=1')]:
+                with patch.object(Client,'repositories',return_value=repos):
+                    with self.assertRaises(urllib.error.HTTPError) as caught:browser.open(self.origin+'/auth/github/connect')
+                    self.assertEqual(caught.exception.code,303)
+                    self.assertEqual(caught.exception.headers['Location'],destination)
+
     def test_dns_rebinding_host_is_rejected(self):
         req=urllib.request.Request(self.origin+'/api/github/session',headers={'Host':'evil.example'})
         with self.assertRaises(urllib.error.HTTPError) as e:self.browser.open(req)

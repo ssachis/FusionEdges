@@ -1245,14 +1245,25 @@ window.addEventListener("hashchange", route);
 
 (() => { const b = $("#ghbtn"), pnl = $("#ghpanel");
   const set = open => { pnl.classList.toggle("hidden", !open); b.setAttribute("aria-expanded", open); };
-  b.onclick = e => { e.stopPropagation(); set(pnl.classList.contains("hidden")); };
+  b.onclick = e => { e.stopPropagation(); connectGithub(); };
   $("#ghclose").onclick = () => set(false);
   const sidebar = $("#github-repos"), picker = $("#github-picker");
-  $("#ghconnect").onclick = () => { set(false); sidebar.classList.remove("hidden"); picker.src = "http://127.0.0.1:8101/picker"; };
+  let authWindow = null, connected = false;
+  function connectGithub(){
+    set(false);
+    if(!connected) {
+      authWindow = window.open("http://127.0.0.1:8101/auth/github/connect", "fusionedges-github", "popup,width=900,height=760");
+      if(!authWindow) {set(true); return;}
+    }
+    sidebar.classList.remove("hidden");
+    picker.src = "http://127.0.0.1:8101/picker?watch=1";
+  }
+  $("#ghconnect").onclick = connectGithub;
   $("#hide-repos").onclick = () => { sidebar.classList.add("hidden"); document.body.classList.remove("github-connected"); };
   window.addEventListener("message", e => {
     if(e.origin !== "http://127.0.0.1:8101" || e.source !== picker.contentWindow) return;
-    if(e.data?.type === "fusionedges-connected") {document.body.classList.toggle("github-connected", !!e.data.connected); b.querySelector("span").textContent=e.data.connected ? "GitHub connected" : "Connect GitHub";}
+    if(e.data?.type === "fusionedges-connected") {if(!e.data.connected) connected=false; document.body.classList.toggle("github-connected", !!e.data.connected); b.querySelector("span").textContent=e.data.connected ? "GitHub connected" : "Connect GitHub";}
+    if(e.data?.type === "fusionedges-ready") {connected=true; if(authWindow && !authWindow.closed) authWindow.close();}
     if(e.data?.type === "fusionedges-repository" && /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(e.data.repo)) {
       $("#source").value = "https://github.com/" + e.data.repo;
       $("#source").dispatchEvent(new Event("input", {bubbles:true}));

@@ -18,7 +18,7 @@ python3 -m fusionedges.server --port 8000
 
 The main app also starts the optional connection service on port 8101. `zsh start-github-feature.command` is available if you need to start that service separately.
 
-Open **http://127.0.0.1:8000**. Click **Connect GitHub**. App login or a token unlocks the repository list. You can hide the list and keep pasting links. The connection service uses port 8101 so repository previews cannot access its authenticated APIs. Restart any older server still displaying the replaced workspace before starting these commands.
+Open **http://127.0.0.1:8000**. Click **Connect GitHub** to open GitHub directly. Sign in and, if repository access has not been granted, select repositories on GitHub. The sidebar refreshes automatically while you complete access; the two link fields remain available. You can hide the list and keep pasting links. The connection service uses port 8101 so repository previews cannot access its authenticated APIs. Restart any older server still displaying the replaced workspace before starting these commands.
 
 The original transfer flow is unchanged; selecting a private repository does not add authenticated cloning to that legacy flow. The separately implemented PR review workspace remains available at `http://127.0.0.1:8101/projects` as an optional secondary screen. Its transfer and publication flow is described below; it is not the default app or a required login step. Bringing its private-repository transfer and approval controls into the original result view remains follow-up work.
 
@@ -89,3 +89,5 @@ Publication carries donor source/commit/license attribution in the diff and PR d
 - Tests cover session rotation, CSRF and host checks, account ownership, archive traversal/links, protected files, stale approval, stale default branch, worker credential isolation and no default-branch update/merge.
 - Desktop and mobile UI checked, including no horizontal overflow at 390px.
 - Live GitHub App login and real PR creation require your registered app or fine-grained token and have **not** been exercised against your account.
+
+The registered app separates user authorization from installation permissions. The connection endpoint guides users through both. For newly registered apps, the installation setup URL returns to the connection endpoint; existing app installations are also detected by the sidebar while the GitHub window is open.

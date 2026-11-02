@@ -23,7 +23,7 @@ def handle(handler):
             handler._send(b'{"error":"Start the optional GitHub connection service on port 8101."}', 'application/json', 404)
             return True
         return False
-    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/callback','/auth/github/register/callback')
+    public=path in ('/','/projects','/projects.js','/projects.css','/picker','/picker.js','/picker.css','/github-setup','/auth/github/start','/auth/github/connect','/auth/github/callback','/auth/github/register/callback')
     if path=='/api/status':return False
     if path=='/lab' and handler.command=='GET':
         handler._send(b'','text/plain',303,{'Location':'http://127.0.0.1:8000/'})
@@ -50,7 +50,7 @@ def handle(handler):
             if path == '/picker':
                 headers['Content-Security-Policy'] = headers['Content-Security-Policy'].replace("frame-ancestors 'none'", "frame-ancestors http://127.0.0.1:8000")
             handler._send(p.read_bytes(),mimetypes.guess_type(str(p))[0] or 'text/plain',extra=headers);return True
-        session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=handler.command=='GET' and path in ('/api/github/session','/auth/github/start'))
+        session=product.sessions.from_cookie(handler.headers.get('Cookie'),create=handler.command=='GET' and path in ('/api/github/session','/auth/github/start','/auth/github/connect'))
         def respond(data,status=200,s=None):
             handler._send(json.dumps(data,default=str).encode(),'application/json',status,
                           extra={'Set-Cookie':product.sessions.cookie(s),'X-Content-Type-Options':'nosniff'} if s else {'X-Content-Type-Options':'nosniff'})
@@ -59,6 +59,17 @@ def handle(handler):
             if s:extra['Set-Cookie']=product.sessions.cookie(s)
             handler._send(b'','text/plain',303,extra)
         if handler.command=='GET' and path=='/api/github/session':respond(product.sessions.public(session),s=session);return True
+        def connection_destination(current):
+            if current and current.get('token'):
+                repositories=Client(current['token']).repositories(current['kind'])
+                if repositories:return '/picker?connected=1'
+                install=product.sessions.public(current).get('install_url')
+                if current.get('kind')=='app' and install:return install
+                return '/picker'
+            if not product.sessions.public(current)['github_login_configured']:return '/github-setup'
+            return product.sessions.start(current)
+        if handler.command=='GET' and path=='/auth/github/connect':
+            redirect(connection_destination(session),session);return True
         if handler.command=='GET' and path=='/auth/github/start':redirect(product.sessions.start(session),session);return True
         if handler.command=='GET' and path=='/auth/github/register/callback':
             q=urllib.parse.parse_qs(parsed.query)
@@ -67,7 +78,7 @@ def handle(handler):
         if handler.command=='GET' and path=='/auth/github/callback':
             q=urllib.parse.parse_qs(parsed.query)
             new=product.sessions.callback(session,(q.get('code') or [''])[0],(q.get('state') or [''])[0])
-            redirect('/picker',new);return True
+            redirect(connection_destination(new),new);return True
         params={}
         if handler.command=='POST':
             product.sessions.csrf(session,handler.headers)
@@ -104,7 +115,7 @@ def handle(handler):
         raise GitHubError('Workspace endpoint not found.',404)
     except GitHubError as exc:
         if path.startswith('/auth/github/') and handler.headers.get('Host')==urllib.parse.urlparse(product.origin).netloc:
-            handler._send(b'','text/plain',303,{'Location':'/projects?'+urllib.parse.urlencode({'auth_error':str(exc)})})
+            handler._send(b'','text/plain',303,{'Location':'/picker?'+urllib.parse.urlencode({'auth_error':str(exc)})})
             return True
         handler._send(json.dumps({'error':str(exc)}).encode(),'application/json',exc.status if 400<=exc.status<=599 else 400);return True
     except (ValueError,KeyError,TypeError):
