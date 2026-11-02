@@ -143,8 +143,11 @@ class Handler(BaseHTTPRequestHandler):
         self._send(p.read_bytes(), ctype, extra={"content-disposition": f'attachment; filename="{p.name}"'} if download else None)
 
     def do_GET(self):
+        from .github_http import handle
+        if handle(self):
+            return
         p = urllib.parse.urlparse(self.path).path
-        if p in ("/", "/index.html"):
+        if p in ("/", "/index.html", "/lab"):
             return self._file(STATIC / "index.html")
         if p == "/api/status":
             return self._json(status())
@@ -214,6 +217,9 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(404)
 
     def do_POST(self):
+        from .github_http import handle
+        if handle(self):
+            return
         n = int(self.headers.get("content-length", 0) or 0)
         try:
             params = json.loads(self.rfile.read(n) or b"{}")
@@ -279,13 +285,16 @@ class Handler(BaseHTTPRequestHandler):
         self.send_error(404)
 
 
-def make_server(port=8000):
-    return ThreadingHTTPServer(("127.0.0.1", port), Handler)
+def make_server(port=8101):
+    from .github_http import Product
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server.github = Product(f"http://127.0.0.1:{server.server_address[1]}", paths.HOME / ".github-workspaces")
+    return server
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--port", type=int, default=8101)
     ap.add_argument("--no-open", action="store_true")
     a = ap.parse_args()
     try:

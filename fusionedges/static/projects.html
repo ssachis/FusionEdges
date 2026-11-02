@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FusionEdges · Component integrations</title><link rel="stylesheet" href="/projects.css"><script defer src="/projects.js"></script></head>
+<body>
+<aside class="sidebar">
+  <a class="brand" href="/projects"><span class="brand-icon">F</span>FusionEdges<span class="beta">local</span></a>
+  <div id="account" class="account"></div>
+  <div class="side-heading"><span>YOUR PROJECTS</span><button id="add-repo" class="icon-button" title="Add a repository" aria-label="Add a repository">+</button></div>
+  <nav id="projects" aria-label="Your target repositories"></nav>
+  <div id="repo-picker" class="repo-picker hidden"><label for="repo-search">Add a GitHub repository</label><input id="repo-search" placeholder="Search repositories…" autocomplete="off"><div id="repositories"></div><button id="refresh-repos" class="text-button">Refresh access</button><a id="install-app" class="text-button hidden" target="_blank" rel="noopener noreferrer">Manage selected repositories ↗</a></div>
+  <div class="side-footer"><a href="/lab">Experiment lab ↗</a><a href="/github-setup">Connection setup</a><span>Changes stay local until you approve a PR.</span></div>
+</aside>
+<main>
+  <header class="topbar"><div><span class="eyebrow">COMPONENT WORKSPACE</span><h1 id="page-title">Bring the right pieces together.</h1></div><span id="provider" class="badge">Checking AI…</span></header>
+  <div id="notice" class="notice hidden" role="status"></div>
+  <section id="connect" class="welcome panel">
+    <div class="eyebrow">YOUR REPO. THEIR COMPONENT. ONE REVIEWABLE CHANGE.</div>
+    <h2>A component integration,<br>ready for your review.</h2>
+    <p>Connect GitHub, choose the project you want to change, and bring over a component from a public repository. Review the patch and checks before opening a draft pull request.</p>
+    <div class="flow"><span>01 <b>Select project</b></span><span>02 <b>Integrate component</b></span><span>03 <b>Review & open PR</b></span></div>
+    <a id="github-login" class="primary" href="/auth/github/start">Continue with GitHub ↗</a>
+    <p id="oauth-hint" class="muted"></p>
+    <details id="token-section"><summary>Connect with a fine-grained GitHub token instead</summary><form id="token-form"><label for="token">GitHub token</label><div class="inline"><input id="token" type="password" autocomplete="off" spellcheck="false" required placeholder="github_pat_…"><button class="secondary" id="connect-token">Connect</button></div><p class="muted">Select only the repositories you want to use. The token stays in this local server’s memory, never in browser storage or generated code.</p></form></details>
+  </section>
+  <section id="empty-project" class="panel hidden"><h2>Select a target repository</h2><p>Use the left sidebar to add the repository where you want the changes. FusionEdges needs Contents and Pull requests write access.</p><button id="choose-repo" class="primary">Choose repository</button></section>
+  <div id="workspace" class="hidden">
+    <section class="panel target-summary"><div><span class="eyebrow">CHANGES WILL GO TO</span><h2 id="target-name"></h2><p id="target-meta" class="muted"></p></div><span class="badge">New branch → draft PR</span></section>
+    <section class="panel">
+      <div class="section-heading"><div><span class="eyebrow">NEW INTEGRATION</span><h2>What would you like to bring over?</h2></div><span class="step-number">02</span></div>
+      <form id="transfer-form">
+        <div class="form-grid"><div><label for="donor">Public donor repository</label><input id="donor" placeholder="https://github.com/someone/their-project" required autocomplete="off"><p class="muted">A GitHub repository link, not a deployed website. Branch and subfolder links are supported.</p></div><div><label for="component">Component</label><input id="component" placeholder="e.g. navbar, footer, pricing card" maxlength="80" required><div class="chips"><button type="button" data-component="navbar">Navbar</button><button type="button" data-component="footer">Footer</button><button type="button" data-component="card">Card</button><button type="button" data-component="accordion">Accordion</button></div></div></div>
+        <label for="instructions">Integration instructions <span class="muted">optional</span></label><textarea id="instructions" rows="3" placeholder="Where it should appear, props/content to use, and what must stay unchanged…"></textarea>
+        <div class="consents"><label><input type="checkbox" id="trust-scripts" required> I trust these repositories and allow their build scripts to run on this computer.</label><label><input type="checkbox" id="private-ai"> Allow the configured AI provider to process private repository code, if this target is private.</label></div>
+        <div class="form-actions"><p class="muted">No branch, push, or PR is created at this step.</p><button class="primary" id="start-transfer">Prepare integration →</button></div>
+      </form>
+    </section>
+    <section id="job-panel" class="panel hidden"><div class="section-heading"><div><span class="eyebrow">INTEGRATION STATUS</span><h2 id="job-title"></h2><p id="job-phase" class="muted"></p></div><span id="job-state" class="badge"></span></div><details><summary>Run log</summary><pre id="job-log" class="log"></pre></details></section>
+    <section id="review-panel" class="hidden">
+      <div class="review-header"><div><span class="eyebrow">REVIEW BEFORE ANYTHING IS PUSHED</span><h2>Your proposed change</h2></div><a id="download-result" class="secondary">Download project</a></div>
+      <div class="review-grid"><section class="panel"><h3>Checks & evidence</h3><div id="checks"></div><div id="usage" class="metrics"></div><div id="report"></div><div id="license" class="muted"></div></section><section class="panel"><h3>Preview evidence</h3><div id="screenshots"></div><p class="muted">Automated checks do not guarantee visual fidelity. Inspect the component and the rest of your page before approval.</p></section></div>
+      <section class="panel"><div class="section-heading"><h3>Code diff</h3><span id="file-count" class="badge"></span></div><div id="diff-files"></div></section>
+      <section class="panel approval"><span class="eyebrow">YOU CONTROL PUBLICATION</span><h3>Open this change for review on GitHub</h3><p id="pr-destination"></p><details><summary>Pull request description</summary><pre id="pr-body"></pre></details><label class="check-label"><input type="checkbox" id="approve-patch"> I reviewed this patch and approve publishing it to a new branch.</label><label id="unresolved-label" class="check-label hidden"><input type="checkbox" id="acknowledge-checks"> I understand some checks failed or were not run; keep this as a draft for further work.</label><div class="form-actions"><span class="muted">The default branch is never updated directly. Merge later on GitHub.</span><button id="publish-pr" class="primary" disabled>Approve & open draft PR ↗</button></div><div id="published"></div></section>
+    </section>
+    <section class="history"><span class="eyebrow">PREVIOUS INTEGRATIONS</span><div id="jobs"></div></section>
+  </div>
+</main>
+</body></html>

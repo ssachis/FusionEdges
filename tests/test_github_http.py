@@ -1,0 +1,67 @@
+import http.cookiejar
+import json
+import tempfile
+import threading
+import unittest
+import urllib.error
+import urllib.request
+from pathlib import Path
+from unittest.mock import patch
+from fusionedges import paths
+from fusionedges.server import make_server
+from fusionedges.github_api import Client
+
+TOKEN='test_token_'+('x'*32)
+
+class HTTPTests(unittest.TestCase):
+    def setUp(self):
+        self.temp=tempfile.TemporaryDirectory();self.addCleanup(self.temp.cleanup)
+        self.home_patch=patch.object(paths,'HOME',Path(self.temp.name));self.home_patch.start();self.addCleanup(self.home_patch.stop)
+        self.server=make_server(0);threading.Thread(target=self.server.serve_forever,daemon=True).start()
+        self.addCleanup(self.server.server_close);self.addCleanup(self.server.shutdown)
+        self.origin='http://127.0.0.1:'+str(self.server.server_address[1])
+        self.cookies=http.cookiejar.CookieJar();self.browser=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookies))
+    def call(self,path,body=None,csrf=None,origin=None):
+        headers={}
+        if body is not None:headers={'Content-Type':'application/json','Origin':origin or self.origin,'X-FusionEdges-CSRF':csrf or ''}
+        req=urllib.request.Request(self.origin+path,data=json.dumps(body).encode() if body is not None else None,headers=headers)
+        try:
+            with self.browser.open(req) as r:return r.status,json.loads(r.read())
+        except urllib.error.HTTPError as e:return e.code,json.loads(e.read())
+    def test_credentials_not_echoed_and_projects_are_session_bound(self):
+        status,session=self.call('/api/github/session');self.assertEqual(status,200)
+        self.assertEqual(self.call('/api/github/projects')[0],401)
+        with patch.object(Client,'profile',return_value={'id':7,'login':'tester'}):
+            status,connected=self.call('/api/github/token',{'token':TOKEN},session['csrf'])
+        self.assertEqual(status,200);self.assertNotIn(TOKEN,json.dumps(connected));self.assertNotEqual(connected['csrf'],session['csrf'])
+        meta={'id':9,'full_name':'tester/site','private':False,'default_branch':'main','html_url':'https://github.com/tester/site','permissions':{'push':True}}
+        with patch.object(Client,'repository',return_value=meta):
+            status,project=self.call('/api/github/projects',{'repo':'tester/site'},connected['csrf'])
+        self.assertEqual(status,201);self.assertEqual(self.call('/api/github/projects')[1]['projects'][0]['id'],project['id'])
+        self.assertEqual(self.call('/api/github/disconnect',{},connected['csrf'])[0],200)
+        self.assertEqual(self.call('/api/github/projects')[0],401)
+    def test_token_login_rejects_cross_origin_even_with_csrf(self):
+        _,s=self.call('/api/github/session')
+        self.assertEqual(self.call('/api/github/token',{'token':TOKEN},s['csrf'],'https://evil.example')[0],403)
+    def test_product_has_csp_and_setup_route(self):
+        for path in ['/projects','/github-setup']:
+            with self.browser.open(self.origin+path) as response:
+                self.assertIn("frame-ancestors 'none'",response.headers['Content-Security-Policy'])
+                self.assertEqual(response.status,200)
+    def test_dns_rebinding_host_is_rejected(self):
+        req=urllib.request.Request(self.origin+'/api/github/session',headers={'Host':'evil.example'})
+        with self.assertRaises(urllib.error.HTTPError) as e:self.browser.open(req)
+        self.assertEqual(e.exception.code,403)
+
+
+class ProductOriginTests(unittest.TestCase):
+    setUp=HTTPTests.setUp
+    call=HTTPTests.call
+    def test_generated_sites_and_legacy_execution_are_not_on_authenticated_origin(self):
+        self.assertEqual(self.call('/site/untrusted/index.html')[0],404)
+        self.assertEqual(self.call('/output/anything')[0],404)
+        self.assertEqual(self.call('/api/history')[0],404)
+        _,s=self.call('/api/github/session')
+        self.assertEqual(self.call('/api/run',{'source':'anything'},s['csrf'])[0],404)
+
+if __name__=='__main__':unittest.main()
