@@ -198,15 +198,15 @@ def problems(result: dict, baseline: dict | None = None, component: str = "navba
         if ALIASES.get(result.get("component"), result.get("component")) in ROLE_SELECTORS:
             if not v.get("found"):
                 out.append(f"On {label} no {name} is visible.")
-            elif vp == "desktop" and len(v.get("links", [])) < 2:
+            elif result.get("component") != "footer" and vp == "desktop" and len(v.get("links", [])) < 2:
                 out.append(f"On {label} the {name} shows only {len(v.get('links', []))} link(s) "
                            f"({', '.join(v.get('links', [])) or 'none'}): its links are probably hidden.")
-            elif vp == "desktop" and len(v.get("hidden", [])) >= 2 and len(v.get("hidden", [])) >= len(v.get("links", [])):
+            elif result.get("component") != "footer" and vp == "desktop" and len(v.get("hidden", [])) >= 2 and len(v.get("hidden", [])) >= len(v.get("links", [])):
                 out.append(f"On {label} {len(v['hidden'])} of the {name}'s links are hidden "
                            f"({', '.join(v['hidden'][:5])}); only {', '.join(v.get('links', [])) or 'nothing'} is visible.")
-            elif vp == "mobile" and not v.get("links"):
+            elif result.get("component") != "footer" and vp == "mobile" and not v.get("links"):
                 out.append(f"On {label} the {name} has no visible link or menu button.")
-            if v.get("found") and (v.get("height") or 0) > 160:
+            if result.get("component") != "footer" and v.get("found") and (v.get("height") or 0) > 160:
                 out.append(f"On {label} the {name} is {v['height']}px tall: it is probably unstyled.")
         base_vp = ((baseline or {}).get("viewports") or {}).get(vp) or {}
         if vp == "mobile" and v.get("sideways") and not base_vp.get("sideways"):   # the original site may already do this

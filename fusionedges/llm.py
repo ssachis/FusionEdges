@@ -18,6 +18,7 @@ Stdlib only. Keys are read from the environment and never logged.
 from __future__ import annotations
 
 import json
+import copy
 import os
 import re
 import time
@@ -239,6 +240,13 @@ def _openai(spec, model, key, system, messages, tools, max_tokens):
                 msg["tool_calls"] = [{"id": _safe_id(c["id"]), "type": "function",
                                       "function": {"name": c["name"], "arguments": json.dumps(c["args"])}}
                                      for c in m["tool_calls"]]
+            if m.get("wire_provider") == spec.name and m.get("wire_model") == model:
+                if m.get("wire_tool_calls"):
+                    msg["tool_calls"] = copy.deepcopy(m["wire_tool_calls"])
+                    for c in msg["tool_calls"]:
+                        c["id"] = _safe_id(c.get("id"))
+                if "wire_extra_content" in m:
+                    msg["extra_content"] = copy.deepcopy(m["wire_extra_content"])
             out.append(msg)
         elif m["role"] == "tool":
             for r in m["results"]:
@@ -261,7 +269,10 @@ def _openai(spec, model, key, system, messages, tools, max_tokens):
             args = {"_invalid_json": fn.get("arguments", "")[:500]}
         calls.append({"id": c.get("id") or f"call_{i}", "name": fn.get("name", ""), "args": args})
     u = resp.get("usage") or {}
-    return ({"role": "assistant", "text": choice.get("content") or "", "tool_calls": calls},
+    return ({"role": "assistant", "text": choice.get("content") or "", "tool_calls": calls,
+             "wire_provider": spec.name, "wire_model": model,
+             "wire_tool_calls": copy.deepcopy(choice.get("tool_calls") or []),
+             **({"wire_extra_content": copy.deepcopy(choice["extra_content"])} if "extra_content" in choice else {})},
             {"in": u.get("prompt_tokens", 0), "out": u.get("completion_tokens", 0)})
 
 

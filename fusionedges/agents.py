@@ -175,7 +175,7 @@ def run_loop(session: Session, system: str, first: str, ws: Workspace, tools: li
     final = ""
     for _ in range(max_steps):
         msg = session.chat(system, messages, tools, max_tokens=8192)
-        messages.append({"role": "assistant", "text": msg.get("text", ""), "tool_calls": msg.get("tool_calls", [])})
+        messages.append({k: v for k, v in msg.items() if k in ("role", "text", "tool_calls") or k.startswith("wire_")})
         if (msg.get("text") or "").strip():
             final = msg["text"]
             log(f"[{session.label}] {msg['text'].strip()[:300]}")
@@ -515,8 +515,15 @@ def run_edit_agent(task: str, source: Path, donor: Path, output: Path, scan: dic
     if report is not None:
         first += ("\n\nCOMPATIBILITY REPORT for this exact task (prepared from both repos; follow its page map, style map "
                   "and adaptations, and resolve every high-severity conflict):\n\n" + report_markdown(report)[:18000])
-    summary = run_loop(s, EDIT_SYSTEM, first, ws, make_tools(("source", "donor", "output"), True), max_steps, log)
+    error = None
+    try:
+        summary = run_loop(s, EDIT_SYSTEM, first, ws, make_tools(("source", "donor", "output"), True), max_steps, log)
+    except LLMError as exc:
+        error = str(exc)
+        summary = "Agent stopped: " + error
     t = s.totals()
+    if error:
+        t["error"] = error
     t.update({"summary": summary[:3000], "tool_calls": ws.tool_calls, "builds": ws.builds,
               "build_failures": ws.build_failures, "retries": max(0, ws.builds - 1),
               "files_written": sorted(set(ws.writes)), "files_deleted": ws.deletes})
