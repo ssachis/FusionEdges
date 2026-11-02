@@ -24,8 +24,9 @@ class SetupTests(unittest.TestCase):
         page,state=self.prepare()
         manifest=json.loads(html.unescape(re.search('name="manifest" value="([^"]+)"',page).group(1)))
         self.assertEqual(manifest['callback_urls'],['http://127.0.0.1:8101/auth/github/callback'])
-        self.assertEqual(manifest['hook_attributes'], {'active':False})
-        self.assertNotIn('unused-webhook',json.dumps(manifest))
+        self.assertFalse(manifest['hook_attributes']['active'])
+        self.assertEqual(manifest['hook_attributes']['url'],'https://example.com/fusionedges/unused-webhook')
+        self.assertEqual(manifest['default_events'],[])
         self.assertEqual(set(manifest['default_permissions']),{'contents','pull_requests','metadata'})
         self.assertIn(state,page)
     def test_wrong_browser_and_replay_rejected_before_network(self):
