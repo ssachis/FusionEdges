@@ -1,0 +1,355 @@
+"""Local web UI. Run: python3 -m fusionedges.server   (http://127.0.0.1:8000)"""
+from __future__ import annotations
+
+import argparse
+import html
+import json
+import mimetypes
+import platform
+import shutil
+import subprocess
+import threading
+import time
+import traceback
+import urllib.parse
+import uuid
+import webbrowser
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from . import compare, diffs, llm, paths, preview, store
+from .pipeline import run
+from .prompts import default_prompt
+
+STATIC = Path(__file__).resolve().parent / "static"
+JOBS: dict = {}
+RUN_LOCK = threading.Lock()  # one run at a time (shared provider limits, npm installs)
+
+
+def _stages(mode):
+    s = [("fetch", "Clone both repos"), ("scan", "Scan both codebases")]
+    if mode in ("report", "history"):
+        s.append(("report", "Retrieve code" + (" + past cases" if mode == "history" else "") + " + write compatibility report"))
+    if mode == "port":
+        return s + [("port", "Port the component by rule (no AI)"), ("agent", "Record the result"), ("check", "Build + check the result")]
+    if mode == "adaptive":
+        return s + [("port", "Apply rules"), ("report", "Compatibility record; investigate only if needed"),
+                    ("agent", "Escalate only unresolved work"), ("check", "Verify component and host")]
+    if mode in ("port-report", "port-report-memory"):
+        return s + [("port", "Port by rule"), ("report", "Explain unresolved compatibility"),
+                    ("agent", "Apply only necessary fixes"), ("check", "Build + check the result")]
+    if mode == "port-ai":
+        return s + [("port", "Port the component by rule (no AI)"), ("agent", "Build; AI fixes only what still fails"),
+                    ("check", "Build + check the result")]
+    return s + [("agent", "AI writes the code (+ fixes build errors)"), ("check", "Build + check the result")]
+
+
+class Job:
+    def __init__(self, mode):
+        self.id = uuid.uuid4().hex[:10]
+        self.status, self.error, self.record, self.run_id = "queued", None, None, None
+        self.stages = [{"id": i, "label": l, "state": "pending", "note": ""} for i, l in _stages(mode)]
+        self.log = []
+        self.routing = []
+
+    def public(self):
+        rec = self.record
+        if rec is None and self.run_id:
+            f = paths.OUTPUT / self.run_id / "run.json"
+            if f.exists():
+                try:
+                    rec = json.loads(f.read_text())
+                except json.JSONDecodeError:
+                    rec = None
+        return {"id": self.id, "status": self.status, "error": self.error, "stages": self.stages,
+                "log": self.log[-500:], "record": rec, "routing": list(self.routing)}
+
+
+def _worker(job: Job, params: dict):
+    def log(m):
+        job.log.append(f"{time.strftime('%H:%M:%S')} {m}")
+
+    def stage(sid, state, note=""):
+        if sid == "assignment":
+            job.routing.append(json.loads(note))
+            return
+        if sid == "port" and state == "running":
+            job.routing.append({"route":"rules", "reasons":["Start with deterministic rules; escalate only when verification requires it."]})
+        for s in job.stages:
+            if s["id"] == sid:
+                s["state"], s["note"] = state, note
+
+    with RUN_LOCK:
+        job.status = "running"
+        job.run_id = f"{time.strftime('%Y%m%d-%H%M%S')}-{params['mode']}"
+        try:
+            job.record = run(params, log, stage, run_id=job.run_id)
+            job.status = "done"
+        except Exception as e:
+            job.status, job.error = "error", str(e)
+            for s in job.stages:
+                if s["state"] == "running":
+                    s["state"], s["note"] = "failed", str(e)[:160]
+            log("error: " + str(e))
+            traceback.print_exc()
+
+
+def _under(base: Path, rel: str):
+    base = base.resolve()
+    t = (base / urllib.parse.unquote(rel)).resolve()
+    return t if (t == base or base in t.parents) else None
+
+
+def _listing(url_path: str, folder: Path) -> bytes:
+    rows = ['<li><a href="../">../</a></li>'] if url_path.rstrip("/").count("/") > 2 else []
+    for p in sorted(folder.iterdir(), key=lambda x: (not x.is_dir(), x.name.lower())):
+        if p.name in ("node_modules", ".git", ".next"):
+            continue
+        n = p.name + ("/" if p.is_dir() else "")
+        rows.append(f'<li><a href="{urllib.parse.quote(n)}">{html.escape(n)}</a></li>')
+    return (f"<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width'>"
+            f"<title>{html.escape(url_path)}</title><style>body{{font:14px/1.7 system-ui;margin:24px;max-width:900px}}"
+            f"a{{text-decoration:none}}code{{background:#8881;padding:2px 6px;border-radius:4px}}</style>"
+            f"<p><a href='/'>← FusionEdges</a></p><h2>{html.escape(url_path)}</h2>"
+            f"<p>On your computer: <code>{html.escape(str(folder))}</code></p><ul>{''.join(rows)}</ul>").encode()
+
+
+def status():
+    return {"providers": llm.status(), "configured": llm.configured(), "npm": bool(shutil.which("npm")),
+            "git": bool(shutil.which("git")), "output": str(paths.OUTPUT), "examples": str(paths.EXAMPLES),
+            "prompts": {"both": default_prompt(True, True), "migration": default_prompt(True, False),
+                        "style": default_prompt(False, True), "component": default_prompt(False, False, "{name}")},
+            "preview": preview.status()}
+
+
+class Handler(BaseHTTPRequestHandler):
+    def log_message(self, *a):
+        pass
+
+    def _send(self, body: bytes, ctype: str, code=200, extra=None):
+        try:
+            self.send_response(code)
+            self.send_header("content-type", ctype)
+            self.send_header("content-length", str(len(body)))
+            self.send_header("cache-control", "no-store")
+            for k, v in (extra or {}).items():
+                self.send_header(k, v)
+            self.end_headers()
+            self.wfile.write(body)
+        except ConnectionError:
+            self.close_connection = True  # Browser navigation can cancel a response.
+
+
+    def _json(self, obj, code=200):
+        self._send(json.dumps(obj, default=str).encode(), "application/json", code)
+
+    def _file(self, p: Path, download=False):
+        if not p or not p.is_file():
+            return self.send_error(404)
+        ctype = mimetypes.guess_type(p.name)[0] or "text/plain; charset=utf-8"
+        if p.suffix in (".diff", ".log", ".md", ".jsx", ".tsx", ".ts", ".mjs", ".cjs", ".json", ".css", ".js") \
+                and "/output/" in self.path:
+            ctype = "text/plain; charset=utf-8"  # browsing code shows it as text
+        self._send(p.read_bytes(), ctype, extra={"content-disposition": f'attachment; filename="{p.name}"'} if download else None)
+
+    def do_GET(self):
+        # Keep the app and auth iframe on the same site for SameSite cookies.
+        if self.headers.get('Host','').split(':',1)[0] == 'localhost':
+            port=self.server.server_address[1]
+            return self._send(b'', 'text/plain', 303, {'Location':f'http://127.0.0.1:{port}'+self.path})
+        from .github_http import handle
+        if handle(self):
+            return
+        p = urllib.parse.urlparse(self.path).path
+        if p in ("/", "/index.html", "/lab"):
+            return self._file(STATIC / "index.html")
+        if p == "/api/status":
+            return self._json(status())
+        if p == "/api/history":
+            return self._json({"runs": store.history()})
+        if p.startswith("/api/job/"):
+            j = JOBS.get(p.rsplit("/", 1)[1])
+            return self._json(j.public()) if j else self._json({"error": "unknown job"}, 404)
+        if p == "/api/analysis":
+            from . import records
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            return self._json(records.analysis((q.get("experiment") or [""])[0]))
+        if p == "/api/comparisons":
+            rows = compare.all_rows()
+            return self._json({"rows": rows, "summary": compare.summary(rows)})
+        if p.startswith("/api/diff/"):
+            r = store.load(urllib.parse.unquote(p.rsplit("/", 1)[1]))
+            if not r:
+                return self._json({"error": "unknown run"}, 404)
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            res = diffs.for_run(r, refresh="refresh" in q)
+            if not res.get("ok"):   # project folder gone: fall back to the copy kept in runs.db
+                saved = store.load_diff(r["id"])
+                if saved:
+                    res = {"ok": True, "baseline": "db", "baseline_note": saved[0]["baseline"] + " (from runs.db)",
+                           "files": saved, "totals": {"files": len(saved), "code_files": sum(f["kind"] == "code" for f in saved),
+                           "added": sum(f["added"] for f in saved if f["kind"] == "code"),
+                           "removed": sum(f["removed"] for f in saved if f["kind"] == "code"),
+                           "new": sum(f["status"] == "added" for f in saved), "changed": sum(f["status"] == "modified" for f in saved),
+                           "deleted": sum(f["status"] == "deleted" for f in saved)}}
+            return self._json(res)
+        if p.startswith("/api/lessons/"):
+            from . import lessons_auto
+            ids = urllib.parse.unquote(p.rsplit("/", 1)[1]).split(",")
+            return self._json({"lessons": lessons_auto.for_runs(ids)})
+        if p.startswith("/api/browser/"):
+            from . import records
+            return self._json({"checks": records.browser_for(urllib.parse.unquote(p.rsplit("/", 1)[1]))})
+        if p.startswith("/api/run/"):
+            r = store.load(p.rsplit("/", 1)[1])
+            return self._json(r) if r else self._json({"error": "unknown run"}, 404)
+        if p.startswith("/output/"):
+            t = _under(paths.OUTPUT, p[len("/output/"):])
+            if t is None:
+                return self.send_error(403)
+            if t.is_dir():
+                if not p.endswith("/"):
+                    return self._send(b"", "text/plain", 301, {"location": p + "/"})
+                return self._send(_listing(p, t), "text/html; charset=utf-8")
+            return self._file(t, download=t.suffix == ".zip")
+        if p.startswith("/experiments/"):   # screenshots and write-ups kept in git
+            t = _under(paths.HOME / "experiments", p[len("/experiments/"):])
+            return self.send_error(403) if t is None else self._file(t)
+        if p.startswith("/site/"):  # static HTML output, served as a website
+            parts = p.split("/", 3)
+            if len(parts) < 3:
+                return self.send_error(404)
+            base = _under(paths.OUTPUT, f"{parts[2]}/project")
+            if base is None or not base.is_dir():
+                return self.send_error(404)
+            if len(parts) == 3:
+                return self._send(b"", "text/plain", 301, {"location": p + "/"})
+            t = _under(base, parts[3] or "index.html")
+            if t is not None and t.is_dir():
+                t = t / "index.html"
+            return self._file(t)
+        self.send_error(404)
+
+    def do_POST(self):
+        from .github_http import handle
+        if handle(self):
+            return
+        n = int(self.headers.get("content-length", 0) or 0)
+        try:
+            params = json.loads(self.rfile.read(n) or b"{}")
+        except json.JSONDecodeError:
+            return self._json({"error": "bad json"}, 400)
+        if self.path == "/api/run":
+            if not (params.get("source") and params.get("donor")):
+                return self._json({"error": "Paste both GitHub links"}, 400)
+            if params.get("add_component") and not (params.get("component") or "").strip():
+                return self._json({"error": "Say which component to add (e.g. navbar)"}, 400)
+            if not (params.get("migration") or params.get("style") or params.get("add_component")):
+                return self._json({"error": "Pick codebase migration, style transfer, or add a component"}, 400)
+            if not (params.get("prompt") or "").strip():
+                return self._json({"error": "The prompt is empty"}, 400)
+            if not llm.configured() and params.get("mode") not in ("port", "adaptive"):
+                return self._json({"error": "No AI key is set. Export GROQ_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY "
+                                            "or OPENAI_API_KEY in the terminal and restart the server."}, 400)
+            params["mode"] = params.get("mode") if params.get("mode") in ("report", "history", "port", "port-ai", "port-report", "port-report-memory", "adaptive") else "prompt"
+            job = Job(params["mode"])
+            JOBS[job.id] = job
+            busy = RUN_LOCK.locked()
+            threading.Thread(target=_worker, args=(job, params), daemon=True).start()
+            return self._json({"id": job.id, "queued": busy})
+        if self.path == "/api/lesson":
+            from . import lessons_auto
+            try:
+                return self._json(lessons_auto.decide(int(params.get("id", 0)), str(params.get("status", ""))))
+            except (ValueError, TypeError) as e:
+                return self._json({"error": str(e)}, 400)
+        if self.path == "/api/feedback":
+            try:
+                return self._json(compare.add_feedback(str(params.get("id", "")), str(params.get("helped", "")),
+                                                       str(params.get("note", ""))[:2000], bool(params.get("as_lesson"))))
+            except ValueError as e:
+                return self._json({"error": str(e)}, 400)
+        if self.path == "/api/compare":
+            try:
+                if "note" in params and params.get("id"):
+                    return self._json(compare.set_note(str(params["id"]), str(params["note"])[:4000]))
+                return self._json(compare.record(str(params.get("a", "")), str(params.get("b", "")),
+                                                 experiment=str(params.get("experiment", ""))))
+            except ValueError as e:
+                return self._json({"error": str(e)}, 400)
+        if self.path == "/api/preview":
+            rid = str(params.get("run_id", ""))
+            folder = _under(paths.OUTPUT, f"{rid}/project")
+            if not rid or folder is None or not folder.is_dir():
+                return self._json({"error": "unknown run"}, 404)
+            res = preview.start(rid, folder)
+            if res.get("static"):
+                res = {"url": f"/site/{urllib.parse.quote(rid)}/"}
+            return self._json(res, 200 if "url" in res else 500)
+        if self.path == "/api/open":
+            t = _under(paths.OUTPUT, params.get("path", ""))
+            if t is None or not t.exists():
+                return self._json({"error": "not found"}, 404)
+            cmd = {"Darwin": ["open"], "Windows": ["explorer"]}.get(platform.system(), ["xdg-open"])
+            try:
+                subprocess.Popen(cmd + [str(t)])
+                return self._json({"ok": True})
+            except OSError as e:
+                return self._json({"error": str(e)}, 500)
+        self.send_error(404)
+
+
+def make_server(port=8000, github_workspace=False):
+    from .github_http import Product
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server.github_workspace = github_workspace
+    server.github = Product(f"http://127.0.0.1:{server.server_address[1]}", paths.HOME / ".github-workspaces")
+    return server
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--port", type=int, default=8000)
+    ap.add_argument("--no-open", action="store_true")
+    ap.add_argument("--github-workspace", action="store_true", help="Run the isolated optional GitHub connection service")
+    a = ap.parse_args()
+    try:
+        from . import diffs
+        diffs.backfill()
+    except Exception as e:
+        print(f"note: could not store earlier diffs ({e})")
+    try:
+        n = store.mark_interrupted()
+        if n:
+            print(f"Marked {n} earlier run(s) that were cut off by a restart as 'interrupted'.")
+    except Exception as e:
+        print(f"note: could not clean up the run history ({e})")
+    srv = make_server(a.port, github_workspace=a.github_workspace)
+    github_service = None
+    if not a.github_workspace and a.port == 8000:
+        try:
+            github_service = make_server(8101, github_workspace=True)
+            threading.Thread(target=github_service.serve_forever, daemon=True).start()
+        except OSError:
+            print("Optional GitHub connection port 8101 is already in use; stop an older FusionEdges workspace if needed.")
+    url = f"http://127.0.0.1:{srv.server_address[1]}"
+    print(f"FusionEdges running at {url}  (Ctrl+C to stop)")
+    print(f"Repos are cloned to {paths.EXAMPLES}; results go to {paths.OUTPUT}")
+    chain = llm.configured()
+    print("AI providers (fallback order): " + (" -> ".join(chain) if chain else
+          "NONE. Set GROQ_API_KEY, GEMINI_API_KEY, ANTHROPIC_API_KEY or OPENAI_API_KEY."))
+    if not a.no_open:
+        webbrowser.open(url)
+    try:
+        srv.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        if github_service:
+            github_service.shutdown()
+            github_service.server_close()
+        preview.stop()
+
+
+if __name__ == "__main__":
+    main()
