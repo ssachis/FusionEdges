@@ -1,0 +1,87 @@
+{
+ "about": "Which runs count as evidence. Every run belongs to one batch; only batches with status 'study' feed a result. Everything else is kept as the record of how FusionEdges was built. Edit this file (not the database) to change a label; the Analysis tab reads it.",
+ "statuses": {
+  "exploration": "Trying things out. Mixed models, failed AI calls, one task. Not evidence.",
+  "pilot": "First structured comparison. Too small and not pinned to one model. Shapes the questions, answers none.",
+  "development": "Runs used to build and fix FusionEdges. The rules were changed after seeing these results, so they cannot test it.",
+  "preliminary": "A fair comparison on tasks that were also used for development. Shows direction, not proof.",
+  "study": "Frozen pipeline, fresh tasks, analysis fixed in advance. The only batches a result may come from."
+ },
+ "batches": [
+  {
+   "id": "explore-oct",
+   "match": {
+    "untagged_before": "2026-10-27"
+   },
+   "status": "exploration",
+   "title": "Early runs (15-18 Oct)",
+   "what": "One navbar task, prompt vs report, four different models, several failed AI calls."
+  },
+  {
+   "id": "pilot-oct27",
+   "match": {
+    "experiment_prefix": "next-to-react-navbar"
+   },
+   "status": "pilot",
+   "title": "Pilot (27 Oct)",
+   "what": "4 navbar tasks, agent alone vs agent + report, then the first port runs. Models mixed after a quota fallback."
+  },
+  {
+   "id": "port-v1",
+   "match": {
+    "experiment": "heldout-port"
+   },
+   "status": "development",
+   "title": "Port v1 (1 Nov)",
+   "what": "First rule-based port on 16 tasks, no browser check."
+  },
+  {
+   "id": "port-v2",
+   "match": {
+    "experiment": "heldout-port-v2"
+   },
+   "status": "development",
+   "title": "Port v2 (1 Nov)",
+   "what": "Rules added after v1's failures; first browser check."
+  },
+  {
+   "id": "prelim-navbar",
+   "match": {
+    "experiment": [
+     "heldout-screening",
+     "heldout-port-v3"
+    ]
+   },
+   "status": "preliminary",
+   "title": "Preliminary navbar comparison (2 Nov)",
+   "what": "16 navbar tasks: agent alone (2 runs each, gemini-3.5-flash-lite) vs port v3 (no AI), with a side-by-side review. Fair setup, but the port's rules were written while looking at these tasks."
+  },
+  {
+   "id": "adaptive-v1",
+   "match": {
+    "experiment_prefix": "adaptive-pilot"
+   },
+   "status": "development",
+   "title": "Adaptive pilot v1 (2 Nov)",
+   "what": "7 of 32 runs across navbar, footer, card, accordion; adaptive runs crashed on a Gemini tool-call bug."
+  },
+  {
+   "id": "diag-six",
+   "match": {
+    "experiment_prefix": "diagnostic-six"
+   },
+   "status": "development",
+   "title": "Six-run diagnostic attempts (2 Nov evening)",
+   "what": "Card, accordion, footer on two familiar hosts; stopped by the gemini-3.6-flash free quota."
+  },
+  {
+   "id": "study-1",
+   "match": {
+    "experiment_prefix": "study-1"
+   },
+   "status": "study",
+   "title": "Study 1: navbar, Next.js donor into a React site",
+   "what": "Frozen pipeline (port v4 + adaptive), ~30 fresh tasks, agent alone vs FusionEdges, 2 runs each, gemini-3.5-flash-lite, blind review of a sample. See experiments/study-1/PLAN.md."
+  }
+ ]
+}

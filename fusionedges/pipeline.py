@@ -249,7 +249,8 @@ def run(params: dict, log=print, stage=lambda *a: None, run_id: str | None = Non
         port_rec = None
         if mode in ("port", "port-ai", "port-report", "port-report-memory", "adaptive") and component:
             stage("port", "running")
-            port_rec = port.port(source.path, donor.path, project, sc, component, log)
+            _loc = re.search(r'data-fe-transfer=\\?"([^"\\]+)', str((params.get("acceptance") or {}).get("selector") or ""))
+            port_rec = port.port(source.path, donor.path, project, sc, component, log, locator=_loc.group(1) if _loc else "")
             if params.get("component_inputs"):
                 port_rec = port.bind_inputs(project, port_rec, params["component_inputs"])
             (folder / "port.json").write_text(json.dumps(port_rec, indent=1))

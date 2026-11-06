@@ -1,0 +1,855 @@
+{
+ "name": "study-1-navbar",
+ "evidence_version": 1,
+ "status": "draft (freeze after readiness check)",
+ "frozen_date": null,
+ "scope": "Study 1: navbar transfer, Next.js donors -> React (Vite / CRA) hosts. 15 fresh hosts x 2 fresh donors = 30 tasks, none seen while building the port rules. Hosts and donors found by a fixed GitHub search (pushed Oct-Nov 2026), pinned to commits.",
+ "conditions": [
+  "prompt",
+  "adaptive"
+ ],
+ "repeats": 2,
+ "seed": 261103,
+ "env": {
+  "FUSIONEDGES_PROVIDERS": "gemini",
+  "FUSIONEDGES_GEMINI_MODEL": "gemini-3.5-flash-lite",
+  "FUSIONEDGES_GEMINI_MAX_TOKENS": "4096",
+  "FUSIONEDGES_CONTEXT_CHARS": "20000",
+  "FUSIONEDGES_BROWSER": "1",
+  "FUSIONEDGES_REPORT_TOOLS": "0",
+  "FUSIONEDGES_WAIT_MAX": "0"
+ },
+ "memory": "Disabled in both conditions (no RAG, no lessons). Memory is a separate later study.",
+ "primary_endpoint": "Per task: share of runs that pass all automatic checks AND the frozen acceptance contract (strict_success). Compared per task (each task counts once), sign test over tasks.",
+ "cost_endpoint": "AI tokens per run and per working result (all tokens spent / runs that work), wall time per run.",
+ "quality_endpoint": "Blinded side-by-side review of screenshots (desktop 1280px, phone 390px) and diffs: donor navbar recognisable, host intact. Overall = checks AND review.",
+ "budget_note": "Agent alone: one-shot + up to 2 repairs. FusionEdges adaptive: rules -> verify -> report -> 1 local edit -> bounded agent (8 steps). System comparison, not equal-call-budget.",
+ "uncertainty": "30 tasks, 2 repeats each (repeats are not independent). Report all cells, failures and quota retries. Donor fidelity is judged by review, not by link assertions.",
+ "code_sha256": "FILL AT FREEZE",
+ "tasks": [
+  {
+   "id": "oliver-sampa--coderx85",
+   "source": "https://github.com/Oliver-Sampa/hair-salon-website/tree/e5980243c1a8c7e19f10e31c666030299ded935a",
+   "donor": "https://github.com/Coderx85/Portfolio/tree/bcfdb60c17e66b945f4bc5abdbaef5c91047ed80",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Navbar.tsx",
+   "donor_file_sha256": "b77cc53e93d60154955a4a045c29c42a4e40ca8b1d03b03234bb5208dc0cb607",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Navbar.tsx.\nReplace only the site's existing navigation (src/components/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Welcome to Laritza's Hair Salon\\\")\",\n      \"text\": \"Welcome to Laritza's Hair Salon\"\n    },\n    {\n      \"selector\": \"p:has-text(\\\"Fresh cuts, sharp fades, and styles for everyone.\\\")\",\n      \"text\": \"Fresh cuts, sharp fades, and styles for everyone.\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Welcome to Laritza's Hair Salon\")",
+      "text": "Welcome to Laritza's Hair Salon"
+     },
+     {
+      "selector": "p:has-text(\"Fresh cuts, sharp fades, and styles for everyone.\")",
+      "text": "Fresh cuts, sharp fades, and styles for everyone."
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "oliver-sampa--igorkowalczyk",
+   "source": "https://github.com/Oliver-Sampa/hair-salon-website/tree/e5980243c1a8c7e19f10e31c666030299ded935a",
+   "donor": "https://github.com/IgorKowalczyk/igorkowalczyk.dev/tree/fc924bdd7ee29f2ef78ed73b315b9a6de3d2b517",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "components/Navigation.tsx",
+   "donor_file_sha256": "ba056c8398de5cc39e1c73da3577423bb79c767f8de8d6bc0f9f74112abe80b3",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/Navigation.tsx.\nReplace only the site's existing navigation (src/components/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Welcome to Laritza's Hair Salon\\\")\",\n      \"text\": \"Welcome to Laritza's Hair Salon\"\n    },\n    {\n      \"selector\": \"p:has-text(\\\"Fresh cuts, sharp fades, and styles for everyone.\\\")\",\n      \"text\": \"Fresh cuts, sharp fades, and styles for everyone.\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Welcome to Laritza's Hair Salon\")",
+      "text": "Welcome to Laritza's Hair Salon"
+     },
+     {
+      "selector": "p:has-text(\"Fresh cuts, sharp fades, and styles for everyone.\")",
+      "text": "Fresh cuts, sharp fades, and styles for everyone."
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "xshshahab--tiendat2204",
+   "source": "https://github.com/xshshahab/portfolio/tree/89298c18dd2fd44920c8e28102d835f61bc7a0f0",
+   "donor": "https://github.com/tiendat2204/tien-dat-portfolio/tree/c2d5c0f83c31795d9723c34a9a1714d08beaac4d",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Nav.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Header.tsx",
+   "donor_file_sha256": "62b3acb7e69dc484bb5a40edcc339c67d258677603eb3941f40438b7acc8030e",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Header.tsx.\nReplace only the site's existing navigation (src/components/Nav.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h3:has-text(\\\"Currently learning\\\")\",\n      \"text\": \"Currently learning\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Activity\\\")\",\n      \"text\": \"Activity\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h3:has-text(\"Currently learning\")",
+      "text": "Currently learning"
+     },
+     {
+      "selector": "h2:has-text(\"Activity\")",
+      "text": "Activity"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "xshshahab--coderx85",
+   "source": "https://github.com/xshshahab/portfolio/tree/89298c18dd2fd44920c8e28102d835f61bc7a0f0",
+   "donor": "https://github.com/Coderx85/Portfolio/tree/bcfdb60c17e66b945f4bc5abdbaef5c91047ed80",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Nav.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Navbar.tsx",
+   "donor_file_sha256": "b77cc53e93d60154955a4a045c29c42a4e40ca8b1d03b03234bb5208dc0cb607",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Navbar.tsx.\nReplace only the site's existing navigation (src/components/Nav.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h3:has-text(\\\"Currently learning\\\")\",\n      \"text\": \"Currently learning\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Activity\\\")\",\n      \"text\": \"Activity\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h3:has-text(\"Currently learning\")",
+      "text": "Currently learning"
+     },
+     {
+      "selector": "h2:has-text(\"Activity\")",
+      "text": "Activity"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "nagoloumdaniel--alemoraru",
+   "source": "https://github.com/nagoloumdaniel/Nagos/tree/8e72a886e004ec4f6428d412ac7936f65220c0f1",
+   "donor": "https://github.com/alemoraru/nextjs-portofolio-website/tree/783c407e0fa69b4b859f70846b8857c52fd8ea43",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/header/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/NavigationMenu.tsx",
+   "donor_file_sha256": "70c445c7c75a2b626a3f1aaefc1eba9ec4d401fbbf1dfe229dcd77de14fbf0cd",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/NavigationMenu.tsx.\nReplace only the site's existing navigation (src/components/header/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"\\u00c0 propos de moi\\\")\",\n      \"text\": \"\\u00c0 propos de moi\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Mon Blog\\\")\",\n      \"text\": \"Mon Blog\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"\u00c0 propos de moi\")",
+      "text": "\u00c0 propos de moi"
+     },
+     {
+      "selector": "h2:has-text(\"Mon Blog\")",
+      "text": "Mon Blog"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "nagoloumdaniel--divijg19",
+   "source": "https://github.com/nagoloumdaniel/Nagos/tree/8e72a886e004ec4f6428d412ac7936f65220c0f1",
+   "donor": "https://github.com/divijg19/Lys/tree/cf9b804d840e5a0c939fddb5aefda996d82e8c4c",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/header/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/layout/Navbar.tsx",
+   "donor_file_sha256": "d9d993e588c110a73be6869ca871b0221d3e7ff269fddd9609d9b6f812c9c836",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/layout/Navbar.tsx.\nReplace only the site's existing navigation (src/components/header/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"\\u00c0 propos de moi\\\")\",\n      \"text\": \"\\u00c0 propos de moi\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Mon Blog\\\")\",\n      \"text\": \"Mon Blog\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"\u00c0 propos de moi\")",
+      "text": "\u00c0 propos de moi"
+     },
+     {
+      "selector": "h2:has-text(\"Mon Blog\")",
+      "text": "Mon Blog"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "uzairkhanadv--shubhamverma1811",
+   "source": "https://github.com/uzairkhanadv/My-react-portfolio/tree/2cd0976d97e3f73d2dd3e339ff70293e1ce8cbb0",
+   "donor": "https://github.com/ShubhamVerma1811/Website/tree/87516ab444578e4900bd9d2222df85eea4981815",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/NavBar/navbar.js",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/Header.tsx",
+   "donor_file_sha256": "220fc28d6cc1dfb9ef087651bba0665a4c338d068120b94e336f2c2b23496998",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Header.tsx.\nReplace only the site's existing navigation (src/components/NavBar/navbar.js); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h3:has-text(\\\"Education\\\")\",\n      \"text\": \"Education\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Passion\\\")\",\n      \"text\": \"Passion\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h3:has-text(\"Education\")",
+      "text": "Education"
+     },
+     {
+      "selector": "h3:has-text(\"Passion\")",
+      "text": "Passion"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "uzairkhanadv--alvin-dennis",
+   "source": "https://github.com/uzairkhanadv/My-react-portfolio/tree/2cd0976d97e3f73d2dd3e339ff70293e1ce8cbb0",
+   "donor": "https://github.com/alvin-dennis/Personal-Portfolio-2.0/tree/6b4ff38466790dc9a2aec5a7fe957cf65293ab08",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/NavBar/navbar.js",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/navbar.tsx",
+   "donor_file_sha256": "12c0bf3a10c8488a3cd235710692eb430acbe74863b4ed7130a283850b41414c",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/navbar.tsx.\nReplace only the site's existing navigation (src/components/NavBar/navbar.js); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h3:has-text(\\\"Education\\\")\",\n      \"text\": \"Education\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Passion\\\")\",\n      \"text\": \"Passion\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h3:has-text(\"Education\")",
+      "text": "Education"
+     },
+     {
+      "selector": "h3:has-text(\"Passion\")",
+      "text": "Passion"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "juanfalibene--akhila-ariyachan",
+   "source": "https://github.com/juanfalibene/music-portfolio/tree/50095714c9fcd86a76fb3ac2f1ef22a4dc2c41c7",
+   "donor": "https://github.com/akhila-ariyachandra/akhilaariyachandra.com/tree/980c3806a80493b912471314ff4a38821f7c62bd",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/layout/Navbar.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "app/(site)/header.tsx",
+   "donor_file_sha256": "eedeac62698c8e91c17ad9a0a10ee27cadaa177a6132730882ff6b4efadc0805",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: app/(site)/header.tsx.\nReplace only the site's existing navigation (src/components/layout/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Past Gigs since 2016\\\")\",\n      \"text\": \"Past Gigs since 2016\"\n    },\n    {\n      \"selector\": \"h1:has-text(\\\"PRESSKIT\\\")\",\n      \"text\": \"PRESSKIT\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Past Gigs since 2016\")",
+      "text": "Past Gigs since 2016"
+     },
+     {
+      "selector": "h1:has-text(\"PRESSKIT\")",
+      "text": "PRESSKIT"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "juanfalibene--tejas164321",
+   "source": "https://github.com/juanfalibene/music-portfolio/tree/50095714c9fcd86a76fb3ac2f1ef22a4dc2c41c7",
+   "donor": "https://github.com/Tejas164321/TejasFolio/tree/ce05d062aa8f53835182cf2309a2bc806e7de526",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/layout/Navbar.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/layout/header.tsx",
+   "donor_file_sha256": "41a851098c6a3f3052dd312341fb59eb1377f49cccd32150c5b4208337b40900",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/layout/header.tsx.\nReplace only the site's existing navigation (src/components/layout/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Past Gigs since 2016\\\")\",\n      \"text\": \"Past Gigs since 2016\"\n    },\n    {\n      \"selector\": \"h1:has-text(\\\"PRESSKIT\\\")\",\n      \"text\": \"PRESSKIT\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Past Gigs since 2016\")",
+      "text": "Past Gigs since 2016"
+     },
+     {
+      "selector": "h1:has-text(\"PRESSKIT\")",
+      "text": "PRESSKIT"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "milan-960--alvin-dennis",
+   "source": "https://github.com/Milan-960/Myportfolio/tree/4696ddd0430c3849a1ca0282bfa61a98fd51ffec",
+   "donor": "https://github.com/alvin-dennis/Personal-Portfolio-2.0/tree/6b4ff38466790dc9a2aec5a7fe957cf65293ab08",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navigation/MainNavigation/MainNavigation.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/navbar.tsx",
+   "donor_file_sha256": "12c0bf3a10c8488a3cd235710692eb430acbe74863b4ed7130a283850b41414c",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/navbar.tsx.\nReplace only the site's existing navigation (src/components/Navigation/MainNavigation/MainNavigation.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"BACKEND\\\")\",\n      \"text\": \"BACKEND\"\n    },\n    {\n      \"selector\": \"h1:has-text(\\\"DATABASE\\\")\",\n      \"text\": \"DATABASE\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"BACKEND\")",
+      "text": "BACKEND"
+     },
+     {
+      "selector": "h1:has-text(\"DATABASE\")",
+      "text": "DATABASE"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "milan-960--akhila-ariyachan",
+   "source": "https://github.com/Milan-960/Myportfolio/tree/4696ddd0430c3849a1ca0282bfa61a98fd51ffec",
+   "donor": "https://github.com/akhila-ariyachandra/akhilaariyachandra.com/tree/980c3806a80493b912471314ff4a38821f7c62bd",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navigation/MainNavigation/MainNavigation.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "app/(site)/header.tsx",
+   "donor_file_sha256": "eedeac62698c8e91c17ad9a0a10ee27cadaa177a6132730882ff6b4efadc0805",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: app/(site)/header.tsx.\nReplace only the site's existing navigation (src/components/Navigation/MainNavigation/MainNavigation.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"BACKEND\\\")\",\n      \"text\": \"BACKEND\"\n    },\n    {\n      \"selector\": \"h1:has-text(\\\"DATABASE\\\")\",\n      \"text\": \"DATABASE\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"BACKEND\")",
+      "text": "BACKEND"
+     },
+     {
+      "selector": "h1:has-text(\"DATABASE\")",
+      "text": "DATABASE"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "sri-3116--kaganmert",
+   "source": "https://github.com/Sri-3116/Portfolio/tree/90cab1d3cd20fcc0e9ef97ffe1bec31be914bff7",
+   "donor": "https://github.com/kaganmert/next-shadcn-sanity-blog/tree/403919a95e3c8ae423c64d304fc61e7646f725be",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Component/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "components/site-header.tsx",
+   "donor_file_sha256": "5aca9240118d59635a8a558f56eb4e064d57a1afebf6ee2ba42ff64246ad96fd",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/site-header.tsx.\nReplace only the site's existing navigation (src/Component/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Professional Experience\\\")\",\n      \"text\": \"Professional Experience\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Skills\\\")\",\n      \"text\": \"Skills\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Professional Experience\")",
+      "text": "Professional Experience"
+     },
+     {
+      "selector": "h2:has-text(\"Skills\")",
+      "text": "Skills"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "sri-3116--aniruddhaadak80",
+   "source": "https://github.com/Sri-3116/Portfolio/tree/90cab1d3cd20fcc0e9ef97ffe1bec31be914bff7",
+   "donor": "https://github.com/aniruddhaadak80/Folio-Motion/tree/a2214076c624781169ca7e1fe26950ce503d1bf9",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Component/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/site-header.tsx",
+   "donor_file_sha256": "539f66926585bf6904f26d5d122fa2e3bde9cd27b0484b6d441b24bde9f5e397",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/site-header.tsx.\nReplace only the site's existing navigation (src/Component/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Professional Experience\\\")\",\n      \"text\": \"Professional Experience\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Skills\\\")\",\n      \"text\": \"Skills\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Professional Experience\")",
+      "text": "Professional Experience"
+     },
+     {
+      "selector": "h2:has-text(\"Skills\")",
+      "text": "Skills"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "rajharsh03--shubhamverma1811",
+   "source": "https://github.com/RajHarsh03/Portfolio/tree/c11b84c7fc9876f13327ae3ca29c1017ef40727d",
+   "donor": "https://github.com/ShubhamVerma1811/Website/tree/87516ab444578e4900bd9d2222df85eea4981815",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/layout/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Header.tsx",
+   "donor_file_sha256": "220fc28d6cc1dfb9ef087651bba0665a4c338d068120b94e336f2c2b23496998",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Header.tsx.\nReplace only the site's existing navigation (src/components/layout/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"GitHub Activity\\\")\",\n      \"text\": \"GitHub Activity\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Projects\\\")\",\n      \"text\": \"Projects\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"GitHub Activity\")",
+      "text": "GitHub Activity"
+     },
+     {
+      "selector": "h2:has-text(\"Projects\")",
+      "text": "Projects"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "rajharsh03--igorkowalczyk",
+   "source": "https://github.com/RajHarsh03/Portfolio/tree/c11b84c7fc9876f13327ae3ca29c1017ef40727d",
+   "donor": "https://github.com/IgorKowalczyk/igorkowalczyk.dev/tree/fc924bdd7ee29f2ef78ed73b315b9a6de3d2b517",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/layout/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "components/Navigation.tsx",
+   "donor_file_sha256": "ba056c8398de5cc39e1c73da3577423bb79c767f8de8d6bc0f9f74112abe80b3",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/Navigation.tsx.\nReplace only the site's existing navigation (src/components/layout/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"GitHub Activity\\\")\",\n      \"text\": \"GitHub Activity\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Projects\\\")\",\n      \"text\": \"Projects\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"GitHub Activity\")",
+      "text": "GitHub Activity"
+     },
+     {
+      "selector": "h2:has-text(\"Projects\")",
+      "text": "Projects"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "dineshkumar-mb--abjt14",
+   "source": "https://github.com/dineshkumar-mb/portfolio/tree/4b3605cdd7f333ae87206f6bd42178fb1a9bb6bd",
+   "donor": "https://github.com/abjt14/portfolio-v7/tree/30be0ea6c903ada7b88d0a39bd2d5c93098479de",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Components/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Navigation/MainMenu.tsx",
+   "donor_file_sha256": "f3b650447e2607780ca5c37d4b679f0d43228b8518fef5f8543875e299b6ba27",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Navigation/MainMenu.tsx.\nReplace only the site's existing navigation (src/Components/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Full Stack Developer\\\")\",\n      \"text\": \"Full Stack Developer\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Currently Exploring\\\")\",\n      \"text\": \"Currently Exploring\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Full Stack Developer\")",
+      "text": "Full Stack Developer"
+     },
+     {
+      "selector": "h3:has-text(\"Currently Exploring\")",
+      "text": "Currently Exploring"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "dineshkumar-mb--ahnafnafee",
+   "source": "https://github.com/dineshkumar-mb/portfolio/tree/4b3605cdd7f333ae87206f6bd42178fb1a9bb6bd",
+   "donor": "https://github.com/ahnafnafee/ahnafnafee.dev/tree/390a1b583d7246c0712391c4018f8ec14260c9c0",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Components/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/site/common/Header/Header.tsx",
+   "donor_file_sha256": "5eac1565c08d3ef481e6183adafd95efc096861ca410e7584562b72ab1e3bf54",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/site/common/Header/Header.tsx.\nReplace only the site's existing navigation (src/Components/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Full Stack Developer\\\")\",\n      \"text\": \"Full Stack Developer\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Currently Exploring\\\")\",\n      \"text\": \"Currently Exploring\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Full Stack Developer\")",
+      "text": "Full Stack Developer"
+     },
+     {
+      "selector": "h3:has-text(\"Currently Exploring\")",
+      "text": "Currently Exploring"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "mbronstein1--kaganmert",
+   "source": "https://github.com/mbronstein1/new-portfolio/tree/ab9b5ccf8d68ef25cba048c962321e74f0876d17",
+   "donor": "https://github.com/kaganmert/next-shadcn-sanity-blog/tree/403919a95e3c8ae423c64d304fc61e7646f725be",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar/Navbar.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "components/site-header.tsx",
+   "donor_file_sha256": "5aca9240118d59635a8a558f56eb4e064d57a1afebf6ee2ba42ff64246ad96fd",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/site-header.tsx.\nReplace only the site's existing navigation (src/components/Navbar/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Full stack engineer, technical lead\\\")\",\n      \"text\": \"Full stack engineer, technical lead\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Let's talk\\\")\",\n      \"text\": \"Let's talk\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Full stack engineer, technical lead\")",
+      "text": "Full stack engineer, technical lead"
+     },
+     {
+      "selector": "h2:has-text(\"Let's talk\")",
+      "text": "Let's talk"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "mbronstein1--tiendat2204",
+   "source": "https://github.com/mbronstein1/new-portfolio/tree/ab9b5ccf8d68ef25cba048c962321e74f0876d17",
+   "donor": "https://github.com/tiendat2204/tien-dat-portfolio/tree/c2d5c0f83c31795d9723c34a9a1714d08beaac4d",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar/Navbar.jsx",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/Header.tsx",
+   "donor_file_sha256": "62b3acb7e69dc484bb5a40edcc339c67d258677603eb3941f40438b7acc8030e",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Header.tsx.\nReplace only the site's existing navigation (src/components/Navbar/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Full stack engineer, technical lead\\\")\",\n      \"text\": \"Full stack engineer, technical lead\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Let's talk\\\")\",\n      \"text\": \"Let's talk\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Full stack engineer, technical lead\")",
+      "text": "Full stack engineer, technical lead"
+     },
+     {
+      "selector": "h2:has-text(\"Let's talk\")",
+      "text": "Let's talk"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "arif596--memoona-tech",
+   "source": "https://github.com/Arif596/Portfolio/tree/6e3758df3a7a4d3d2afef852e4970d1aefcef39b",
+   "donor": "https://github.com/Memoona-tech/nextjs-portfolio/tree/d52df49129c78a44b55caa9da36b271e2521e097",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Component/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "components/Header.tsx",
+   "donor_file_sha256": "71cdcf226f832151a712e69b514e585306d60e9356d9cae5a2ac52a71a92537e",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/Header.tsx.\nReplace only the site's existing navigation (src/Component/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"About me\\\")\",\n      \"text\": \"About me\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Hello, I'm Arif!\\\")\",\n      \"text\": \"Hello, I'm Arif!\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"About me\")",
+      "text": "About me"
+     },
+     {
+      "selector": "h3:has-text(\"Hello, I'm Arif!\")",
+      "text": "Hello, I'm Arif!"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "arif596--tejas164321",
+   "source": "https://github.com/Arif596/Portfolio/tree/6e3758df3a7a4d3d2afef852e4970d1aefcef39b",
+   "donor": "https://github.com/Tejas164321/TejasFolio/tree/ce05d062aa8f53835182cf2309a2bc806e7de526",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Component/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/layout/header.tsx",
+   "donor_file_sha256": "41a851098c6a3f3052dd312341fb59eb1377f49cccd32150c5b4208337b40900",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/layout/header.tsx.\nReplace only the site's existing navigation (src/Component/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"About me\\\")\",\n      \"text\": \"About me\"\n    },\n    {\n      \"selector\": \"h3:has-text(\\\"Hello, I'm Arif!\\\")\",\n      \"text\": \"Hello, I'm Arif!\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"About me\")",
+      "text": "About me"
+     },
+     {
+      "selector": "h3:has-text(\"Hello, I'm Arif!\")",
+      "text": "Hello, I'm Arif!"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "lroy-stack--aniruddhaadak80",
+   "source": "https://github.com/lroy-stack/portfolio-react/tree/0642a6e12ddf13fdc749cf5c74cbd34694b6ac80",
+   "donor": "https://github.com/aniruddhaadak80/Folio-Motion/tree/a2214076c624781169ca7e1fe26950ce503d1bf9",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/common/Navigation.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/site-header.tsx",
+   "donor_file_sha256": "539f66926585bf6904f26d5d122fa2e3bde9cd27b0484b6d441b24bde9f5e397",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/site-header.tsx.\nReplace only the site's existing navigation (src/components/common/Navigation.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Leroy L\\u00f6we\\\")\",\n      \"text\": \"Leroy L\\u00f6we\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"About Me\\\")\",\n      \"text\": \"About Me\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Leroy L\u00f6we\")",
+      "text": "Leroy L\u00f6we"
+     },
+     {
+      "selector": "h2:has-text(\"About Me\")",
+      "text": "About Me"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "lroy-stack--divijg19",
+   "source": "https://github.com/lroy-stack/portfolio-react/tree/0642a6e12ddf13fdc749cf5c74cbd34694b6ac80",
+   "donor": "https://github.com/divijg19/Lys/tree/cf9b804d840e5a0c939fddb5aefda996d82e8c4c",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/common/Navigation.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/layout/Navbar.tsx",
+   "donor_file_sha256": "d9d993e588c110a73be6869ca871b0221d3e7ff269fddd9609d9b6f812c9c836",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/layout/Navbar.tsx.\nReplace only the site's existing navigation (src/components/common/Navigation.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h1:has-text(\\\"Leroy L\\u00f6we\\\")\",\n      \"text\": \"Leroy L\\u00f6we\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"About Me\\\")\",\n      \"text\": \"About Me\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h1:has-text(\"Leroy L\u00f6we\")",
+      "text": "Leroy L\u00f6we"
+     },
+     {
+      "selector": "h2:has-text(\"About Me\")",
+      "text": "About Me"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "xbnikhil--abjt14",
+   "source": "https://github.com/xbnikhil/Nikhil-Portfolio/tree/a7447a80ac6c1c4c61e595c9ccf6202d8df0d4b0",
+   "donor": "https://github.com/abjt14/portfolio-v7/tree/30be0ea6c903ada7b88d0a39bd2d5c93098479de",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/Navigation/MainMenu.tsx",
+   "donor_file_sha256": "f3b650447e2607780ca5c37d4b679f0d43228b8518fef5f8543875e299b6ba27",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/Navigation/MainMenu.tsx.\nReplace only the site's existing navigation (src/components/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Make yourself at home.\\\")\",\n      \"text\": \"Make yourself at home.\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Good stuff is marinating.\\\")\",\n      \"text\": \"Good stuff is marinating.\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Make yourself at home.\")",
+      "text": "Make yourself at home."
+     },
+     {
+      "selector": "h2:has-text(\"Good stuff is marinating.\")",
+      "text": "Good stuff is marinating."
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "xbnikhil--alemoraru",
+   "source": "https://github.com/xbnikhil/Nikhil-Portfolio/tree/a7447a80ac6c1c4c61e595c9ccf6202d8df0d4b0",
+   "donor": "https://github.com/alemoraru/nextjs-portofolio-website/tree/783c407e0fa69b4b859f70846b8857c52fd8ea43",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Navbar.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/NavigationMenu.tsx",
+   "donor_file_sha256": "70c445c7c75a2b626a3f1aaefc1eba9ec4d401fbbf1dfe229dcd77de14fbf0cd",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/NavigationMenu.tsx.\nReplace only the site's existing navigation (src/components/Navbar.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"Make yourself at home.\\\")\",\n      \"text\": \"Make yourself at home.\"\n    },\n    {\n      \"selector\": \"h2:has-text(\\\"Good stuff is marinating.\\\")\",\n      \"text\": \"Good stuff is marinating.\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"Make yourself at home.\")",
+      "text": "Make yourself at home."
+     },
+     {
+      "selector": "h2:has-text(\"Good stuff is marinating.\")",
+      "text": "Good stuff is marinating."
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "dbhridoy--tejas164321",
+   "source": "https://github.com/DbHridoy/React-Router-Portfolio/tree/23935161bbcb94a17ab95c3e48b91f8a88001920",
+   "donor": "https://github.com/Tejas164321/TejasFolio/tree/ce05d062aa8f53835182cf2309a2bc806e7de526",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Header/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/layout/header.tsx",
+   "donor_file_sha256": "41a851098c6a3f3052dd312341fb59eb1377f49cccd32150c5b4208337b40900",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/layout/header.tsx.\nReplace only the site's existing navigation (src/components/Header/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"React development is carried out by passionate developers\\\")\",\n      \"text\": \"React development is carried out by passionate developers\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"React development is carried out by passionate developers\")",
+      "text": "React development is carried out by passionate developers"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "dbhridoy--ahnafnafee",
+   "source": "https://github.com/DbHridoy/React-Router-Portfolio/tree/23935161bbcb94a17ab95c3e48b91f8a88001920",
+   "donor": "https://github.com/ahnafnafee/ahnafnafee.dev/tree/390a1b583d7246c0712391c4018f8ec14260c9c0",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/components/Header/Header.jsx",
+   "host_build": "vite",
+   "donor_component_file": "src/components/site/common/Header/Header.tsx",
+   "donor_file_sha256": "5eac1565c08d3ef481e6183adafd95efc096861ca410e7584562b72ab1e3bf54",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/site/common/Header/Header.tsx.\nReplace only the site's existing navigation (src/components/Header/Header.jsx); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"React development is carried out by passionate developers\\\")\",\n      \"text\": \"React development is carried out by passionate developers\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"React development is carried out by passionate developers\")",
+      "text": "React development is carried out by passionate developers"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "zamandev313--memoona-tech",
+   "source": "https://github.com/ZamanDev313/zaman-dev/tree/faa59b2270b190dee2c7ab23116c0cdcc5a25eaf",
+   "donor": "https://github.com/Memoona-tech/nextjs-portfolio/tree/d52df49129c78a44b55caa9da36b271e2521e097",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Components/Portfolio/Navbar.js",
+   "host_build": "react-scripts",
+   "donor_component_file": "components/Header.tsx",
+   "donor_file_sha256": "71cdcf226f832151a712e69b514e585306d60e9356d9cae5a2ac52a71a92537e",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: components/Header.tsx.\nReplace only the site's existing navigation (src/Components/Portfolio/Navbar.js); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"ZamanDev\\\")\",\n      \"text\": \"ZamanDev\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"ZamanDev\")",
+      "text": "ZamanDev"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  },
+  {
+   "id": "zamandev313--alvin-dennis",
+   "source": "https://github.com/ZamanDev313/zaman-dev/tree/faa59b2270b190dee2c7ab23116c0cdcc5a25eaf",
+   "donor": "https://github.com/alvin-dennis/Personal-Portfolio-2.0/tree/6b4ff38466790dc9a2aec5a7fe957cf65293ab08",
+   "component": "navbar",
+   "family": "navbar",
+   "host_nav_file": "src/Components/Portfolio/Navbar.js",
+   "host_build": "react-scripts",
+   "donor_component_file": "src/components/navbar.tsx",
+   "donor_file_sha256": "12c0bf3a10c8488a3cd235710692eb430acbe74863b4ed7130a283850b41414c",
+   "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/components/navbar.tsx.\nReplace only the site's existing navigation (src/Components/Portfolio/Navbar.js); keep the donor navbar's own logo, links and styling. Do not port other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"study1-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"study1-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"h2:has-text(\\\"ZamanDev\\\")\",\n      \"text\": \"ZamanDev\"\n    }\n  ],\n  \"assertions\": [],\n  \"interactive\": false,\n  \"actions\": []\n}",
+   "acceptance": {
+    "selector": "[data-fe-transfer=\"study1-navbar\"]",
+    "preserve": [
+     {
+      "selector": "h2:has-text(\"ZamanDev\")",
+      "text": "ZamanDev"
+     }
+    ],
+    "assertions": [],
+    "interactive": false,
+    "actions": []
+   }
+  }
+ ]
+}

@@ -66,6 +66,7 @@ def main(argv=None):
     rs = sub.add_parser("rescore", help="re-run the checks on finished runs (no AI calls)")
     rs.add_argument("ids", nargs="*")
     res = sub.add_parser("results", help="verdicts recorded so far")
+    sub.add_parser("evidence", help="rewrite experiments/EVIDENCE.md from the evidence ledger and the runs")
     sbs = sub.add_parser("import-sidebyside", help="store a side-by-side qualitative review (experiments/reviews/*.json)")
     sbs.add_argument("file")
     sub.add_parser("metrics", help="fill run_metrics for every earlier run and print the per-condition table")
@@ -93,6 +94,13 @@ def main(argv=None):
         else:
             print(f"Wrote {records.export(a.name, a.date)}")
         return 0
+    if a.cmd == "evidence":
+        from . import ledger, metrics, paths as _p
+        metrics.backfill()
+        out = _p.HOME / "experiments" / "EVIDENCE.md"
+        out.write_text(ledger.markdown(metrics.rows("")))
+        print(f"wrote {out}")
+        return
     if a.cmd == "import-sidebyside":
         from . import qualitative
         print(qualitative.import_file(Path(a.file)))

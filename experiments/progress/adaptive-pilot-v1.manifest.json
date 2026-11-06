@@ -1,0 +1,753 @@
+{
+  "sha256": "dcf290b41ccec54e1a2574fb13ae0d4f37a0f3b115e76e7750f303c90b4f3781",
+  "spec": {
+    "name": "adaptive-pilot-v1",
+    "evidence_version": 1,
+    "status": "frozen",
+    "frozen_date": "2026-11-02",
+    "scope": "Development pilot: two previously seen React hosts, four component families, three Next donors. Not an independent held-out benchmark.",
+    "conditions": [
+      "prompt",
+      "adaptive"
+    ],
+    "repeats": 2,
+    "seed": 261102,
+    "env": {
+      "FUSIONEDGES_PROVIDERS": "gemini",
+      "FUSIONEDGES_GEMINI_MODEL": "gemini-3.6-flash",
+      "FUSIONEDGES_GEMINI_MAX_TOKENS": "4096",
+      "FUSIONEDGES_CONTEXT_CHARS": "20000",
+      "FUSIONEDGES_BROWSER": "1",
+      "FUSIONEDGES_REPORT_TOOLS": "0",
+      "FUSIONEDGES_WAIT_MAX": "0"
+    },
+    "memory": "Disabled for both conditions; no evaluation-time learning.",
+    "warm_setup": "Same original-source dependency cache and frozen npm lock per host in both arms; detached and reinstalled if dependencies change. Source browser error baselines prewarmed before timing.",
+    "budget_note": "System comparison: baseline initial one-shot + up to 2 repairs; adaptive focused report, at most 1 local edit and one tool agent capped at 8 steps. Not an equal-call-budget causal test of reports.",
+    "quality_endpoint": "Automatic checks are necessary. Product success additionally requires blinded reviewer donor fidelity, host preservation and responsiveness all 2/2; interactive contract must pass. Two reviewers, adjudicate disagreements; no rating means unverified.",
+    "uncertainty": "Only 2 host repos and 3 donors; repeated runs are not independent samples. Report all cells, task averages, failures, retry overhead and per-family results. No generalization or significance claim from this pilot.",
+    "reference_note": "Navigation/footer use original Next 14 app. Card/accordion use unchanged donor component implementations in isolated Next 16 / React 19 reference fixtures; this is a component fixture, not the complete original donor app. Card donor app pins Next 15. Fixture packages and sources are archived.",
+    "code_sha256": "372cb264bab55788debb5631bf4c9f37fc6b8016954576fdee59b8073cce4562",
+    "runtime": {
+      "python": "3.9.6",
+      "platform": "macOS-15.2-arm64-arm-64bit",
+      "node": "v22.16.0",
+      "npm": "10.9.2",
+      "playwright": "1.60.0",
+      "code_sha256": "372cb264bab55788debb5631bf4c9f37fc6b8016954576fdee59b8073cce4562"
+    },
+    "artifact_sha256": {
+      "experiments/adaptive-pilot-v1/PROTOCOL.md": "951ab03fe7c0c676ad53a58419e1edf8c204573b0bc1f77e76852e06426b2f65",
+      "experiments/adaptive-pilot-v1/donors/accordion/desktop-component.png": "a8614d6f58225f0819ded43695405eaa42e1f05b402e11431f4e908d8c7b28f8",
+      "experiments/adaptive-pilot-v1/donors/accordion/desktop-full.png": "506a4043ecc20dcfc84b9112d49cd022faeaf0768c000aa145b540e2e4b81f66",
+      "experiments/adaptive-pilot-v1/donors/accordion/desktop-open.png": "279cacddb74122bc9e9c55afcc7779bc84dc943454ee962b448a74eb05a0f95f",
+      "experiments/adaptive-pilot-v1/donors/accordion/mobile-component.png": "0ded047fcd9344f7e47bfd051ccfe278b238ae5d595900d9275d6c2ca75ba19c",
+      "experiments/adaptive-pilot-v1/donors/accordion/mobile-full.png": "be5d30d371e24d60d43491c9133478dccb105d4f99afd3b03164dcac783b8262",
+      "experiments/adaptive-pilot-v1/donors/accordion/mobile-open.png": "d3251b0588a328b54b253f59deb0446ef6ceabee746bbc91d56ae7889bf29ded",
+      "experiments/adaptive-pilot-v1/donors/accordion/reference.json": "60a0f591875772c946ba9f26485045d2238febd806935564a5b9ef8187e6fcbc",
+      "experiments/adaptive-pilot-v1/donors/card/desktop-component.png": "8c8f9ff362fbc3fb700e48bff37489b132166ee43d3dd9396b2c696a33f415d9",
+      "experiments/adaptive-pilot-v1/donors/card/desktop-full.png": "5846f147b95fb017df05065e7409ebee0bf09ce5f0c2a12cd12a0bd46512a514",
+      "experiments/adaptive-pilot-v1/donors/card/mobile-component.png": "51eee241b33b6d14246415f6725afe251c6d450ddd4df4bd3347bc0310078dc3",
+      "experiments/adaptive-pilot-v1/donors/card/mobile-full.png": "49a544359dcc1b66dd24518bffa0cacec16e01b61e8bdf2e9332992725e39732",
+      "experiments/adaptive-pilot-v1/donors/card/reference.json": "6a27f35ebf9f0a4f45c6dc353a343f0e5bfbef16ac35f53d09452bcab15a4d22",
+      "experiments/adaptive-pilot-v1/donors/footer/desktop-component.png": "e8f92698fc6b2cd09a1f176b0c07383b69b5a258f19d437824f14d11a9f102c0",
+      "experiments/adaptive-pilot-v1/donors/footer/desktop-full.png": "b46122f560c2c0197721380f0fc63ac24b9a8b8c33fb52922eb265708b88d101",
+      "experiments/adaptive-pilot-v1/donors/footer/mobile-component.png": "a6dbf11a7556cb97ac9fa3bdac9e5433e5cc52d8d1442efab260f7f2d1905df3",
+      "experiments/adaptive-pilot-v1/donors/footer/mobile-full.png": "00265efd870f675aa1cd036d8fc34bca4b7382a0b260fe44c33dcb8f5f28167b",
+      "experiments/adaptive-pilot-v1/donors/footer/reference.json": "e9cde4b91bcf6b1f2c9ec7bf015edee0a42c9ea42796b3b63a82dbb45bb9c441",
+      "experiments/adaptive-pilot-v1/donors/navbar/desktop-component.png": "dab1b6b0f2eb0f44fad78af2317a5513cda4906124b5a53bcbb452d58d35d459",
+      "experiments/adaptive-pilot-v1/donors/navbar/desktop-full.png": "b46122f560c2c0197721380f0fc63ac24b9a8b8c33fb52922eb265708b88d101",
+      "experiments/adaptive-pilot-v1/donors/navbar/mobile-component.png": "6e4b096bc1cf7386a054af502f654e1c2fb1bfc06e242af0999db948b0b9665a",
+      "experiments/adaptive-pilot-v1/donors/navbar/mobile-full.png": "00265efd870f675aa1cd036d8fc34bca4b7382a0b260fe44c33dcb8f5f28167b",
+      "experiments/adaptive-pilot-v1/donors/navbar/reference.json": "ce6437e75e8d4ea83ca00af1cd7bec4702a9e1b68418278db56ec43926e1861e",
+      "experiments/adaptive-pilot-v1/hosts/jcole/baseline.json": "ba966290185ebb47aadb5847bb8438e1f937b4a69264e36dde9d3dbcb7081b03",
+      "experiments/adaptive-pilot-v1/hosts/jcole/desktop-component.png": "a3c021543a154a1d1b37c9dc03877244aada0b6e047c2071139c024df026b03a",
+      "experiments/adaptive-pilot-v1/hosts/jcole/desktop-full.png": "56cd1ece349ca78d3bfe1a25e0512ddbf203a37214ecb7e752f58861ecec8cbf",
+      "experiments/adaptive-pilot-v1/hosts/jcole/desktop.png": "45bfe4804d345ed426509d4e70d694c83ec276c5017ddd3536227644241eddce",
+      "experiments/adaptive-pilot-v1/hosts/jcole/mobile-component.png": "5b8ed61204c24ef16dbd89ae174f4d04e52cd52d38e964fe7e6237949e9e8605",
+      "experiments/adaptive-pilot-v1/hosts/jcole/mobile-full.png": "26b1989343f2171399722e83e69aa45b7d3140c0741f201eff8be7045991c67e",
+      "experiments/adaptive-pilot-v1/hosts/jcole/mobile.png": "2a95d6c26bf69be28aaf45c316765ab6717a1e13e497ba2377eea24b3ac22bfb",
+      "experiments/adaptive-pilot-v1/hosts/jcole/preservation.json": "912ccfccb3f895bc11099da0a11bb0c2dc567559058ba03d21a519582d5df3d2",
+      "experiments/adaptive-pilot-v1/hosts/sky/baseline.json": "ab1c21bd4414f4a4e6e92e3d0537ed6c6d9007bde88c14ef33c1cb210b6dd094",
+      "experiments/adaptive-pilot-v1/hosts/sky/desktop-component.png": "b2dbbafbaa653b5848a4606892d758b6bc00f26422bb668963bd4c34522f47b5",
+      "experiments/adaptive-pilot-v1/hosts/sky/desktop-full.png": "694046d32884cef844966956ee956522276f7eff9337d852b7b04fea372e311a",
+      "experiments/adaptive-pilot-v1/hosts/sky/desktop.png": "620756717cfc7d8d06eed81e884a7e19d597083ad25b8edd75dbfbf976b063c3",
+      "experiments/adaptive-pilot-v1/hosts/sky/mobile-component.png": "56de51f60cb3490cf5d28494ff40c8f48d68fbbc0d39348ee8828bbdd8af2fb1",
+      "experiments/adaptive-pilot-v1/hosts/sky/mobile-full.png": "b90e9399ec412c2566c9599b972fe9f34a771f9da16d69f3a6662dee505ce820",
+      "experiments/adaptive-pilot-v1/hosts/sky/mobile.png": "ac80c8c9c5aa78a1c8a12bf10ab57afe20f9302c12d3216f5b2518b96b38b302",
+      "experiments/adaptive-pilot-v1/hosts/sky/preservation.json": "6420ac3e304f2192981bf91d3f2901a986046e03c87de41ea4f1d5282df38a8d",
+      "experiments/adaptive-pilot-v1/negative-controls.json": "4ca08fb688a125ea4b1c74a7b4a657d2461f43aff0a6b01e6cdbb95db2def7c3",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/.babelrc": "dd7065ccbb18255ae0ad732dbf63b838885fb1e5523987cd65a91e204c8a5641",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/next.config.js": "c0f4c7eaa5f2b991858d7d39f88c55e375e40ee8a7263f4847ebb936ad0ea182",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/package-lock.json": "938034dd001c0a48037bbeffd8085ba92a241f0809babd1901d361fdd7e84940",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/package.json": "6bbc3d916abde7272edf60708c6aa8282acccc85338e94bb240dd18982f8ebb7",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/postcss.config.js": "7ca400db4e70673712decfe752624a87ba00eb14e65c868312ebaa02143f49c2",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/src/pages/pilot-reference.tsx": "8f76bf5a7a48a4cb7b9a772220a4bdf2312c415cae57f7a64dff7053a5b92131",
+      "experiments/adaptive-pilot-v1/reference-fixtures/ixartz/tailwind.config.js": "a6be097056a1c3d766df5e6db9e0777ca52cae0c78b86f4a78295bf65867d61d",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/next.config.js": "09197f4a1ae9f6f4f10e432fd8d68d569484e82d0d965193e939c88b5b5b7c5b",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/package-lock.json": "a79bc034642144f197b2a566004c8880fe3c7bfc1613ccc66b148ca1a00ffb09",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/package.json": "1cc3b02ae525dbd587bdfbdeb7472fedac085d2aacbaae3f536c3765e0c63a27",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/postcss.config.mjs": "cc8f514ba7fda07a2e2828670c99e34275f314b350628d8c2ab39e68e50bf9f8",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/app/accordion/page.tsx": "acbffa9cf727c97bf2930e72ee0c20a384ff2f2b25160397c37afba392475087",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/app/accordion.css": "d5ee19da3963e1eab28a19e5f5d5d6a16fa4cb4eb5679d9bd62dd5202ed55991",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/app/card/page.tsx": "76c2dbaae1646565f3c260a6ec19162347173fca34dee3ecf6de01a478f156e9",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/app/layout.tsx": "58c6442779dc45e35e52ad4a7a272aca5ed0b60de0217f8f0f892d8f8a73d1a7",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/card/Card.tsx": "718b421683c90d49176a6b6e942ec8695596f1c1f092e0ceadc33ebc73181c51",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/card/Image.tsx": "daa1addae94693f733ac138b3c79a738d2eb2718b6c9d0a9637c6e0bebb29ef0",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/card/Link.tsx": "b9ec82ce41797b6709fdb7e49d6ae16cafc33ebf7891fd7881f0bf3f6c212e1d",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/card/tailwind.css": "321713f9103a4880a789a71125b1f0b746416fa86471f0587f098a2c5d7f198e",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/components/retroui/Accordion.tsx": "f5c44cae4c0681450491260bb55f549650dd89a663de67389f4abf999c6adf6e",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/components/retroui/icons.tsx": "03edff5201d067ab83b851bd832d8e6dfe0e1febd02cf75539ce0c2a0bb81fe2",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/src/lib/utils.ts": "69da3eaa9cbcfddeb3c00ec327b7caf1c11b7ce256adb6ab8695e2173bbb7952",
+      "experiments/adaptive-pilot-v1/reference-fixtures/modern/tsconfig.json": "6a3bbc8d3ea1ea7bea64f61061aab3c5ab2a0b779c768df3c129be6cce4829a9",
+      "experiments/adaptive-pilot-v1/source-locks/jcole-package-lock.json": "ee04f9f96b51fdf393c2f61c3c30603e7f6c6177c69efd09db739deda521e045",
+      "experiments/adaptive-pilot-v1/source-locks/sky-package-lock.json": "73ea9a048c523c41e8d0219f0db56e1740fabc2262d27312c7486c5e59df4db0"
+    },
+    "tasks": [
+      {
+        "id": "sky-navbar",
+        "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+        "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+        "component": "navbar",
+        "family": "navbar",
+        "donor_component_file": "src/navigation/NavbarTwoColumns.tsx",
+        "donor_file_sha256": "e57548127728986d9abbdbf2f2ee658eea624c122a86491c6a4cc47c6c151a18",
+        "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/navigation/NavbarTwoColumns.tsx.\nReplace only the existing navigation, preserving the host hero/title and routes. Use NavbarTwoColumns from the specified donor file with logo=<strong>Fusion Pilot</strong> and two child li links: Home href=/, Documentation href=https://example.com/docs. The replacement menu items are intentional; retain the underlying host pages. Do not port the donor hero. Preserve the donor navbar styling, including its styled-jsx @apply spacing.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#showcase h1\",\n      \"text\": \"Professional Web Design\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"HTML Markup\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"CSS 3 Styling\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"Graphic Design\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"] nav a[href=\\\"/\\\"]\",\n      \"text\": \"Home\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"] a[href=\\\"https://example.com/docs\\\"]\",\n      \"text\": \"Documentation\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-navbar\"]",
+          "preserve": [
+            {
+              "selector": "#showcase h1",
+              "text": "Professional Web Design"
+            },
+            {
+              "selector": "#boxes",
+              "text": "HTML Markup"
+            },
+            {
+              "selector": "#boxes",
+              "text": "CSS 3 Styling"
+            },
+            {
+              "selector": "#boxes",
+              "text": "Graphic Design"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-navbar\"] nav a[href=\"/\"]",
+              "text": "Home"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-navbar\"] a[href=\"https://example.com/docs\"]",
+              "text": "Documentation"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-095609-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/sky-package-lock.json",
+          "lock_sha256": "73ea9a048c523c41e8d0219f0db56e1740fabc2262d27312c7486c5e59df4db0",
+          "cache_sha256": "4048c258bf1ca15e8a3c95c69b3dc6ddfbf71d316130b888c9fd37e8666d3327"
+        },
+        "baseline_host": "sky",
+        "reference": {
+          "route": "/pilot-reference/",
+          "fixture": "ixartz",
+          "selector": "[data-fe-transfer=\"pilot-navbar\"]",
+          "implementation_sha256": "e57548127728986d9abbdbf2f2ee658eea624c122a86491c6a4cc47c6c151a18"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-navbar"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 18
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/sky/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/navbar/reference.json",
+        "existing_host_defects": [
+          "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+        ]
+      },
+      {
+        "id": "sky-footer",
+        "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+        "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+        "component": "footer",
+        "family": "footer",
+        "donor_component_file": "src/footer/CenteredFooter.tsx",
+        "donor_file_sha256": "e3ce893cbbcc513369b7f934c9d184602cbf101ba4a48e03fb40ea606d4608de",
+        "prompt": "Transfer the donor's footer component into this existing React site. Exact donor implementation: src/footer/CenteredFooter.tsx.\nReplace only the existing footer with CenteredFooter from the specified donor file. Supply logo=<strong>Fusion Pilot</strong>, iconList=null, and two child li links: Home href=/, Privacy href=https://example.com/privacy. Keep FooterCopyright and its CreativeDesignsGuru attribution. Preserve donor styles; do not copy other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-footer\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#showcase h1\",\n      \"text\": \"Professional Web Design\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"HTML Markup\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"CSS 3 Styling\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"Graphic Design\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"] a[href=\\\"https://example.com/privacy\\\"]\",\n      \"text\": \"Privacy\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"] a[href=\\\"https://creativedesignsguru.com\\\"]\",\n      \"text\": \"CreativeDesignsGuru\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-footer\"]",
+          "preserve": [
+            {
+              "selector": "#showcase h1",
+              "text": "Professional Web Design"
+            },
+            {
+              "selector": "#boxes",
+              "text": "HTML Markup"
+            },
+            {
+              "selector": "#boxes",
+              "text": "CSS 3 Styling"
+            },
+            {
+              "selector": "#boxes",
+              "text": "Graphic Design"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-footer\"] a[href=\"https://example.com/privacy\"]",
+              "text": "Privacy"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-footer\"] a[href=\"https://creativedesignsguru.com\"]",
+              "text": "CreativeDesignsGuru"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-095609-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/sky-package-lock.json",
+          "lock_sha256": "73ea9a048c523c41e8d0219f0db56e1740fabc2262d27312c7486c5e59df4db0",
+          "cache_sha256": "4048c258bf1ca15e8a3c95c69b3dc6ddfbf71d316130b888c9fd37e8666d3327"
+        },
+        "baseline_host": "sky",
+        "reference": {
+          "route": "/pilot-reference/",
+          "fixture": "ixartz",
+          "selector": "[data-fe-transfer=\"pilot-footer\"]",
+          "implementation_sha256": "e3ce893cbbcc513369b7f934c9d184602cbf101ba4a48e03fb40ea606d4608de"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-footer"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 18
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/sky/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/footer/reference.json",
+        "existing_host_defects": [
+          "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+        ]
+      },
+      {
+        "id": "sky-card",
+        "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+        "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c",
+        "component": "card",
+        "family": "card",
+        "donor_component_file": "components/Card.tsx",
+        "donor_file_sha256": "718b421683c90d49176a6b6e942ec8695596f1c1f092e0ceadc33ebc73181c51",
+        "prompt": "Transfer the donor's card component into this existing React site. Exact donor implementation: components/Card.tsx.\nAdd exactly one new donor Card after the host main content; keep all existing cards and host content. Pass title='Pilot card', description='A reusable component transfer.', imgSrc='' (intentionally no image), and href='https://example.com/pilot'. Keep the donor card border, typography, spacing and link styling. Use the donor Card implementation, not an unrelated component with the same name.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-card\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#showcase h1\",\n      \"text\": \"Professional Web Design\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"HTML Markup\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"CSS 3 Styling\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"Graphic Design\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] h2\",\n      \"text\": \"Pilot card\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] p\",\n      \"text\": \"A reusable component transfer.\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] a:has-text(\\\"Learn more\\\")\",\n      \"attribute\": \"href\",\n      \"value\": \"https://example.com/pilot\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-card\"]",
+          "preserve": [
+            {
+              "selector": "#showcase h1",
+              "text": "Professional Web Design"
+            },
+            {
+              "selector": "#boxes",
+              "text": "HTML Markup"
+            },
+            {
+              "selector": "#boxes",
+              "text": "CSS 3 Styling"
+            },
+            {
+              "selector": "#boxes",
+              "text": "Graphic Design"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] h2",
+              "text": "Pilot card"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] p",
+              "text": "A reusable component transfer."
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] a:has-text(\"Learn more\")",
+              "attribute": "href",
+              "value": "https://example.com/pilot"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-095609-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/sky-package-lock.json",
+          "lock_sha256": "73ea9a048c523c41e8d0219f0db56e1740fabc2262d27312c7486c5e59df4db0",
+          "cache_sha256": "4048c258bf1ca15e8a3c95c69b3dc6ddfbf71d316130b888c9fd37e8666d3327"
+        },
+        "baseline_host": "sky",
+        "reference": {
+          "route": "/card/",
+          "fixture": "modern",
+          "selector": "[data-fe-transfer=\"pilot-card\"]",
+          "implementation_sha256": "718b421683c90d49176a6b6e942ec8695596f1c1f092e0ceadc33ebc73181c51"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-card"
+          },
+          "props": {
+            "title": "Pilot card",
+            "description": "A reusable component transfer.",
+            "imgSrc": "",
+            "href": "https://example.com/pilot"
+          }
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 18
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/sky/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/card/reference.json",
+        "existing_host_defects": [
+          "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+        ]
+      },
+      {
+        "id": "sky-accordion",
+        "source": "https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6",
+        "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+        "component": "accordion",
+        "family": "accordion",
+        "donor_component_file": "src/components/retroui/Accordion.tsx",
+        "donor_file_sha256": "f5c44cae4c0681450491260bb55f549650dd89a663de67389f4abf999c6adf6e",
+        "prompt": "Transfer the donor's accordion component into this existing React site. Exact donor implementation: src/components/retroui/Accordion.tsx.\nAdd one donor Accordion after the host main content. Use the exported compound Accordion with type='single', collapsible, one Accordion.Item value='pilot', Accordion.Header text 'What does FusionEdges transfer?', and Accordion.Content text 'Reusable UI components.'. Start closed. Preserve the donor border, colors, chevron and open/close behavior. Mouse click, Enter and Space must toggle the panel. No backend or full donor application is needed.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-accordion\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#showcase h1\",\n      \"text\": \"Professional Web Design\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"HTML Markup\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"CSS 3 Styling\"\n    },\n    {\n      \"selector\": \"#boxes\",\n      \"text\": \"Graphic Design\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"text\": \"What does FusionEdges transfer?\",\n      \"attribute\": \"aria-expanded\",\n      \"value\": \"false\"\n    }\n  ],\n  \"interactive\": true,\n  \"actions\": [\n    {\n      \"type\": \"click\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": true,\n        \"text\": \"Reusable UI components.\"\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Enter\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": false\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Space\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": true,\n        \"text\": \"Reusable UI components.\"\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Space\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": false\n      }\n    }\n  ]\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-accordion\"]",
+          "preserve": [
+            {
+              "selector": "#showcase h1",
+              "text": "Professional Web Design"
+            },
+            {
+              "selector": "#boxes",
+              "text": "HTML Markup"
+            },
+            {
+              "selector": "#boxes",
+              "text": "CSS 3 Styling"
+            },
+            {
+              "selector": "#boxes",
+              "text": "Graphic Design"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "text": "What does FusionEdges transfer?",
+              "attribute": "aria-expanded",
+              "value": "false"
+            }
+          ],
+          "interactive": true,
+          "actions": [
+            {
+              "type": "click",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": true,
+                "text": "Reusable UI components."
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Enter",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": false
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Space",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": true,
+                "text": "Reusable UI components."
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Space",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": false
+              }
+            }
+          ]
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-095609-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/sky-package-lock.json",
+          "lock_sha256": "73ea9a048c523c41e8d0219f0db56e1740fabc2262d27312c7486c5e59df4db0",
+          "cache_sha256": "4048c258bf1ca15e8a3c95c69b3dc6ddfbf71d316130b888c9fd37e8666d3327"
+        },
+        "baseline_host": "sky",
+        "reference": {
+          "route": "/accordion/",
+          "fixture": "modern",
+          "selector": "[data-fe-transfer=\"pilot-accordion\"]",
+          "implementation_sha256": "f5c44cae4c0681450491260bb55f549650dd89a663de67389f4abf999c6adf6e"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-accordion"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 18
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/sky/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/accordion/reference.json",
+        "existing_host_defects": [
+          "On phone (390px) the page scrolls sideways (something is wider than the screen)."
+        ]
+      },
+      {
+        "id": "jcole-navbar",
+        "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+        "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+        "component": "navbar",
+        "family": "navbar",
+        "donor_component_file": "src/navigation/NavbarTwoColumns.tsx",
+        "donor_file_sha256": "e57548127728986d9abbdbf2f2ee658eea624c122a86491c6a4cc47c6c151a18",
+        "prompt": "Transfer the donor's navbar component into this existing React site. Exact donor implementation: src/navigation/NavbarTwoColumns.tsx.\nReplace only the existing navigation, preserving the host hero/title and routes. Use NavbarTwoColumns from the specified donor file with logo=<strong>Fusion Pilot</strong> and two child li links: Home href=/, Documentation href=https://example.com/docs. The replacement menu items are intentional; retain the underlying host pages. Do not port the donor hero. Preserve the donor navbar styling, including its styled-jsx @apply spacing.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-navbar\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#about .main-content h3\",\n      \"text\": \"My name is Jennifer Cole and...\"\n    },\n    {\n      \"selector\": \"#info-1 h4\",\n      \"text\": \"A.A. Degree\"\n    },\n    {\n      \"selector\": \"header .title h1\",\n      \"text\": \"Cole Codes\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"] nav a[href=\\\"/\\\"]\",\n      \"text\": \"Home\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-navbar\\\"] a[href=\\\"https://example.com/docs\\\"]\",\n      \"text\": \"Documentation\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-navbar\"]",
+          "preserve": [
+            {
+              "selector": "#about .main-content h3",
+              "text": "My name is Jennifer Cole and..."
+            },
+            {
+              "selector": "#info-1 h4",
+              "text": "A.A. Degree"
+            },
+            {
+              "selector": "header .title h1",
+              "text": "Cole Codes"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-navbar\"] nav a[href=\"/\"]",
+              "text": "Home"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-navbar\"] a[href=\"https://example.com/docs\"]",
+              "text": "Documentation"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-102052-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/jcole-package-lock.json",
+          "lock_sha256": "ee04f9f96b51fdf393c2f61c3c30603e7f6c6177c69efd09db739deda521e045",
+          "cache_sha256": "6d0177d7bafcfedeb723a8443035379bb440a34cf70842dafeecbe58e66b6cae"
+        },
+        "baseline_host": "jcole",
+        "reference": {
+          "route": "/pilot-reference/",
+          "fixture": "ixartz",
+          "selector": "[data-fe-transfer=\"pilot-navbar\"]",
+          "implementation_sha256": "e57548127728986d9abbdbf2f2ee658eea624c122a86491c6a4cc47c6c151a18"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-navbar"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 17
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/jcole/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/navbar/reference.json",
+        "existing_host_defects": []
+      },
+      {
+        "id": "jcole-footer",
+        "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+        "donor": "https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df",
+        "component": "footer",
+        "family": "footer",
+        "donor_component_file": "src/footer/CenteredFooter.tsx",
+        "donor_file_sha256": "e3ce893cbbcc513369b7f934c9d184602cbf101ba4a48e03fb40ea606d4608de",
+        "prompt": "Transfer the donor's footer component into this existing React site. Exact donor implementation: src/footer/CenteredFooter.tsx.\nReplace only the existing footer with CenteredFooter from the specified donor file. Supply logo=<strong>Fusion Pilot</strong>, iconList=null, and two child li links: Home href=/, Privacy href=https://example.com/privacy. Keep FooterCopyright and its CreativeDesignsGuru attribution. Preserve donor styles; do not copy other donor sections.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-footer\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#about .main-content h3\",\n      \"text\": \"My name is Jennifer Cole and...\"\n    },\n    {\n      \"selector\": \"#info-1 h4\",\n      \"text\": \"A.A. Degree\"\n    },\n    {\n      \"selector\": \"header .title h1\",\n      \"text\": \"Cole Codes\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"] a[href=\\\"https://example.com/privacy\\\"]\",\n      \"text\": \"Privacy\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-footer\\\"] a[href=\\\"https://creativedesignsguru.com\\\"]\",\n      \"text\": \"CreativeDesignsGuru\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-footer\"]",
+          "preserve": [
+            {
+              "selector": "#about .main-content h3",
+              "text": "My name is Jennifer Cole and..."
+            },
+            {
+              "selector": "#info-1 h4",
+              "text": "A.A. Degree"
+            },
+            {
+              "selector": "header .title h1",
+              "text": "Cole Codes"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-footer\"] a[href=\"https://example.com/privacy\"]",
+              "text": "Privacy"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-footer\"] a[href=\"https://creativedesignsguru.com\"]",
+              "text": "CreativeDesignsGuru"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-102052-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/jcole-package-lock.json",
+          "lock_sha256": "ee04f9f96b51fdf393c2f61c3c30603e7f6c6177c69efd09db739deda521e045",
+          "cache_sha256": "6d0177d7bafcfedeb723a8443035379bb440a34cf70842dafeecbe58e66b6cae"
+        },
+        "baseline_host": "jcole",
+        "reference": {
+          "route": "/pilot-reference/",
+          "fixture": "ixartz",
+          "selector": "[data-fe-transfer=\"pilot-footer\"]",
+          "implementation_sha256": "e3ce893cbbcc513369b7f934c9d184602cbf101ba4a48e03fb40ea606d4608de"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-footer"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 17
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/jcole/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/footer/reference.json",
+        "existing_host_defects": []
+      },
+      {
+        "id": "jcole-card",
+        "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+        "donor": "https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c",
+        "component": "card",
+        "family": "card",
+        "donor_component_file": "components/Card.tsx",
+        "donor_file_sha256": "718b421683c90d49176a6b6e942ec8695596f1c1f092e0ceadc33ebc73181c51",
+        "prompt": "Transfer the donor's card component into this existing React site. Exact donor implementation: components/Card.tsx.\nAdd exactly one new donor Card after the host main content; keep all existing cards and host content. Pass title='Pilot card', description='A reusable component transfer.', imgSrc='' (intentionally no image), and href='https://example.com/pilot'. Keep the donor card border, typography, spacing and link styling. Use the donor Card implementation, not an unrelated component with the same name.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-card\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#about .main-content h3\",\n      \"text\": \"My name is Jennifer Cole and...\"\n    },\n    {\n      \"selector\": \"#info-1 h4\",\n      \"text\": \"A.A. Degree\"\n    },\n    {\n      \"selector\": \"header .title h1\",\n      \"text\": \"Cole Codes\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] h2\",\n      \"text\": \"Pilot card\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] p\",\n      \"text\": \"A reusable component transfer.\"\n    },\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-card\\\"] a:has-text(\\\"Learn more\\\")\",\n      \"attribute\": \"href\",\n      \"value\": \"https://example.com/pilot\"\n    }\n  ],\n  \"interactive\": false,\n  \"actions\": []\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-card\"]",
+          "preserve": [
+            {
+              "selector": "#about .main-content h3",
+              "text": "My name is Jennifer Cole and..."
+            },
+            {
+              "selector": "#info-1 h4",
+              "text": "A.A. Degree"
+            },
+            {
+              "selector": "header .title h1",
+              "text": "Cole Codes"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] h2",
+              "text": "Pilot card"
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] p",
+              "text": "A reusable component transfer."
+            },
+            {
+              "selector": "[data-fe-transfer=\"pilot-card\"] a:has-text(\"Learn more\")",
+              "attribute": "href",
+              "value": "https://example.com/pilot"
+            }
+          ],
+          "interactive": false,
+          "actions": []
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-102052-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/jcole-package-lock.json",
+          "lock_sha256": "ee04f9f96b51fdf393c2f61c3c30603e7f6c6177c69efd09db739deda521e045",
+          "cache_sha256": "6d0177d7bafcfedeb723a8443035379bb440a34cf70842dafeecbe58e66b6cae"
+        },
+        "baseline_host": "jcole",
+        "reference": {
+          "route": "/card/",
+          "fixture": "modern",
+          "selector": "[data-fe-transfer=\"pilot-card\"]",
+          "implementation_sha256": "718b421683c90d49176a6b6e942ec8695596f1c1f092e0ceadc33ebc73181c51"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-card"
+          },
+          "props": {
+            "title": "Pilot card",
+            "description": "A reusable component transfer.",
+            "imgSrc": "",
+            "href": "https://example.com/pilot"
+          }
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 17
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/jcole/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/card/reference.json",
+        "existing_host_defects": []
+      },
+      {
+        "id": "jcole-accordion",
+        "source": "https://github.com/JColeCodes/react-portfolio/tree/2dbbb52b0f4cff6be083cc0c7dc853fa09b8f925",
+        "donor": "https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b",
+        "component": "accordion",
+        "family": "accordion",
+        "donor_component_file": "src/components/retroui/Accordion.tsx",
+        "donor_file_sha256": "f5c44cae4c0681450491260bb55f549650dd89a663de67389f4abf999c6adf6e",
+        "prompt": "Transfer the donor's accordion component into this existing React site. Exact donor implementation: src/components/retroui/Accordion.tsx.\nAdd one donor Accordion after the host main content. Use the exported compound Accordion with type='single', collapsible, one Accordion.Item value='pilot', Accordion.Header text 'What does FusionEdges transfer?', and Accordion.Content text 'Reusable UI components.'. Start closed. Preserve the donor border, colors, chevron and open/close behavior. Mouse click, Enter and Space must toggle the panel. No backend or full donor application is needed.\nPut exactly this transferred component inside one wrapper with data-fe-transfer=\"pilot-accordion\". This attribute is a test locator, not a styling requirement. Keep the host framework and React major version. Preserve unrelated content, layout, images and functionality; scope donor CSS to prevent host regressions. Never substitute a placeholder or stand-in for the requested component. Do not fetch or create backend services.\nFrozen acceptance criteria (same in both conditions):\n{\n  \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"]\",\n  \"preserve\": [\n    {\n      \"selector\": \"#about .main-content h3\",\n      \"text\": \"My name is Jennifer Cole and...\"\n    },\n    {\n      \"selector\": \"#info-1 h4\",\n      \"text\": \"A.A. Degree\"\n    },\n    {\n      \"selector\": \"header .title h1\",\n      \"text\": \"Cole Codes\"\n    }\n  ],\n  \"assertions\": [\n    {\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"text\": \"What does FusionEdges transfer?\",\n      \"attribute\": \"aria-expanded\",\n      \"value\": \"false\"\n    }\n  ],\n  \"interactive\": true,\n  \"actions\": [\n    {\n      \"type\": \"click\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": true,\n        \"text\": \"Reusable UI components.\"\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Enter\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": false\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Space\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": true,\n        \"text\": \"Reusable UI components.\"\n      }\n    },\n    {\n      \"type\": \"press\",\n      \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] button\",\n      \"key\": \"Space\",\n      \"expect\": {\n        \"selector\": \"[data-fe-transfer=\\\"pilot-accordion\\\"] [role=\\\"region\\\"]\",\n        \"visible\": false\n      }\n    }\n  ]\n}",
+        "acceptance": {
+          "selector": "[data-fe-transfer=\"pilot-accordion\"]",
+          "preserve": [
+            {
+              "selector": "#about .main-content h3",
+              "text": "My name is Jennifer Cole and..."
+            },
+            {
+              "selector": "#info-1 h4",
+              "text": "A.A. Degree"
+            },
+            {
+              "selector": "header .title h1",
+              "text": "Cole Codes"
+            }
+          ],
+          "assertions": [
+            {
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "text": "What does FusionEdges transfer?",
+              "attribute": "aria-expanded",
+              "value": "false"
+            }
+          ],
+          "interactive": true,
+          "actions": [
+            {
+              "type": "click",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": true,
+                "text": "Reusable UI components."
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Enter",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": false
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Space",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": true,
+                "text": "Reusable UI components."
+              }
+            },
+            {
+              "type": "press",
+              "selector": "[data-fe-transfer=\"pilot-accordion\"] button",
+              "key": "Space",
+              "expect": {
+                "selector": "[data-fe-transfer=\"pilot-accordion\"] [role=\"region\"]",
+                "visible": false
+              }
+            }
+          ]
+        },
+        "source_setup": {
+          "cache_project": "/Users/sachisingh/Desktop/fusionedges-5/output/20261102-102052-prompt/project",
+          "lockfile": "experiments/adaptive-pilot-v1/source-locks/jcole-package-lock.json",
+          "lock_sha256": "ee04f9f96b51fdf393c2f61c3c30603e7f6c6177c69efd09db739deda521e045",
+          "cache_sha256": "6d0177d7bafcfedeb723a8443035379bb440a34cf70842dafeecbe58e66b6cae"
+        },
+        "baseline_host": "jcole",
+        "reference": {
+          "route": "/accordion/",
+          "fixture": "modern",
+          "selector": "[data-fe-transfer=\"pilot-accordion\"]",
+          "implementation_sha256": "f5c44cae4c0681450491260bb55f549650dd89a663de67389f4abf999c6adf6e"
+        },
+        "eligibility": "frozen: clean host build and preservation checks; unchanged donor implementation with specified props passes native reference checks on desktop/mobile",
+        "component_inputs": {
+          "data_attributes": {
+            "data-fe-transfer": "pilot-accordion"
+          },
+          "props": {}
+        },
+        "constraints": {
+          "target_framework": "react",
+          "react_major": 17
+        },
+        "host_baseline": "experiments/adaptive-pilot-v1/hosts/jcole/baseline.json",
+        "donor_reference": "experiments/adaptive-pilot-v1/donors/accordion/reference.json",
+        "existing_host_defects": []
+      }
+    ]
+  }
+}

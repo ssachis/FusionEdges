@@ -1,0 +1,147 @@
+{
+  "tasks": 8,
+  "runs": 32,
+  "model": "gemini-3.6-flash",
+  "memory": "disabled",
+  "checks": "frozen host and native donor fixtures; identical warm source caches"
+}
+adaptive-pilot-v1: 32 runs planned, 0 already done
+
+=== adaptive-pilot-v1 · task 1/8 · repeat 1/2 · AD adaptive rules/report/agent · 1/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 7 files under src/fusion/navbar, 0 packages, 0 assets; resolved 10, left for AI 0 (none); mount: replaced
+    [adaptive] report: Works in the browser (desktop + phone); On desktop (1280px): expected content missing: [data-fe-transfer="pilot-navbar"] nav a[href="/"]; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0; On phone (390px): expected content missing: [data-fe-transfer="pilot-navbar"] nav a[href="/"]; On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [report] context: 8 files (1 donor, 7 source), 7,644 chars (~2,184 tokens) from the navbar and what it imports
+    [report] first message: system prompt ~594, scanner facts ~570, code ~3,145, repo descriptions ~260 = ~4,569 tokens (est.); one call, no tools
+    [report] sending 20,934 chars (~9,102 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [report] ```json
+{
+  "summary": "Transfer the donor's NavbarTwoColumns component into the source React CRA site to replace the existing Navbar header component. Ensure the transferred component is wrapped in a container with data-fe-transfer=\"pilot-navbar\" and configured with logo=<strong>Fusion Pilot</str
+    [adaptive] local: Select editor from unresolved compatibility signals
+    [port-ai] sending 12,300 chars (~5,348 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [port-ai] attempt 1: wrote 0 files
+    [port-ai] still failing; out of repair attempts
+    [adaptive] agent: Local correction did not satisfy verification
+    [agent] sending 11,366 chars (~4,942 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] read_file donor src/navigation/NavbarTwoColumns.tsx
+    [agent] sending 12,320 chars (~5,357 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] gemini unavailable (bad request on this model (HTTP 400): Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea); switching provider
+    [agent] stopped: All providers failed. gemini: Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea
+    [browser] final check: On desktop (1280px): expected content missing: [data-fe-transfer="pilot-navbar"] nav a[href="/"]; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0; On phone (390px): expected content missing: [data-fe-transfer="pilot-navbar"] nav a[href="/"]; On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    Code changes: 8 files (+116 -1 lines), see changes.diff
+    -> partial 8/9
+
+=== adaptive-pilot-v1 · task 1/8 · repeat 1/2 · A agent alone · 2/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (navbar)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [oneshot] context: 7 files (1 donor, 6 source), 7,279 chars (~2,080 tokens) from the navbar and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 11,150 chars (~3,186 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 12,016 chars (~5,224 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 12,627 chars (~5,490 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 13,106 chars (~5,698 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 13,708 chars (~5,960 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 1: wrote 1, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] sending what a user would see back (repair 1/2)
+    [oneshot] sending 2,548 chars (~1,108 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] attempt 2: wrote 1, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] sending what a user would see back (repair 2/2)
+    [oneshot] sending 2,649 chars (~1,152 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 3,238 chars (~1,408 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] attempt 3: wrote 2, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    [browser] still failing in the browser; out of repair attempts
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] nav a[href="/"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-navbar"] a[href="https://example.com/docs"]; found 0
+    Code changes: 2 files (+56 -0 lines), see changes.diff
+    -> partial 7/9
+
+*** AD adaptive rules/report/agent vs A agent alone: INCONCLUSIVE
+    Inconclusive: the AI call failed for the report run, so nothing was written to compare. The report run fixed: The navbar is rendered. Both failed: Works in the browser (desktop + phone). Code: agent alone changed 2 files (+56 -0), with the report 8 files (+116 -1). Only agent alone wrote: src/navigation/NavbarTwoColumns.js, src/navigation/NavbarTwoColumns.tsx. Only the report run wrote: src/App.js, src/fusion/navbar/fusion.css, src/fusion/navbar/index.jsx, src/fusion/navbar/navigation/NavbarTwoColumns.jsx, src/fusion/navbar/next-shims.jsx, src/fusion/navbar/templates/FusionUsage.jsx …. Report adherence (read from the diff, automatic): the agent fully acted on 2 of 3 testable report items (0 partly); agent alone did 0 of the same 3 without being told. Handled only with the report: Donor uses next/link in react-cra app; Donor Tailwind utility classes and styled-jsx in CRA environment. Tokens: 8,718 with the report vs 21,047 without (-59%).
+
+=== adaptive-pilot-v1 · task 2/8 · repeat 1/2 · AD adaptive rules/report/agent · 3/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (footer)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [port] 9 files under src/fusion/footer, 0 packages, 0 assets; resolved 10, left for AI 0 (none); mount: replaced
+    [adaptive] report: Works in the browser (desktop + phone); On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On desktop (1280px) the footer is 170px tall: it is probably unstyled.; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On phone (390px) the footer is 190px tall: it is probably unstyled.
+    [report] context: 11 files (4 donor, 7 source), 9,664 chars (~2,761 tokens) from the footer and what it imports
+    [report] first message: system prompt ~594, scanner facts ~525, code ~3,884, repo descriptions ~260 = ~5,263 tokens (est.); one call, no tools
+    [report] sending 23,219 chars (~10,095 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [report] ```json
+{
+  "summary": "Transfer the donor CenteredFooter component into the source React application to replace the existing footer. Ensure proper props and child links (Home and Privacy) are passed to CenteredFooter, wrapped inside a container with data-fe-transfer=\"pilot-footer\" and styled usin
+    [report] answer was not valid JSON; asking once more
+    [report] sending 26,284 chars (~11,428 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [adaptive] local: Select editor from unresolved compatibility signals
+    [port-ai] sending 16,339 chars (~7,104 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [port-ai] attempt 1: wrote 1 files
+    [port-ai] still failing; out of repair attempts
+    [adaptive] agent: Local correction did not satisfy verification
+    [agent] sending 11,082 chars (~4,818 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] list_files output src
+    [agent] sending 11,962 chars (~5,201 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] gemini unavailable (bad request on this model (HTTP 400): Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea); switching provider
+    [agent] stopped: All providers failed. gemini: Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea
+    [browser] final check: On phone (390px) the footer is 175px tall: it is probably unstyled.
+    [lessons] proposed (not in the report): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 10 files (+142 -1 lines), see changes.diff
+    -> partial 8/9
+
+=== adaptive-pilot-v1 · task 2/8 · repeat 1/2 · A agent alone · 4/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (footer)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [oneshot] context: 10 files (4 donor, 6 source), 9,153 chars (~2,615 tokens) from the footer and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 13,144 chars (~3,755 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 14,010 chars (~6,091 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 14,660 chars (~6,374 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,390 chars (~6,691 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,894 chars (~6,910 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 1: no <<<FILE>>> block found in an answer of 1,994 chars. Starts: ' max-height: 150px; }`.\nNotice that in the host original `Footer.js`:\n```jsx\nconst Footer = () => {\n  return (\n    <div>\n      <footer>\n...\n```\nIf we replace `Footer.js` content with CenteredFooter, o' ... ends: 'data-fe-transfer="pilot-footer"] .text-sm {\n  font-size: 0.875rem;\n  line-height: 1.25rem;\n}\n\n[data-fe-transfer="pilot-footer"] .footer-copyright {\n  '
+    [oneshot] attempt 1: wrote 0, deleted 0, copied 0
+    [oneshot] sending 16,094 chars (~6,997 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (rate limit / quota (HTTP 429): You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-); switching provider
+    [oneshot] attempt 2 could not be completed: All providers failed. gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://
+    [agent] stopped: All providers failed. gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0; On desktop (1280px) the footer shows only 0 link(s) (none): its links are probably hidden.; On desktop (1280px) the footer is 190px tall: it is probably unstyled.; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0; On phone (390px) the footer has no visible link or menu button.; On phone (390px) the footer is 190px tall: it is probably unstyled.
+    [lessons] proposed (agent alone): Do not express responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have n
+    [lessons] proposed (agent alone): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 0 files (+0 -0 lines), see changes.diff
+    -> quota reached during this run; it will be redone when you resume
+
+QUOTA REACHED after 3 new run(s) today (3/32 done). Run the same command again after the quota resets (midnight Pacific) to continue.

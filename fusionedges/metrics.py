@@ -8,6 +8,7 @@ are added with `python3 -m fusionedges metrics --backfill`.
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter
 from statistics import median
 
@@ -21,6 +22,7 @@ CONDITIONS = {
     "M": ("FusionEdges port", "Rule-based port, no AI at all."),
     "M1": ("FusionEdges port v1", "First version of the rule-based port (superseded on 1 Nov); kept for the record."),
     "M2": ("FusionEdges port v2", "Second version (superseded after its browser check on 1 Nov); kept for the record."),
+    "M3": ("FusionEdges port v3", "Rule-based port, version used in the 2 Nov comparison (no AI)."),
     "AD": ("Adaptive FusionEdges", "Rules and verification first; report and AI only as needed."),
     "MR": ("Rules + report + AI", "Compatibility report after rule-based port."),
     "MRM": ("Rules + report + memory + AI", "Residual report informed by a frozen cross-repository corpus."),
@@ -143,7 +145,11 @@ def from_run(rec: dict, experiment: str = "") -> dict:
     row = {
         "run_id": rec["id"], "created": rec.get("created"), "experiment": experiment, "condition": condition_of(rec),
         "task": f"{(rec.get('source') or {}).get('label') or (rec.get('source') or {}).get('spec', '')} ← "
-                f"{(rec.get('donor') or {}).get('label') or (rec.get('donor') or {}).get('spec', '')}",
+                f"{(rec.get('donor') or {}).get('label') or (rec.get('donor') or {}).get('spec', '')}"
+                # the component is part of the task (same repos, card vs footer = two tasks); navbar kept bare for
+                # compatibility with reviews recorded before components other than the navbar existed
+                + ("" if ((rec.get("options") or {}).get("component") or "navbar") == "navbar"
+                   else f" ({(rec.get('options') or {}).get('component')})"),
         "component": (rec.get("options") or {}).get("component") or "",
         "source": (rec.get("source") or {}).get("label") or (rec.get("source") or {}).get("spec"),
         "donor": (rec.get("donor") or {}).get("label") or (rec.get("donor") or {}).get("spec"),
@@ -324,7 +330,8 @@ def paired(rs: list, a: str, b: str) -> dict:
 def headline(conds: list, rs: list | None = None) -> dict:
     """Plain answer to 'does FusionEdges beat a plain AI agent?', on the tasks both ran, or why not yet."""
     by = {c["condition"]: c for c in conds}
-    best = next((k for k in ("MA", "M", "D") if k in by), None)
+    ports = sorted((k for k in by if re.fullmatch(r"M\d+", k)), reverse=True)
+    best = next((k for k in ("AD", "MA", "M", *ports, "D") if k in by), None)
     if "A" not in by or not best:
         return {"answer": "not yet", "text": "No comparison yet: run the same tasks as 'Agent alone' and with FusionEdges."}
     p = paired(rs or [], "A", best)

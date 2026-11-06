@@ -88,12 +88,16 @@ def load_pending() -> list:
     return done
 
 
-def summary() -> dict:
-    """What the Analysis tab shows: per approach, how results look to a person, and the footprint of the change."""
+def summary(only: set | None = None) -> dict:
+    """What the Analysis tab shows: per approach, how results look to a person, and the footprint of the change.
+    `only`: restrict to these run ids (the batch on screen)."""
     with connect() as db:
         db.row_factory = sqlite3.Row
         runs = [dict(r) for r in db.execute("SELECT * FROM qual_runs ORDER BY task, condition, run_id")]
         tasks = [dict(r) for r in db.execute("SELECT * FROM qual_tasks ORDER BY task")]
+    if only is not None:
+        runs = [r for r in runs if r["run_id"] in only]
+        tasks = [t for t in tasks if t["task"] in {r["task"] for r in runs}]
     for r in runs:
         r["causes"] = json.loads(r["causes"] or "[]")
     by = {}
@@ -117,13 +121,13 @@ def summary() -> dict:
             "reviewers": sorted({r["reviewer"] for r in runs})}
 
 
-def overall(metric_rows: list, conds=("A", "MA", "M")) -> dict:
+def overall(metric_rows: list, conds=("A", "AD", "MA", "M"), only: set | None = None) -> dict:
     """The one result the Analysis tab leads with. On the tasks a person reviewed, per approach:
       - works by the checks (automatic), looks right to a person, and BOTH (the main measure);
       - each as an average over tasks, so a task run 9 times still counts once;
       - tokens per working navbar (all tokens spent ÷ runs that work by both), time, and how much of the site's own
         code it changed."""
-    q = summary()
+    q = summary(only)
     person = {r["run_id"]: r for r in q["runs"]}
     tasks = sorted({r["task"] for r in q["runs"]})
     out = {"tasks": len(tasks), "reviewers": q["reviewers"], "approaches": []}
@@ -152,6 +156,6 @@ def overall(metric_rows: list, conds=("A", "MA", "M")) -> dict:
             "tokens_per_run": round(toks / len(xs)), "tokens_per_working": round(toks / len(both)) if both else None,
             "median_seconds": secs[len(secs) // 2], "median_site_lines_removed": rem[len(rem) // 2],
             "disagree": sum(1 for m in xs if bool(m["verified_success"]) != ok_person(m)),
-            "top_causes": [c_["cause"] for c_ in q["by_condition"].get(c, {}).get("causes", [])[:3]],
+            "top_causes": [c_["cause"] for c_ in (q["by_condition"].get(c) or q["by_condition"].get(c[:1]) or {}).get("causes", [])[:3]],
         })
     return out

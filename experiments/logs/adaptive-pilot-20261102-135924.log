@@ -1,0 +1,124 @@
+{
+  "tasks": 8,
+  "runs": 32,
+  "model": "gemini-3.6-flash",
+  "memory": "disabled",
+  "checks": "frozen host and native donor fixtures; identical warm source caches"
+}
+adaptive-pilot-v1: 32 runs planned, 3 already done (resuming)
+
+=== adaptive-pilot-v1 · task 2/8 · repeat 1/2 · A agent alone · 4/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/ixartz/Next-js-Landing-Page-Starter-Template/tree/cd6694e6c69efad1128c1ed732188389182789df  (footer)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating ixartz/Next-js-Landing-Page-Starter-Template@cd6694e6c69efad1128c1ed732188389182789df in examples/
+    [oneshot] context: 10 files (4 donor, 6 source), 9,153 chars (~2,615 tokens) from the footer and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 13,144 chars (~3,755 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 14,010 chars (~6,091 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 14,611 chars (~6,353 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,401 chars (~6,696 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,937 chars (~6,929 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 10s and retrying (2/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 1: wrote 4, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0
+    [browser] On desktop (1280px) the footer shows only 0 link(s) (none): its links are probably hidden.
+    [browser] On desktop (1280px) the footer is 190px tall: it is probably unstyled.
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0
+    [browser] On phone (390px) the footer has no visible link or menu button.
+    [browser] On phone (390px) the footer is 190px tall: it is probably unstyled.
+    [browser] sending what a user would see back (repair 1/2)
+    [oneshot] sending 3,915 chars (~1,702 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 4,547 chars (~1,977 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] attempt 2: wrote 1, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0
+    [browser] On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0
+    [browser] On desktop (1280px) the footer shows only 0 link(s) (none): its links are probably hidden.
+    [browser] On desktop (1280px) the footer is 190px tall: it is probably unstyled.
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0
+    [browser] On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0
+    [browser] On phone (390px) the footer has no visible link or menu button.
+    [browser] On phone (390px) the footer is 190px tall: it is probably unstyled.
+    [browser] sending what a user would see back (repair 2/2)
+    [oneshot] sending 4,127 chars (~1,794 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 4,762 chars (~2,070 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 5,491 chars (~2,387 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 6,148 chars (~2,673 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 3: no <<<FILE>>> block found in an answer of 2,307 chars. Starts: '\n      }\n    >\n      <li>\n        <Link href="/">\n          <a>Home</a>\n        </Link>\n      </li>\n      <li>\n        <Link href="/about">\n          <a>About</a>\n        </Link>\n      </li>\n      {/*' ... ends: ' py-8">\n    {props.logo}\n\n    <nav className="mt-5">\n      <ul className="navbar flex flex-row flex-wrap justify-center text-xl font-medium text-gray-'
+    [oneshot] attempt 3: wrote 0, deleted 0, copied 0
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0; On desktop (1280px) the footer shows only 0 link(s) (none): its links are probably hidden.; On desktop (1280px) the footer is 190px tall: it is probably unstyled.; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://example.com/privacy"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-footer"] a[href="https://creativedesignsguru.com"]; found 0; On phone (390px) the footer has no visible link or menu button.; On phone (390px) the footer is 190px tall: it is probably unstyled.
+    [lessons] proposed (agent alone): Do not express responsive classes (hidden md:flex, sm:hidden, lg:block) as inline styles: inline styles have n
+    [lessons] proposed (agent alone): Port the component's look to the site's own styling system (its CSS files or its Bootstrap classes). Class nam
+    Code changes: 4 files (+56 -0 lines), see changes.diff
+    -> partial 7/9
+
+*** AD adaptive rules/report/agent vs A agent alone: INCONCLUSIVE
+    Inconclusive: the AI call failed for the report run, so nothing was written to compare. The report run fixed: The footer is rendered. Both failed: Works in the browser (desktop + phone). Code: agent alone changed 4 files (+56 -0), with the report 10 files (+142 -1). Only agent alone wrote: src/components/footer/CenteredFooter.js, src/components/footer/FooterCopyright.js, src/components/footer/FooterIconList.js, src/utils/AppConfig.js. Only the report run wrote: src/App.js, src/fusion/footer/footer/CenteredFooter.jsx, src/fusion/footer/footer/FooterCopyright.jsx, src/fusion/footer/footer/FooterIconList.jsx, src/fusion/footer/fusion.css, src/fusion/footer/index.jsx …. Report adherence (read from the diff, automatic): the agent fully acted on 2 of 2 testable report items (0 partly); agent alone did 1 of the same 2 without being told. Handled only with the report: Unstyled component due to unlinked or unscoped Tailwind CSS styles. Tokens: 19,631 with the report vs 30,257 without (-35%).
+
+=== adaptive-pilot-v1 · task 3/8 · repeat 1/2 · AD adaptive rules/report/agent · 5/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c  (card)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Cloning timlrx/tailwind-nextjs-starter-blog@b45bef66b40c63b6f57c15ee8cd090682238df4c into examples/
+    [port] 6 files under src/fusion/card, 0 packages, 0 assets; resolved 10, left for AI 5 (version-mismatch, env-var, env-access, component-name-collision, css-variable-undefined); mount: replaced
+    [adaptive] report: version-mismatch: react major version differs: donor 19.2.4, source ^18.2.0. check for removed APIs (e.g. ReactDOM.render, defaultProps on function components in 19).; env-var: Donor reads env var BASE_PATH; the source does not define it.; env-access: Env vars must be read the source's way (process.env.REACT_APP_X).; component-name-collision: Source already has a component named Card. Copying the donor file to the same name would overwrite the source's component. Evidence: src/components/card/Card.js; css-variable-undefined: 3 variable(s) used by the section are defined nowhere. Not defined in either repo's scanned stylesheets; may come from an unscanned file. Evidence: --color-gray-100; --color-gray-200; --tracking-tight; Works in the browser (desktop + phone); On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"]; found 3; On desktop (1280px): expected content missing: #boxes; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 3; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] p; found 3; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"]; found 3; On phone (390px): expected content missing: #boxes; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] p; found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 3
+    [report] context: 10 files (3 donor, 7 source), 10,060 chars (~2,874 tokens) from the card and what it imports
+    [report] first message: system prompt ~594, scanner facts ~768, code ~3,940, repo descriptions ~309 = ~5,611 tokens (est.); one call, no tools
+    [report] sending 26,269 chars (~11,421 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [report] ```json
+{
+  "summary": "Transfer the donor's Card component into the source site as a distinct component without overwriting the host's existing Card component. Render exactly one instance of the donor card wrapped in a locator element with data-fe-transfer=\"pilot-card\" after the host main content
+    [adaptive] agent: Select editor from unresolved compatibility signals
+    [agent] sending 14,615 chars (~6,354 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] read_file output src/pages/Home.js
+    [agent] sending 16,424 chars (~7,141 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] gemini unavailable (bad request on this model (HTTP 400): Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea); switching provider
+    [agent] stopped: All providers failed. gemini: Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"]; found 3; On desktop (1280px): expected content missing: #boxes; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 3; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] p; found 3; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"]; found 3; On phone (390px): expected content missing: #boxes; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] p; found 3; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 3
+    Code changes: 7 files (+137 -1 lines), see changes.diff
+    -> partial 7/8
+
+=== adaptive-pilot-v1 · task 3/8 · repeat 1/2 · A agent alone · 6/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c  (card)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating timlrx/tailwind-nextjs-starter-blog@b45bef66b40c63b6f57c15ee8cd090682238df4c in examples/
+    [oneshot] context: 9 files (3 donor, 6 source), 8,802 chars (~2,515 tokens) from the card and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 13,047 chars (~3,728 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 13,913 chars (~6,049 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 14,524 chars (~6,315 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,175 chars (~6,598 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (rate limit / quota (HTTP 429): You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-); switching provider
+    [oneshot] attempt 1 could not be completed: All providers failed. gemini: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: You ex
+    [agent] stopped: All providers failed. gemini: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] p; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] h2; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] p; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-card"] a:has-text("Learn more"); found 0
+    Code changes: 0 files (+0 -0 lines), see changes.diff
+    -> quota reached during this run; it will be redone when you resume
+
+QUOTA REACHED after 2 new run(s) today (5/32 done). Run the same command again after the quota resets (midnight Pacific) to continue.

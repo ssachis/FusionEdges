@@ -55,7 +55,7 @@ class QuotaReached(RuntimeError):
     """The AI provider's daily quota is used up: stop the experiment; running the same command later resumes it."""
 
 
-QUOTA = re.compile(r"quota|rate limit|429|resource.?exhausted|too many requests", re.I)
+QUOTA = re.compile(r"quota|rate limit|429|resource.?exhausted|too many requests|503|high demand|overloaded|temporarily unavailable", re.I)  # also provider outages: redo later, never a result
 
 
 def _progress_path(name: str) -> Path:
@@ -170,7 +170,7 @@ def _run(spec: dict, log, conditions, repeats, seed, build) -> list:
                                   "models": {c: r.get("models") for c, r in recs.items()}})
     runs_done = runs_in()
     if stop:
-        log(f"\nQUOTA REACHED after {runs_done - done_before} new run(s) today ({runs_done}/{total} done). "
+        log(f"\nQUOTA REACHED (or the model is overloaded) after {runs_done - done_before} new run(s) today ({runs_done}/{total} done). "
             f"Run the same command again after the quota resets (midnight Pacific) to continue.")
     else:
         log(f"\nAll {total} runs done." if runs_done == total else f"\nIncomplete: {runs_done}/{total} runs; resume missing runs.")

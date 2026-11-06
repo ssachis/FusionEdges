@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sqlite3
 import subprocess
 from pathlib import Path
@@ -217,21 +218,50 @@ def analysis(experiment: str = "") -> dict:
         x["final"] = final(x)
         if x["fair"] is None:
             x["fair"] = x["same_model"]
-    from . import metrics
+    from . import ledger, metrics
     try:
         metrics.backfill()   # always: rows are cheap to rebuild, and labels/conditions change with the code
-        mrows = metrics.rows(experiment.split(" [")[0] if experiment else "")
+        all_rows = metrics.rows("")
     except Exception:  # noqa: BLE001 - the pair view must still load
-        mrows = []
+        all_rows = []
+    led = ledger.load()
+    for r in all_rows:
+        b = ledger.batch_of(r, led)
+        r["batch"], r["evidence"] = b["id"], b["status"]
+    batches = ledger.summarise(all_rows)
+    # What the tab shows. Default: the study if it has runs, else the preliminary comparison, clearly labelled.
+    # "batch:<id>" picks one ledger batch; any other value is an experiment name (older links keep working).
+    if experiment == "__all":
+        view_id = ""
+    elif experiment.startswith("batch:"):
+        view_id = experiment[6:]
+    elif experiment:
+        view_id = ""
+    else:
+        view_id = next((b["id"] for b in batches if b["status"] == "study" and b["runs"]), None) or \
+            next((b["id"] for b in batches if b["status"] == "preliminary" and b["runs"]), "")
+    if view_id:
+        mrows = [r for r in all_rows if r["batch"] == view_id]
+    else:
+        mrows = [r for r in all_rows if (r.get("experiment") or "").split(" [")[0] == experiment.split(" [")[0]] \
+            if experiment and experiment != "__all" else all_rows
+    view = next((b for b in batches if b["id"] == view_id), None) or \
+        {"id": "", "status": "mixed" if experiment in ("", "__all") else "development",
+         "title": "All runs" if experiment in ("", "__all") else experiment,
+         "what": "Runs from several batches mixed together: for browsing, not for conclusions." if experiment in ("", "__all") else ""}
     conds = metrics.by_condition(mrows)
     try:
         from . import qualitative
         qualitative.load_pending()          # reviews committed as JSON are loaded the first time the tab opens
-        qual = qualitative.summary()
-        qual["overall"] = qualitative.overall(mrows)
+        in_view = {r["run_id"] for r in mrows}
+        qual = qualitative.summary(in_view)
+        # newest FusionEdges variant present in this view (a batch made with port v3 shows as M3 once v4 exists)
+        ports = sorted({r["condition"] for r in mrows if re.fullmatch(r"M\d+", r["condition"] or "")}, reverse=True)
+        qual["overall"] = qualitative.overall(mrows, conds=("A", "AD", "MA", "M", *ports), only=in_view)
     except Exception:  # noqa: BLE001 - the rest of the tab must still load
         qual = {"runs": [], "tasks": [], "by_condition": {}, "better": {}, "reviewers": []}
     return {
+        "evidence": {"view": view, "batches": batches, "statuses": led.get("statuses", {})},
         "qualitative": qual,
         "vs_agent": {"headline": metrics.headline(conds, mrows), "conditions": conds, "matrix": metrics.task_matrix(mrows),
                      "observations": [{k: r[k] for k in ("run_id", "created", "condition", "task", "observation", "failures",

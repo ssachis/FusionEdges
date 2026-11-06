@@ -375,6 +375,14 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
 .an-sec[open]>summary::before{content:"▾ "}.an-sec>summary p{margin:2px 0 0 18px;color:var(--muted);font-size:13px}
 .an-sec .va-head h2{font-size:20px}
 @media (max-width:640px){.ov table thead{display:none}.ov tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}.ov td{display:flex;justify-content:space-between;border:0;padding:2px 0}.ov td:first-child{display:block;padding-bottom:4px}.ov td::before{content:attr(data-l);color:var(--muted);font-size:12.5px;font-weight:400}}
+/* evidence: which batch is on screen, and what it may be used for */
+.ev-banner{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:10px 14px;margin:6px 0 0;font-size:14px;border:2px solid var(--line);background:var(--surface)}
+.ev-banner.study{border-color:var(--ok);background:var(--ok-soft)}.ev-banner.preliminary{border-color:var(--warn);background:var(--warn-soft)}
+.ev-pill{display:inline-block;border-radius:6px;padding:1px 8px;font:700 12px var(--sans);text-transform:uppercase;letter-spacing:.03em;background:var(--line);color:var(--ink);white-space:nowrap}
+.ev-pill.study{background:var(--ok);color:#fff}.ev-pill.preliminary{background:var(--warn);color:#fff}.ev-pill.development,.ev-pill.pilot{background:var(--sunk);color:var(--muted)}.ev-pill.exploration{background:var(--sunk);color:var(--muted)}
+.ev-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}.ev-table td,.ev-table th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.ev-table th{font:600 12px var(--sans);color:var(--muted)}.ev-table td.n{text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.ev-table thead{display:none}.ev-table tr{display:block;padding:6px 0;border-bottom:1px solid var(--line)}.ev-table td{display:flex;justify-content:space-between;gap:8px;border:0;padding:2px 0}.ev-table td::before{content:attr(data-l);color:var(--muted);font-size:12px}}
 /* tabs + analysis */
 .tabs{display:flex;gap:4px;margin:18px 0 0;border-bottom:2px solid var(--ink)}
 .tabs a{padding:9px 16px;font:700 15px var(--sans);color:var(--muted);text-decoration:none;border:2px solid transparent;border-bottom:0;border-radius:10px 10px 0 0;margin-bottom:-2px}
@@ -461,7 +469,7 @@ button.ghost:disabled{opacity:.55;cursor:not-allowed}
   <section class="hero">
     <div>
       <h1>Borrow a component from any repo.</h1>
-      <p class="lede">The agent rewrites it to fit your site, then builds and checks the result.</p>
+      <p class="lede">Rules port it to fit your site, the AI fixes only what is left, then it builds and checks the result.</p>
     </div>
     <div class="stage" id="stage" role="img" aria-label="A navbar moves from the donor site into your site and replaces its header" title="Click to replay">
       <div class="win donor"><div class="bar"><i></i><i></i><i></i></div>
@@ -677,6 +685,22 @@ function checksHtml(c){
     return `<div class="chk ${cls}"><div class="m">${m}</div><div><b>${esc(x.label)}</b><span>${esc(x.value)}</span>${miss}</div></div>`; }).join("")}</div>`;
 }
 
+function portHtml(rec){
+  const p = rec.port; if (!p || !(p.resolved || []).length) return "";
+  const kind = k => ({"framework-api": "Next.js APIs", "routing-model": "Routing", "language": "TypeScript", "path-alias": "Import aliases",
+    "styling-system": "Tailwind", "global-selector-leak": "Global CSS", "missing-package": "Packages", "dependency-missing": "Next.js package",
+    "mount": "Where it goes", "slot-occupied": "Old navbar", "host-script-coupling": "Site's scripts", "backend-feature": "Backend-only parts",
+    "component-usage": "Logo & links", "styled-jsx": "Next <style jsx>", "dependency-version-conflict": "Package versions",
+    "server-component": "Server component", "test-locator": "Test locator", "api-version": "Library API", "version-mismatch": "React version"})[k] || k;
+  const done = p.resolved.filter(x => x.kind !== "test-locator");
+  return `<section class="panel"><h2>Fixed by rule <span class="tag" style="font:600 14px var(--sans)">no AI tokens</span></h2>
+    <p style="margin:0 0 10px">Each conflict the compatibility check found, and what FusionEdges did about it.</p>
+    <div class="checks">${done.map(x => `<div class="chk ok"><div class="m">✓</div><div><b>${esc(kind(x.kind))}</b><span>${esc(x.action)}</span></div></div>`).join("")}</div>
+    ${(p.unresolved || []).length ? `<p style="margin:14px 0 6px"><b>Left for the AI</b> <span class="tag">only if the result does not work</span></p>
+    <div class="checks">${p.unresolved.map(x => `<div class="chk na"><div class="m">→</div><div><b>${esc(kind(x.kind))}</b><span>${esc((x.text || "").slice(0, 160))}</span></div></div>`).join("")}</div>` : ""}
+  </section>`;
+}
+
 function reportHtml(rec){
   const r = rec.report; if (!r) return "";
   const id = encodeURIComponent(rec.id), u = rec.report_usage || {}, cs = r.conflicts || [];
@@ -735,6 +759,7 @@ function render(rec){
   </section>
   <section class="panel" id="changes"><h2>Code changes</h2><span class="tag">Working out what the agent changed…</span></section>
   ${rec.routing ? `<section class="panel"><h2>Assigned approach</h2>${routingHtml([{route:"rules",reasons:["Started with deterministic rules."]}, ...(rec.routing.trace || [])], rec.routing.status)}</section>` : ""}
+  ${portHtml(rec)}
   ${reportHtml(rec)}`;
   loadChanges(rec);
   askAboutRun(rec);
@@ -1168,7 +1193,7 @@ function sideBySideHTML(q, names){
 function overallHTML(a){
   const o = (a.qualitative || {}).overall, h = (a.vs_agent || {}).headline || {};
   const names = (a.vs_agent || {}).names || {};
-  if (!o || !o.approaches || o.approaches.length < 2) return `<div class="ov"><p class="q">Can FusionEdges add another project's navbar to your site as well as a plain AI agent, for fewer tokens?</p><h2>Not enough reviewed runs yet</h2><p class="ov-sure">The overall result needs the same tasks run both ways and reviewed by a person (Side by side, below).</p></div>`;
+  if (!o || !o.approaches || o.approaches.length < 2) return `<div class="ov"><p class="q">Can FusionEdges add another project's navbar to your site as well as a plain AI agent, for fewer tokens?</p><h2>No reviewed comparison in this view yet</h2><p class="ov-sure">The overall result needs the same tasks run by the agent alone and by FusionEdges, and reviewed by a person (Side by side, below). Pick a batch above, or see the Evidence ledger.</p></div>`;
   const A = o.approaches.find(x => x.condition === "A"), F = o.approaches.find(x => x.condition !== "A");
   const pc = x => `${Math.round(x * 100)}%`, tk = x => x == null ? "none worked" : x === 0 ? "0" : Math.round(x).toLocaleString();
   const better = (f, g, lower) => (lower ? f < g : f > g) ? "win" : "";
@@ -1197,26 +1222,52 @@ function overallHTML(a){
   </div>`;
 }
 const anSec = (id, title, sub, body, open) => `<details class="an-sec" id="${id}"${open ? " open" : ""}><summary><h2>${title}</h2><p>${sub}</p></summary>${body}</details>`;
+
+/* ---------- Evidence: what is on screen, and the ledger of every batch ---------- */
+function viewSelect(a){
+  const ev = a.evidence || {batches: []}, cur = a.experiment || "";
+  const opts = ev.batches.filter(b => b.runs).map(b => `<option value="batch:${esc(b.id)}" ${cur === "batch:" + b.id || (!cur && ev.view && ev.view.id === b.id) ? "selected" : ""}>${esc(b.title)} · ${esc(b.status)}</option>`).join("");
+  return `<select id="anExp" aria-label="Which runs to show">${opts}<option value="__all" ${cur === "__all" ? "selected" : ""}>All runs, mixed (browsing only)</option></select>`;
+}
+function evidenceBanner(a){
+  const v = (a.evidence || {}).view || {}, st = v.status || "mixed";
+  const note = {study: "This is the study: frozen pipeline, fresh tasks, analysis fixed in advance.",
+    preliminary: "Not the study result. These tasks were also used to build the port, so this shows direction, not proof. Study 1 has not run yet.",
+    development: "Development runs: FusionEdges was changed after seeing them. Use them to understand failures, not to compare approaches.",
+    pilot: "Pilot: small and not pinned to one model. It shaped the questions.", exploration: "Exploration: not evidence.",
+    mixed: "Several batches mixed together. Fine for browsing; draw no conclusions from this view."}[st] || "";
+  return `<div class="ev-banner ${esc(st)}"><span class="ev-pill ${esc(st)}">${esc(st)}</span><span><b>Showing: ${esc(v.title || "")}.</b> ${esc(note)}</span></div>`;
+}
+function ledgerHTML(a){
+  const ev = a.evidence || {batches: [], statuses: {}};
+  return `<p style="margin:6px 0 0;font-size:13.5px">Every run belongs to one batch. Only <b>study</b> batches may support a result; the rest is the record of how FusionEdges was built. Labels live in <span class="mono">experiments/evidence-ledger.json</span> (also <span class="mono">experiments/EVIDENCE.md</span>).</p>
+    <table class="ev-table"><thead><tr><th>Batch</th><th>Status</th><th style="text-align:right">Runs</th><th style="text-align:right">Tasks</th><th>Approaches</th><th>What it is</th></tr></thead><tbody>
+    ${ev.batches.map(b => `<tr><td data-l="Batch">${b.runs ? `<a href="#" data-batch="${esc(b.id)}">${esc(b.title)}</a>` : esc(b.title)}</td><td data-l="Status"><span class="ev-pill ${esc(b.status)}" title="${esc(ev.statuses[b.status] || "")}">${esc(b.status)}</span></td>
+      <td class="n" data-l="Runs">${b.runs || "not run yet"}</td><td class="n" data-l="Tasks">${b.tasks || "–"}</td><td data-l="Approaches">${esc((b.conditions || []).join(", ") || "–")}</td><td data-l="What it is">${esc(b.what || "")}</td></tr>`).join("")}</tbody></table>`;
+}
 async function loadAnalysis(exp){
   const box = $("#view-analysis");
   box.innerHTML = '<p class="tag" style="margin-top:24px">Loading…</p>';
   let a; try { a = await (await fetch("/api/analysis" + (exp ? "?experiment=" + encodeURIComponent(exp) : ""))).json(); }
   catch(e){ box.innerHTML = '<div class="err">Could not load the analysis.</div>'; return; }
   const s = a.summary;
-  const expSel = `<select id="anExp" aria-label="Experiment"><option value="">All experiments</option>${a.experiments.map(e => `<option ${e === a.experiment ? "selected" : ""}>${esc(e)}</option>`).join("")}</select>`;
+  const expSel = viewSelect(a);
   if (!a.rows.length) {
-    box.innerHTML = `<div class="an-head"><h2>Analysis</h2>${expSel}</div>` + overallHTML(a) +
+    box.innerHTML = `<div class="an-head"><h2>Analysis</h2>${expSel}</div>` + evidenceBanner(a) + overallHTML(a) +
       anSec("an-sbs", "Side by side: what a person sees", "Each task, the agent's runs next to FusionEdges, judged from screenshots and diffs.", sideBySideHTML(a.qualitative, a.vs_agent.names || {})) +
-      anSec("an-num", "All the numbers", "Every approach and earlier version: success, tokens, time, task by task, and one line per run.", vsAgentHTML(a.vs_agent));
+      anSec("an-num", "All the numbers", "Every approach in this view: success, tokens, time, task by task, and one line per run.", vsAgentHTML(a.vs_agent)) +
+      anSec("an-ledger", "Evidence ledger", "Every batch of runs, and whether it counts as evidence.", ledgerHTML(a));
     $("#anExp").onchange = e => loadAnalysis(e.target.value);
     wireVsAgent(box, a.vs_agent);
+    box.querySelectorAll("[data-batch]").forEach(x => x.onclick = e => { e.preventDefault(); loadAnalysis("batch:" + x.dataset.batch); });
     return;
   }
   const pct = (x, y) => y ? `${x > y ? "+" : ""}${Math.round((x - y) / y * 100)}%` : "";
   const fairImp = (s.fair_final || {}).improved || 0;
-  box.innerHTML = `<div class="an-head"><h2>Analysis</h2>${expSel}</div>` + overallHTML(a) +
+  box.innerHTML = `<div class="an-head"><h2>Analysis</h2>${expSel}</div>` + evidenceBanner(a) + overallHTML(a) +
       anSec("an-sbs", "Side by side: what a person sees", "Each task, the agent's runs next to FusionEdges, judged from screenshots and diffs.", sideBySideHTML(a.qualitative, a.vs_agent.names || {})) +
-      anSec("an-num", "All the numbers", "Every approach and earlier version: success, tokens, time, task by task, and one line per run.", vsAgentHTML(a.vs_agent)) + anSec("an-rep", "Pilot: did an AI-written report help the agent?", "The earlier question (agent alone vs agent + report, 4 tasks, October). Kept for the record.", `
+      anSec("an-num", "All the numbers", "Every approach in this view: success, tokens, time, task by task, and one line per run.", vsAgentHTML(a.vs_agent)) +
+      anSec("an-ledger", "Evidence ledger", "Every batch of runs, and whether it counts as evidence.", ledgerHTML(a)) + anSec("an-rep", "Pilot: did an AI-written report help the agent?", "The earlier question (agent alone vs agent + report, 4 tasks, October). Kept for the record.", `
     <div class="an-head" style="margin-top:8px"><h2 style="font-size:18px">Did the report help? <span class="tag" style="font:500 14px var(--sans)">agent alone vs agent + report, run pairs</span></h2></div>
     ${a.answer ? `<div class="yesno ${{yes: "improved", no: "worse"}[a.answer.answer] || "inconclusive"}" style="margin:10px 0 6px"><b>${esc({yes: "Yes", no: "No", "not yet": "Not yet", "not clear yet": "Not clear yet"}[a.answer.answer] || a.answer.answer)}</b><span>${esc(a.answer.reason)}<small>Pilot numbers. Your answers on the Transfer page count first.</small></span></div>` : ""}
     <p class="tag" style="margin:0">Agent alone (A) vs agent with the compatibility report (D) on the same task. Verdicts after reading the code and checking the page in a browser, where available.</p>
@@ -1250,6 +1301,7 @@ async function loadAnalysis(exp){
     <p class="method"><b>How to read this.</b> Automatic verdicts come from static checks (build, rendered, script selectors, packages). Reviewed verdicts come from reading the diff and opening the page in Chromium at 1280px and 390px; when they differ, the review wins. Small numbers: treat this as a pilot, not a result.</p>`);
   $("#anExp").onchange = e => loadAnalysis(e.target.value);
   wireVsAgent(box, a.vs_agent);
+  box.querySelectorAll("[data-batch]").forEach(x => x.onclick = e => { e.preventDefault(); loadAnalysis("batch:" + x.dataset.batch); });
   wireFeedback(box, () => loadAnalysis(a.experiment));
 }
 

@@ -34,7 +34,8 @@ _SPEC = re.compile(r"""(\bfrom\s*|\bimport\s*\(\s*|\bimport\s+|\brequire\s*\(\s*
 _DIRECTIVE = re.compile(r"""^\s*['"]use (client|server)['"];?\s*\n""", re.M)
 _PUBLIC_REF = re.compile(r"""(['"(])(/[\w./-]+\.(?:png|jpe?g|gif|svg|webp|avif|ico))(['")])""", re.I)
 _IS_PKG = re.compile(r"^(?:@[\w.-]+/[\w.-]+|[\w.-]+)")
-VERSION = 3   # 1: first 20 runs; 2: barrels, backend stand-ins, React versions, old router, CSS-first finds;
+VERSION = 4   # 4 (3 Nov, from the side-by-side review): nav-only replacement, nav-like mounts, Next image objects,
+              #   <style jsx> CSS kept; 1: first 20 runs; 2: barrels, backend stand-ins, React versions, old router, CSS-first finds;
               # 3 (after the first browser check): utilities win over site CSS, scoped reset, shells ported with their usage,
               #   real-nav picking, Headless UI 1 names, <style jsx> removed
 TOOLS = Path(os.environ.get("FUSIONEDGES_TOOLS", Path.home() / ".cache" / "fusionedges"))
@@ -445,6 +446,18 @@ def _element_span(text: str, tag: str):
     return m.start(), i
 
 
+def static_image_objects(text: str) -> str:
+    """Next.js imports an image as an object ({src, width, height}); a React site's bundler gives a URL string.
+    Wrap each default image import so both `<img src={logo}>` and `logo.src` keep working."""
+    rx = re.compile(r"""^import\s+([A-Za-z_$][\w$]*)\s+from\s*(['"])([^'"]+\.(?:png|jpe?g|gif|svg|webp|avif|ico))\2;?[ \t]*$""", re.M | re.I)
+
+    def sub(m):
+        name, q, path = m.group(1), m.group(2), m.group(3)
+        return (f"import {name}__url from {q}{path}{q};\n"
+                f"const {name} = Object.assign(new String({name}__url), {{ src: {name}__url }});")
+    return rx.sub(sub, text)
+
+
 def _add_import(text: str, line: str) -> str:
     last = list(re.finditer(r"^import[^\n]*\n(?:[ \t]+[^\n]*\n)*", text, re.M))
     at = last[-1].end() if last else 0
@@ -490,7 +503,7 @@ def _insert_into_app(host: Path, app_rel: str, entry_abs: str, name: str) -> boo
 
 
 # ------------------------------------------------------------------ the port
-def port(source: Path, donor: Path, output: Path, scan: dict, component: str, log=print) -> dict:
+def port(source: Path, donor: Path, output: Path, scan: dict, component: str, log=print, locator: str = "") -> dict:
     t0 = time.time()
     source, donor, output = Path(source), Path(donor), Path(output)
     rec = {"version": VERSION, "ok": False, "component": component, "files": [], "packages_added": {}, "assets": [], "mount": {},
@@ -579,6 +592,7 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
     # 2. imports: closure files -> new locations, Next.js -> shims, packages -> package.json
     used_shims, packages, unknown_next, missing_local, assets = set(), {}, set(), set(), {}
     stub_rel, stub_names, leaf_files = f"{base}/backend-stubs.js", set(), []
+    sjx_css = []
     for rel in donor_files:
         new_rel = mapping[rel]
         text = _DIRECTIVE.sub("", texts[rel]) if not rel.endswith(STYLE_EXT) else texts[rel]
@@ -631,9 +645,10 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
                 assets[f"public{pm.group(2)}"] = p
         out = output / new_rel
         out.parent.mkdir(parents=True, exist_ok=True)
-        new_text, n_sj = strip_styled_jsx(new_text) if not rel.endswith(STYLE_EXT) else (new_text, 0)
+        new_text, n_sj = strip_styled_jsx(new_text, sjx_css) if not rel.endswith(STYLE_EXT) else (new_text, 0)
         if n_sj:
-            rec["notes"].append(f"{Path(rel).name}: removed {n_sj} <style jsx> block(s) (Next-only)")
+            rec["notes"].append(f"{Path(rel).name}: {n_sj} <style jsx> block(s) moved to the scoped stylesheet")
+        new_text = static_image_objects(new_text) if not rel.endswith(STYLE_EXT) else new_text
         out.write_text(new_text)
         rec["files"].append(new_rel)
     if stub_names:
@@ -738,10 +753,21 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
         f'import {{ {name} as Donor }} from "{_strip_ext(_rel(entry, main_new))}";'
     cls = " ".join(dict.fromkeys([scope[1:]] + keep_cls))
     id_attr = f' id="{keep_id}"' if keep_id else ""
+    if locator:   # the task's test locator (same instruction in every condition), put on the wrapper mechanically
+        id_attr += f' data-fe-transfer="{locator}"'
+        rec["resolved"].append({"kind": "test-locator", "action": f'wrapper carries data-fe-transfer="{locator}"'})
+    sjx_rel = None
+    if sjx_css:
+        sjx_rel = f"{base}/styled-jsx.css"
+        res = compile_apply(scope_css("\n".join(sjx_css), scope), output / sjx_rel, donor)
+        rec["files"].append(sjx_rel)
+        rec["resolved"].append({"kind": "styled-jsx", "action": f"{len(sjx_css)} Next <style jsx> block(s) compiled into "
+                                f"{sjx_rel}, scoped to {scope}" + ("" if res.get("ok") else f" (@apply not resolved: {res.get('reason', '')[:80]})")})
     (output / entry).write_text(
         "// Written by FusionEdges (deterministic port). The wrapper scopes the donor's styles and keeps the\n"
         "// class names / id this site's own scripts look up.\n"
-        + (f'import "./{Path(css_rel).name}";\n' if css_rel else "") + "import React from \"react\";\n" + imp + "\n\n"
+        + (f'import "./{Path(css_rel).name}";\n' if css_rel else "")
+        + (f'import "./{Path(sjx_rel).name}";\n' if sjx_rel else "") + "import React from \"react\";\n" + imp + "\n\n"
         f"export default function {comp_name}(props) {{\n"
         f"  return (\n    <div className=\"{cls}\"{id_attr}>\n      <Donor {{...props}} />\n    </div>\n  );\n}}\n"
         f"export {{ {comp_name} }};\n")
@@ -752,10 +778,17 @@ def port(source: Path, donor: Path, output: Path, scan: dict, component: str, lo
 
     # 7. mount: replace the site's existing component everywhere it is imported, else add it to App
     existing = [e] if (e := existing_component(source, component)) else []
+    if existing and holds_more_than_nav(read(output / existing[0])) and replace_nav_in(output, existing[0], entry, comp_name):
+        rec["mount"] = {"how": "replaced <nav> inside", "existing": existing[0], "files": [existing[0]]}
+        rec["resolved"].append({"kind": "mount", "action": f"only the <nav> inside {existing[0]} replaced: that component also "
+                                "renders other content (hero, sections), which stays"})
+        existing = []      # done: do not also repoint the whole component
     code_files = [p.relative_to(output).as_posix() for p in walk(output, (".js", ".jsx", ".ts", ".tsx"))
                   if "node_modules" not in p.parts and not p.relative_to(output).as_posix().startswith(base)]
     changed = _replace_imports_of(output, existing[0], entry, code_files) if existing else []
-    if changed:
+    if rec["mount"].get("how") == "replaced <nav> inside":
+        pass
+    elif changed:
         rec["mount"] = {"how": "replaced", "existing": existing[0], "files": changed}
         rec["resolved"].append({"kind": "mount", "action": f"imports of {existing[0]} now point to {entry} ({', '.join(changed)})"})
         rec["resolved"].append({"kind": "slot-occupied", "action": f"the site's {existing[0]} is replaced, not duplicated"})
@@ -1322,16 +1355,80 @@ def router_has_hooks(output: Path) -> bool:
 
 
 def existing_component(source: Path, component: str) -> str | None:
-    """The site's current component as a CODE file (Navigation/Navigation.css -> Navigation/index.js)."""
-    for hit in rag.find_component_files(source, component, limit=3):
+    """The site's current component as a CODE file (Navigation/Navigation.css -> Navigation/index.js).
+    v4: among the name matches and the files that render a <nav>, prefer one that is actually a nav (a <nav> or
+    2+ links), so 'HeaderSocials' (a social-icon bar) loses to 'Nav.jsx'. The app's entry files are never picked:
+    replacing App would replace the whole site."""
+    source = Path(source)
+
+    def as_code(hit):
         if not hit.endswith(STYLE_EXT):
             return hit
-        folder = (Path(source) / hit).parent
+        folder = (source / hit).parent
         for cand in [folder / f"index{e}" for e in (".jsx", ".js", ".tsx", ".ts")] + \
                 [folder / f"{Path(hit).stem}{e}" for e in (".jsx", ".js", ".tsx", ".ts")]:
             if cand.is_file():
                 return cand.relative_to(source).as_posix()
-    return None
+        return None
+
+    def is_entry(rel):
+        p = Path(rel)
+        return p.stem in ("App", "app", "index", "main", "layout", "page") and len(p.parts) <= 2
+
+    named = [c for c in (as_code(h) for h in rag.find_component_files(source, component, limit=5)) if c and not is_entry(c)]
+    navs = []
+    for p in walk(source / "src" if (source / "src").is_dir() else source, (".jsx", ".js", ".tsx", ".ts")):
+        rel = p.relative_to(source).as_posix()
+        if "node_modules" in rel or is_entry(rel) or re.search(r"\.(test|spec|stories)\.", rel) or "footer" in rel.lower():
+            continue
+        if "<nav" in _code_only(read(p, 200_000)):
+            navs.append(rel)
+    pool = list(dict.fromkeys(named + navs))
+    if not pool:
+        return None
+    text = {r: _code_only(read(source / r, 200_000)) for r in pool}
+    score = {r: nav_score(text[r]) for r in pool}
+
+    def tier(r):
+        stem = re.sub(r"[^a-z]", "", (Path(r).stem if Path(r).stem not in ("index", "main") else Path(r).parent.name).lower())
+        if r in named and ("nav" in stem or "menu" in stem):
+            return 0           # the site's own Navbar / Navigation / Menu
+        if "<nav" in text[r]:
+            return 1           # renders a real <nav>
+        return 2               # weaker name match (Header, HeaderSocials ...)
+    navlike = [r for r in pool if score[r] >= 3]
+    if navlike:
+        return sorted(navlike, key=lambda r: (tier(r), -score[r], named.index(r) if r in named else 99))[0]
+    return named[0] if named else None
+
+
+def _code_only(text: str) -> str:
+    """Source without comments (commented-out JSX must not count as markup)."""
+    return re.sub(r"/\*.*?\*/|(?<![:'\"\\])//[^\n]*|\{/\*.*?\*/\}", "", text, flags=re.S)
+
+
+def holds_more_than_nav(text: str) -> bool:
+    """A site 'navbar' component that also renders the hero or page content around its <nav>."""
+    text = _code_only(text)
+    span = _element_span(text, "nav")
+    if not span:
+        return False
+    outside = text[:span[0]] + text[span[1]:]
+    big = len(re.findall(r"<(?:section|main|article)\b", outside))
+    small = len(re.findall(r"<(?:h1|h2|p|img)\b", outside))
+    return big >= 1 or small >= 3
+
+
+def replace_nav_in(host: Path, rel: str, entry_abs: str, name: str) -> bool:
+    """Swap only the <nav>...</nav> element of the site's component for the ported navbar."""
+    text = read(host / rel)
+    span = _element_span(text, "nav")
+    if not span:
+        return False
+    body = text[:span[0]] + f"<{name} />" + text[span[1]:]
+    spec = re.sub(r"/index$", "", _strip_ext(_rel(rel, entry_abs)))
+    (host / rel).write_text(_add_import(body, f'import {name} from "{spec}";\n'))
+    return True
 
 
 # ------------------------------------------------------------------ v3 (1 Nov, after the first browser-checked M runs)
@@ -1409,10 +1506,73 @@ def usage_of(donor: Path, main: str):
     return None
 
 
-def strip_styled_jsx(text: str) -> tuple:
-    """Next's <style jsx> blocks need Next's compiler; elsewhere they render as a broken <style jsx> tag."""
-    new, n = re.subn(r"\s*<style\s+jsx(?:\s+global)?\s*>\s*\{`.*?`\}\s*</style>", "", text, flags=re.S)
+_STYLED_JSX = re.compile(r"\s*<style\s+jsx(?:\s+global)?\s*>\s*\{`(.*?)`\}\s*</style>", re.S)
+
+
+def strip_styled_jsx(text: str, collect: list | None = None) -> tuple:
+    """Next's <style jsx> blocks need Next's compiler; elsewhere they render as a broken <style jsx> tag.
+    v4: their CSS is collected (into `collect`) so it can be compiled into the scoped stylesheet, not lost."""
+    if collect is not None:
+        collect += [m.group(1) for m in _STYLED_JSX.finditer(text)]
+    new, n = _STYLED_JSX.subn("", text)
     return new, n
+
+
+def scope_css(css: str, scope: str) -> str:
+    """Prefix every selector with the component's scope; :global(x) becomes x (styled-jsx syntax)."""
+    css = re.sub(r":global\(([^()]*(?:\([^()]*\)[^()]*)*)\)", r"\1", css)
+    out, i, depth, start = [], 0, 0, 0
+    while i < len(css):
+        c = css[i]
+        if c == "{":
+            prelude = css[start:i]
+            if depth == 0 or (out and out[-1].endswith("__AT__")):
+                pass
+            if prelude.strip().startswith("@") or depth > 0 and not prelude.strip():
+                out.append(prelude + "{")
+            elif depth == 0 or (depth > 0 and prelude.strip()):
+                sels = [x.strip() for x in prelude.split(",") if x.strip()]
+                out.append(", ".join(f"{scope} {x}" if not x.startswith(scope) else x for x in sels) + " {")
+            depth += 1
+            start = i + 1
+        elif c == "}":
+            out.append(css[start:i] + "}")
+            depth -= 1
+            start = i + 1
+        elif c == ";" and depth > 0:
+            pass
+        i += 1
+    out.append(css[start:])
+    return "".join(out)
+
+
+def compile_apply(css: str, out_css: Path, donor: Path) -> dict:
+    """Resolve @apply in styled-jsx CSS with the Tailwind CLI (no utilities generated, just the rules)."""
+    if "@apply" not in css:
+        out_css.write_text(css)
+        return {"ok": True, "apply": False}
+    if not shutil.which("npx"):
+        out_css.write_text(re.sub(r"@apply[^;]*;", "", css))
+        return {"ok": False, "reason": "npx not available; @apply rules dropped"}
+    _, _, colors = donor_theme_css(donor, ".x")
+    work = Path(tempfile.mkdtemp(prefix="fe-sjx-"))
+    try:
+        (work / "tailwind.config.js").write_text("module.exports = " + json.dumps(
+            {"content": [{"raw": "<i></i>"}], "corePlugins": {"preflight": False},
+             "theme": {"extend": {"colors": colors}}}) + ";\n")
+        (work / "in.css").write_text(css)
+        r = subprocess.run(["npx", "--yes", "tailwindcss@3", "-c", "tailwind.config.js", "-i", "in.css", "-o", "out.css"],
+                           cwd=work, capture_output=True, text=True, timeout=300)
+        if r.returncode != 0 or not (work / "out.css").is_file():
+            out_css.write_text(re.sub(r"@apply[^;]*;", "", css))
+            return {"ok": False, "reason": (r.stderr or r.stdout)[-300:]}
+        out_css.write_text(important((work / "out.css").read_text()))
+        return {"ok": True, "apply": True}
+    except (OSError, subprocess.SubprocessError) as e:
+        out_css.write_text(re.sub(r"@apply[^;]*;", "", css))
+        return {"ok": False, "reason": str(e)}
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
 
 
 # Headless UI 2 component names that exist only as dotted names in 1.x (used when the site's React needs 1.x)

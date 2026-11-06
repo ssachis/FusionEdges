@@ -1,0 +1,11 @@
+{
+ "pair|20261103-113851-prompt__20261103-113842-adaptive": "improved",
+ "pair|20261103-125020-prompt__20261103-114427-adaptive": "inconclusive",
+ "pair|20261103-125717-prompt__20261103-125655-adaptive": "inconclusive",
+ "r1|t1|adaptive": "20261103-113842-adaptive",
+ "r1|t1|prompt": "20261103-113851-prompt",
+ "r1|t2|adaptive": "20261103-114427-adaptive",
+ "r1|t2|prompt": "20261103-125020-prompt",
+ "r1|t3|adaptive": "20261103-125655-adaptive",
+ "r1|t3|prompt": "20261103-125717-prompt"
+}

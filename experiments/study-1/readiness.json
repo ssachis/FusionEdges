@@ -1,0 +1,607 @@
+{
+ "hosts": {
+  "https://github.com/Oliver-Sampa/hair-salon-website/tree/e5980243c1a8c7e19f10e31c666030299ded935a": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"Welcome to Laritza's Hair Salon\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "p:has-text(\"Fresh cuts, sharp fades, and styles for everyone.\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"Welcome to Laritza's Hair Salon\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "p:has-text(\"Fresh cuts, sharp fades, and styles for everyone.\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/xshshahab/portfolio/tree/89298c18dd2fd44920c8e28102d835f61bc7a0f0": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h3:has-text(\"Currently learning\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Activity\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h3:has-text(\"Currently learning\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Activity\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/nagoloumdaniel/Nagos/tree/8e72a886e004ec4f6428d412ac7936f65220c0f1": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"\u00c0 propos de moi\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Mon Blog\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 3
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"\u00c0 propos de moi\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Mon Blog\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 3
+    }
+   ],
+   "ok": false
+  },
+  "https://github.com/uzairkhanadv/My-react-portfolio/tree/2cd0976d97e3f73d2dd3e339ff70293e1ce8cbb0": {
+   "build_tool": "react-scripts",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h3:has-text(\"Education\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h3:has-text(\"Passion\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h3:has-text(\"Education\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h3:has-text(\"Passion\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": false
+  },
+  "https://github.com/juanfalibene/music-portfolio/tree/50095714c9fcd86a76fb3ac2f1ef22a4dc2c41c7": {
+   "build_tool": "react-scripts",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Past Gigs since 2016\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h1:has-text(\"PRESSKIT\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 2
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Past Gigs since 2016\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h1:has-text(\"PRESSKIT\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 2
+    }
+   ],
+   "ok": false
+  },
+  "https://github.com/Milan-960/Myportfolio/tree/4696ddd0430c3849a1ca0282bfa61a98fd51ffec": {
+   "build_tool": "react-scripts",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [
+      "Cannot use 'in' operator to search for 'default' in undefined",
+      "Unexpected token '<'"
+     ],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"BACKEND\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h1:has-text(\"DATABASE\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [
+      "Cannot use 'in' operator to search for 'default' in undefined",
+      "Unexpected token '<'"
+     ],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"BACKEND\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h1:has-text(\"DATABASE\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": false
+  },
+  "https://github.com/Sri-3116/Portfolio/tree/90cab1d3cd20fcc0e9ef97ffe1bec31be914bff7": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Professional Experience\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Skills\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Professional Experience\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Skills\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/RajHarsh03/Portfolio/tree/c11b84c7fc9876f13327ae3ca29c1017ef40727d": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"GitHub Activity\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Projects\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"GitHub Activity\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Projects\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 1
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/dineshkumar-mb/portfolio/tree/4b3605cdd7f333ae87206f6bd42178fb1a9bb6bd": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"Full Stack Developer\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h3:has-text(\"Currently Exploring\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 2
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h1:has-text(\"Full Stack Developer\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h3:has-text(\"Currently Exploring\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 2
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/mbronstein1/new-portfolio/tree/ab9b5ccf8d68ef25cba048c962321e74f0876d17": {
+   "build_tool": "react-scripts",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Full stack engineer, technical lead\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Let's talk\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 2
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Full stack engineer, technical lead\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h2:has-text(\"Let's talk\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 2
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/Arif596/Portfolio/tree/6e3758df3a7a4d3d2afef852e4970d1aefcef39b": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"About me\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h3:has-text(\"Hello, I'm Arif!\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 3
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"About me\")",
+       "count": 1,
+       "visible": true
+      },
+      {
+       "selector": "h3:has-text(\"Hello, I'm Arif!\")",
+       "count": 1,
+       "visible": true
+      }
+     ],
+     "has_nav": 3
+    }
+   ],
+   "ok": true
+  },
+  "https://github.com/lroy-stack/portfolio-react/tree/0642a6e12ddf13fdc749cf5c74cbd34694b6ac80": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "ok": false,
+   "why": "build: vate/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:19705:13)\n    at Object.renderChunk (file:///private/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:19740:27)\n    at file:///private/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/rollup/dist/es/shared/node-entry.js:24031:40\u001b[39m\n"
+  },
+  "https://github.com/xbnikhil/Nikhil-Portfolio/tree/a7447a80ac6c1c4c61e595c9ccf6202d8df0d4b0": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Make yourself at home.\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h2:has-text(\"Good stuff is marinating.\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 0
+    },
+    {
+     "viewport": 390,
+     "errors": [],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"Make yourself at home.\")",
+       "count": 0,
+       "visible": false
+      },
+      {
+       "selector": "h2:has-text(\"Good stuff is marinating.\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 0
+    }
+   ],
+   "ok": false
+  },
+  "https://github.com/DbHridoy/React-Router-Portfolio/tree/23935161bbcb94a17ab95c3e48b91f8a88001920": {
+   "build_tool": "vite",
+   "nav_file_exists": true,
+   "ok": false,
+   "why": "build: modules/esbuild/lib/main.js:623:9)\n    at handleIncomingPacket (/private/tmp/fe-study1-ready/DbHridoy__React-Router-Portfolio/node_modules/esbuild/lib/main.js:678:12)\n    at Socket.readFromStdout (/private/tmp/fe-study1-ready/DbHridoy__React-Router-Portfolio/node_modules/esbuild/lib/main.js:601:7)\n    at Socket.emit (node:events:518:28)\n    at addChunk (node:internal/streams/readable:561:12)\u001b[39m\n"
+  },
+  "https://github.com/ZamanDev313/zaman-dev/tree/faa59b2270b190dee2c7ab23116c0cdcc5a25eaf": {
+   "build_tool": "react-scripts",
+   "nav_file_exists": true,
+   "page": [
+    {
+     "viewport": 1280,
+     "errors": [
+      "Supabase environment variables are missing."
+     ],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"ZamanDev\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 0
+    },
+    {
+     "viewport": 390,
+     "errors": [
+      "Supabase environment variables are missing."
+     ],
+     "preserve": [
+      {
+       "selector": "h2:has-text(\"ZamanDev\")",
+       "count": 0,
+       "visible": false
+      }
+     ],
+     "has_nav": 0
+    }
+   ],
+   "ok": false
+  }
+ },
+ "donors": {
+  "https://github.com/Coderx85/Portfolio/tree/bcfdb60c17e66b945f4bc5abdbaef5c91047ed80": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/IgorKowalczyk/igorkowalczyk.dev/tree/fc924bdd7ee29f2ef78ed73b315b9a6de3d2b517": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/tiendat2204/tien-dat-portfolio/tree/c2d5c0f83c31795d9723c34a9a1714d08beaac4d": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/alemoraru/nextjs-portofolio-website/tree/783c407e0fa69b4b859f70846b8857c52fd8ea43": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/divijg19/Lys/tree/cf9b804d840e5a0c939fddb5aefda996d82e8c4c": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/ShubhamVerma1811/Website/tree/87516ab444578e4900bd9d2222df85eea4981815": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/alvin-dennis/Personal-Portfolio-2.0/tree/6b4ff38466790dc9a2aec5a7fe957cf65293ab08": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/akhila-ariyachandra/akhilaariyachandra.com/tree/980c3806a80493b912471314ff4a38821f7c62bd": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/Tejas164321/TejasFolio/tree/ce05d062aa8f53835182cf2309a2bc806e7de526": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/kaganmert/next-shadcn-sanity-blog/tree/403919a95e3c8ae423c64d304fc61e7646f725be": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/aniruddhaadak80/Folio-Motion/tree/a2214076c624781169ca7e1fe26950ce503d1bf9": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/abjt14/portfolio-v7/tree/30be0ea6c903ada7b88d0a39bd2d5c93098479de": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/ahnafnafee/ahnafnafee.dev/tree/390a1b583d7246c0712391c4018f8ec14260c9c0": {
+   "ok": true,
+   "file_matches": true
+  },
+  "https://github.com/Memoona-tech/nextjs-portfolio/tree/d52df49129c78a44b55caa9da36b271e2521e097": {
+   "ok": true,
+   "file_matches": true
+  }
+ }
+}

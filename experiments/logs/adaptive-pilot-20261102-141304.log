@@ -1,0 +1,96 @@
+{
+  "tasks": 8,
+  "runs": 32,
+  "model": "gemini-3.6-flash",
+  "memory": "disabled",
+  "checks": "frozen host and native donor fixtures; identical warm source caches"
+}
+adaptive-pilot-v1: 32 runs planned, 5 already done (resuming)
+
+=== adaptive-pilot-v1 · task 3/8 · repeat 1/2 · A agent alone · 6/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/timlrx/tailwind-nextjs-starter-blog/tree/b45bef66b40c63b6f57c15ee8cd090682238df4c  (card)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating timlrx/tailwind-nextjs-starter-blog@b45bef66b40c63b6f57c15ee8cd090682238df4c in examples/
+    [oneshot] context: 9 files (3 donor, 6 source), 8,802 chars (~2,515 tokens) from the card and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 13,047 chars (~3,728 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 13,913 chars (~6,049 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 14,744 chars (~6,410 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 15,523 chars (~6,749 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] attempt 1: wrote 3, deleted 0, copied 0
+    [oneshot] build failed; sending the errors back (repair 1/2)
+    [oneshot] sending 8,157 chars (~3,547 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 10s and retrying (2/4)
+    [oneshot] attempt 2: wrote 1, deleted 0, copied 0
+    [oneshot] build passed
+    [browser] the page works at desktop and phone width
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: works at desktop and phone width
+    Code changes: 3 files (+218 -29 lines), see changes.diff
+    -> passed 8/8
+
+*** AD adaptive rules/report/agent vs A agent alone: INCONCLUSIVE
+    Inconclusive: the AI call failed for the report run, so nothing was written to compare. The report run newly failed: Works in the browser (desktop + phone). Code: agent alone changed 3 files (+218 -29), with the report 7 files (+137 -1). Only agent alone wrote: src/components/donor/DonorCard.css, src/components/donor/DonorCard.js. Only the report run wrote: src/fusion/card/components/Card.jsx, src/fusion/card/components/Image.jsx, src/fusion/card/components/Link.jsx, src/fusion/card/fusion.css, src/fusion/card/index.jsx, src/fusion/card/next-shims.jsx. Report adherence (read from the diff, automatic): the agent fully acted on 1 of 1 testable report items (0 partly); agent alone did 0 of the same 1 without being told. Handled only with the report: Next.js Image and Link dependencies in donor components. Tokens: 10,699 with the report vs 19,488 without (-45%).
+
+=== adaptive-pilot-v1 · task 4/8 · repeat 1/2 · AD adaptive rules/report/agent · 7/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b  (accordion)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Cloning muhammad-fiaz/portfolio@32aa93ec8ed0323da5d46be264898084c7fa634b into examples/
+    [port] 5 files under src/fusion/accordion, 5 packages, 0 assets; resolved 9, left for AI 4 (component-usage, version-mismatch, dependency-version-conflict, css-variable-undefined); mount: inserted
+    [adaptive] report: component-usage: src/components/retroui/Accordion.tsx gets its content (links, logo) from a parent page; ported alone it may render an empty bar; version-mismatch: react major version differs: donor 19.2.8, source ^18.2.0. check for removed APIs (e.g. ReactDOM.render, defaultProps on function components in 19).; dependency-version-conflict: Major version mismatch on shared packages. APIs used by the donor may not exist in the source's version. Evidence: react: source ^18.2.0 vs donor 19.2.8; css-variable-undefined: 1 variable(s) used by the section are defined nowhere. Not defined in either repo's scanned stylesheets; may come from an unscanned file. Evidence: --font-space-grotesk; Works in the browser (desktop + phone); On desktop (1280px): unexpected visibility: [data-fe-transfer="pilot-accordion"]; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On desktop (1280px): behavior failed at [data-fe-transfer="pilot-accordion"] button: TimeoutError; On phone (390px): unexpected visibility: [data-fe-transfer="pilot-accordion"]; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On phone (390px): behavior failed at [data-fe-transfer="pilot-accordion"] button: TimeoutError
+    [report] context: 9 files (3 donor, 6 source), 15,797 chars (~4,513 tokens) from the accordion and what it imports
+    [report] first message: system prompt ~594, scanner facts ~918, code ~5,866, repo descriptions ~248 = ~7,626 tokens (est.); one call, no tools
+    [report] sending 34,030 chars (~14,796 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [report] ```json
+{
+  "summary": "The donor Accordion component from src/components/retroui/Accordion.tsx uses Radix UI Accordion primitives and Hugeicons. It must be rendered as a compound component inside a wrapper with data-fe-transfer=\"pilot-accordion\" located after the main content (<Routes>) and befor
+    [report] answer was not valid JSON; asking once more
+    [report] sending 38,559 chars (~16,765 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [adaptive] agent: Select editor from unresolved compatibility signals
+    [agent] sending 19,910 chars (~8,657 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] read_file output src/App.js
+    [agent] sending 21,145 chars (~9,193 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [agent] gemini unavailable (bad request on this model (HTTP 400): Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea); switching provider
+    [agent] stopped: All providers failed. gemini: Function call is missing a thought_signature in functionCall parts. This is required for tools to work correctly, and missing thought_signature may lea
+    [browser] final check: On desktop (1280px): unexpected visibility: [data-fe-transfer="pilot-accordion"]; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On desktop (1280px): behavior failed at [data-fe-transfer="pilot-accordion"] button: TimeoutError; On phone (390px): unexpected visibility: [data-fe-transfer="pilot-accordion"]; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On phone (390px): behavior failed at [data-fe-transfer="pilot-accordion"] button: TimeoutError
+    Code changes: 9 files (+213 -0 lines), see changes.diff
+    -> partial 8/9
+
+=== adaptive-pilot-v1 · task 4/8 · repeat 1/2 · A agent alone · 8/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b  (accordion)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating muhammad-fiaz/portfolio@32aa93ec8ed0323da5d46be264898084c7fa634b in examples/
+    [oneshot] context: 8 files (3 donor, 5 source), 13,750 chars (~3,929 tokens) from the accordion and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 18,940 chars (~5,411 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 19,806 chars (~8,611 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 20,529 chars (~8,926 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 21,094 chars (~9,171 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 21,793 chars (~9,475 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 1: no <<<FILE>>> block found in an answer of 2,297 chars. Starts: " natively.\nHowever, to be 100% sure in test environments (e.g. synthetic events / Playwright / Testing Library), handles:\n`onClick` calls `toggleItem(value)`.\nIf `onKeyDown` receives Space (`' '`) or " ... ends: 'button!\nHowever, to be 100% sure in all test runners (e.g. `userEvent.type`, `fireEvent.keyDown`), we can also add an `onKeyDown` handler:\n```js\nconst'
+    [oneshot] attempt 1: wrote 0, deleted 0, copied 0
+    [oneshot] sending 22,193 chars (~9,649 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 22,920 chars (~9,965 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 23,661 chars (~10,287 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 24,340 chars (~10,583 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (rate limit / quota (HTTP 429): You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-); switching provider
+    [oneshot] attempt 2 could not be completed: All providers failed. gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://
+    [agent] stopped: All providers failed. gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0
+    Code changes: 0 files (+0 -0 lines), see changes.diff
+    -> quota reached during this run; it will be redone when you resume
+
+QUOTA REACHED after 2 new run(s) today (7/32 done). Run the same command again after the quota resets (midnight Pacific) to continue.

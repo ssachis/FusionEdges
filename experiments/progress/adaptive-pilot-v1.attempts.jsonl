@@ -1,0 +1,22 @@
+{"event": "started", "cell": "r1|t1|adaptive", "run_id": "20261102-134501-adaptive", "condition": "adaptive"}
+{"event": "recorded", "cell": "r1|t1|adaptive", "run_id": "20261102-134501-adaptive", "condition": "adaptive", "quota_retry": false, "tokens": 8718, "seconds": 103.8, "status": "done"}
+{"event": "started", "cell": "r1|t1|prompt", "run_id": "20261102-134646-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t1|prompt", "run_id": "20261102-134646-prompt", "condition": "prompt", "quota_retry": false, "tokens": 21047, "seconds": 221.8, "status": "done"}
+{"event": "started", "cell": "r1|t2|adaptive", "run_id": "20261102-135028-adaptive", "condition": "adaptive"}
+{"event": "recorded", "cell": "r1|t2|adaptive", "run_id": "20261102-135028-adaptive", "condition": "adaptive", "quota_retry": false, "tokens": 19631, "seconds": 108.9, "status": "done"}
+{"event": "started", "cell": "r1|t2|prompt", "run_id": "20261102-135218-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t2|prompt", "run_id": "20261102-135218-prompt", "condition": "prompt", "quota_retry": true, "tokens": 0, "seconds": 102.1, "status": "done"}
+{"event": "started", "cell": "r1|t2|prompt", "run_id": "20261102-135926-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t2|prompt", "run_id": "20261102-135926-prompt", "condition": "prompt", "quota_retry": false, "tokens": 30257, "seconds": 364.0, "status": "done"}
+{"event": "started", "cell": "r1|t3|adaptive", "run_id": "20261102-140531-adaptive", "condition": "adaptive"}
+{"event": "recorded", "cell": "r1|t3|adaptive", "run_id": "20261102-140531-adaptive", "condition": "adaptive", "quota_retry": false, "tokens": 10699, "seconds": 56.2, "status": "done"}
+{"event": "started", "cell": "r1|t3|prompt", "run_id": "20261102-140629-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t3|prompt", "run_id": "20261102-140629-prompt", "condition": "prompt", "quota_retry": true, "tokens": 0, "seconds": 75.4, "status": "done"}
+{"event": "started", "cell": "r1|t3|prompt", "run_id": "20261102-141305-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t3|prompt", "run_id": "20261102-141305-prompt", "condition": "prompt", "quota_retry": false, "tokens": 19488, "seconds": 173.1, "status": "done"}
+{"event": "started", "cell": "r1|t4|adaptive", "run_id": "20261102-141600-adaptive", "condition": "adaptive"}
+{"event": "recorded", "cell": "r1|t4|adaptive", "run_id": "20261102-141600-adaptive", "condition": "adaptive", "quota_retry": false, "tokens": 28065, "seconds": 207.1, "status": "done"}
+{"event": "started", "cell": "r1|t4|prompt", "run_id": "20261102-141928-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t4|prompt", "run_id": "20261102-141928-prompt", "condition": "prompt", "quota_retry": true, "tokens": 0, "seconds": 194.2, "status": "done"}
+{"event": "started", "cell": "r1|t4|prompt", "run_id": "20261102-143534-prompt", "condition": "prompt"}
+{"event": "recorded", "cell": "r1|t4|prompt", "run_id": "20261102-143534-prompt", "condition": "prompt", "quota_retry": true, "tokens": 0, "seconds": 401.6, "status": "done"}

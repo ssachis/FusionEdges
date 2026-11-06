@@ -1,0 +1,46 @@
+host Oliver-Sampa/hair-salon-website/tree/e5980243c1a8c7e19f10e31
+    OK [(1, True), (1, True)] []
+host xshshahab/portfolio/tree/89298c18dd2fd44920c8e28102d835f61bc
+    OK [(1, True), (1, True)] []
+host nagoloumdaniel/Nagos/tree/8e72a886e004ec4f6428d412ac7936f652
+    PROBLEM [(1, True), (0, False)] []
+host uzairkhanadv/My-react-portfolio/tree/2cd0976d97e3f73d2dd3e33
+    PROBLEM [(0, False), (0, False)] []
+host juanfalibene/music-portfolio/tree/50095714c9fcd86a76fb3ac2f1
+    PROBLEM [(0, False), (0, False)] []
+host Milan-960/Myportfolio/tree/4696ddd0430c3849a1ca0282bfa61a98f
+    PROBLEM [(0, False), (0, False)] ["Cannot use 'in' operator to search for 'default' in undefined"]
+host Sri-3116/Portfolio/tree/90cab1d3cd20fcc0e9ef97ffe1bec31be914
+    OK [(1, True), (1, True)] []
+host RajHarsh03/Portfolio/tree/c11b84c7fc9876f13327ae3ca29c1017ef
+    OK [(1, True), (1, True)] []
+host dineshkumar-mb/portfolio/tree/4b3605cdd7f333ae87206f6bd42178
+    OK [(1, True), (1, True)] []
+host mbronstein1/new-portfolio/tree/ab9b5ccf8d68ef25cba048c962321
+    OK [(1, True), (1, True)] []
+host Arif596/Portfolio/tree/6e3758df3a7a4d3d2afef852e4970d1aefcef
+    OK [(1, True), (1, True)] []
+host lroy-stack/portfolio-react/tree/0642a6e12ddf13fdc749cf5c74cb
+host xbnikhil/Nikhil-Portfolio/tree/a7447a80ac6c1c4c61e595c9ccf62
+    PROBLEM [(0, False), (0, False)] []
+host DbHridoy/React-Router-Portfolio/tree/23935161bbcb94a17ab95c3
+host ZamanDev313/zaman-dev/tree/faa59b2270b190dee2c7ab23116c0cdcc
+    PROBLEM [(0, False)] ['Supabase environment variables are missing.']
+
+hosts ok 7/15, donors ok 14/14
+  needs attention: https://github.com/nagoloumdaniel/Nagos/tree/8e72a886e004ec4f6428d412ac7936f65220c0f1 
+  needs attention: https://github.com/uzairkhanadv/My-react-portfolio/tree/2cd0976d97e3f73d2dd3e339ff70293e1ce8cbb0 
+  needs attention: https://github.com/juanfalibene/music-portfolio/tree/50095714c9fcd86a76fb3ac2f1ef22a4dc2c41c7 
+  needs attention: https://github.com/Milan-960/Myportfolio/tree/4696ddd0430c3849a1ca0282bfa61a98fd51ffec 
+  needs attention: https://github.com/lroy-stack/portfolio-react/tree/0642a6e12ddf13fdc749cf5c74cbd34694b6ac80 build: vate/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:19705:13)
+    at Object.renderChunk (file:///private/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:19740:27)
+    at file:///private/tmp/fe-study1-ready/lroy-stack__portfolio-react/node_modules/rollup/dist/es/shared/node-entry.js:24031:40[39m
+
+  needs attention: https://github.com/xbnikhil/Nikhil-Portfolio/tree/a7447a80ac6c1c4c61e595c9ccf6202d8df0d4b0 
+  needs attention: https://github.com/DbHridoy/React-Router-Portfolio/tree/23935161bbcb94a17ab95c3e48b91f8a88001920 build: modules/esbuild/lib/main.js:623:9)
+    at handleIncomingPacket (/private/tmp/fe-study1-ready/DbHridoy__React-Router-Portfolio/node_modules/esbuild/lib/main.js:678:12)
+    at Socket.readFromStdout (/private/tmp/fe-study1-ready/DbHridoy__React-Router-Portfolio/node_modules/esbuild/lib/main.js:601:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)[39m
+
+  needs attention: https://github.com/ZamanDev313/zaman-dev/tree/faa59b2270b190dee2c7ab23116c0cdcc5a25eaf 

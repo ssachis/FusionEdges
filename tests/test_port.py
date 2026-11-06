@@ -356,3 +356,55 @@ class QualitativeTest(unittest.TestCase):
         self.assertEqual(s["by_condition"]["M"]["good_for_user"], 1)
         self.assertEqual(s["by_condition"]["M"]["median_site_lines_removed"], 1)
         self.assertEqual(s["by_condition"]["A"]["median_site_lines_removed"], 30)
+
+
+class PortV4Test(unittest.TestCase):
+    """Fixes from the side-by-side review (2-3 Nov)."""
+
+    def _site(self, files):
+        d = Path(tempfile.mkdtemp())
+        for rel, text in files.items():
+            (d / rel).parent.mkdir(parents=True, exist_ok=True)
+            (d / rel).write_text(text)
+        return d
+
+    def test_real_nav_beats_header_name_match(self):
+        d = self._site({
+            "src/App.jsx": "export default function App(){ return <div/> }",
+            "src/components/ExternalComponents/HeaderSocials.jsx":
+                'export default function HeaderSocials(){ return <div><a href="a">1</a><a href="b">2</a><a href="c">3</a></div> }',
+            "src/components/Section/Nav.jsx":
+                'export default function Nav(){ return <nav><a href="/">Home</a><a href="/x">X</a></nav> }'})
+        try:
+            self.assertEqual(port.existing_component(d, "navbar"), "src/components/Section/Nav.jsx")
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_commented_out_markup_ignored(self):
+        t = 'const N=()=>(<nav><a href="/">a</a></nav>);\n// return (<section><h1>old</h1><p/><p/></section>)\n'
+        self.assertFalse(port.holds_more_than_nav(t))
+        self.assertTrue(port.holds_more_than_nav('const N=()=>(<><nav><a/></nav><section><h1>Hero</h1></section></>);'))
+
+    def test_only_the_nav_is_replaced_when_the_component_holds_the_hero(self):
+        d = self._site({"src/components/navbar.jsx":
+                        'import React from "react";\nexport default function Navbar(){ return (<div>'
+                        '<nav className="x"><a href="/">Home</a></nav><section><h1>Pizza</h1></section></div>); }\n'})
+        try:
+            self.assertTrue(port.replace_nav_in(d, "src/components/navbar.jsx", "src/fusion/navbar/index.jsx", "FusionNavbar"))
+            t = (d / "src/components/navbar.jsx").read_text()
+            self.assertIn("<FusionNavbar />", t)
+            self.assertIn("<h1>Pizza</h1>", t)
+            self.assertNotIn('<nav className="x">', t)
+            self.assertIn('import FusionNavbar from "../fusion/navbar"', t)
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
+    def test_next_image_object_and_styled_jsx(self):
+        t = port.static_image_objects('import ICON from "../assets/icon.svg";\n<img src={ICON.src}/>')
+        self.assertIn('import ICON__url from "../assets/icon.svg";', t)
+        self.assertIn("const ICON = Object.assign(new String(ICON__url), { src: ICON__url });", t)
+        got = []
+        new, n = port.strip_styled_jsx('<div>x<style jsx>{`.a :global(li){ @apply mr-5; }`}</style></div>', got)
+        self.assertEqual(n, 1)
+        self.assertNotIn("<style", new)
+        self.assertEqual(port.scope_css(got[0], ".fe-navbar").strip(), ".fe-navbar .a li { @apply mr-5; }")

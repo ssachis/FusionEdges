@@ -1,0 +1,61 @@
+{
+  "tasks": 8,
+  "runs": 32,
+  "model": "gemini-3.6-flash",
+  "memory": "disabled",
+  "checks": "frozen host and native donor fixtures; identical warm source caches"
+}
+adaptive-pilot-v1: 32 runs planned, 7 already done (resuming)
+
+=== adaptive-pilot-v1 · task 4/8 · repeat 1/2 · A agent alone · 8/32 ===
+    https://github.com/SkyCooper/ReactRouterWebpage/tree/aee65a5277366f3bb3dc2b004a257d95ae2dd3b6  <-  https://github.com/muhammad-fiaz/portfolio/tree/32aa93ec8ed0323da5d46be264898084c7fa634b  (accordion)
+    Updating SkyCooper/ReactRouterWebpage@aee65a5277366f3bb3dc2b004a257d95ae2dd3b6 in examples/
+    Updating muhammad-fiaz/portfolio@32aa93ec8ed0323da5d46be264898084c7fa634b in examples/
+    [oneshot] context: 8 files (3 donor, 5 source), 13,750 chars (~3,929 tokens) from the accordion and what it imports; budget 20,000 chars (from FUSIONEDGES_CONTEXT_CHARS)
+    [oneshot] first message: 18,940 chars (~5,411 tokens). If a provider answers 413, its limit is below this plus the answer size.
+    [oneshot] sending 19,806 chars (~8,611 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 20,459 chars (~8,895 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 10s and retrying (2/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 21,070 chars (~9,161 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 21,756 chars (~9,459 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] attempt 1: no <<<FILE>>> block found in an answer of 2,222 chars. Starts: ' `""`).\n   - Function `toggleItem(value)`: if single & collapsible, if `openItem === value`, set `openItem = null`, else `openItem = value`.\n\n2. `<Accordion.Item value="pilot" className="...">`:\n   - ' ... ends: 'Open ? "true" : "false"`\n    - `data-state`: `isOpen ? "open" : "closed"`\n    - `data-orientation`: `"vertical"`\n    - className: `"flex flex-1 items-'
+    [oneshot] attempt 1: wrote 0, deleted 0, copied 0
+    [oneshot] sending 22,118 chars (~9,617 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 22,858 chars (~9,938 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 23,520 chars (~10,226 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 10s and retrying (2/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 15s and retrying (3/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 20s and retrying (4/4)
+    [oneshot] answer was cut off; asking it to continue
+    [oneshot] sending 24,246 chars (~10,542 tokens, estimated at 2.3 chars per token) to gemini, answer cap 4,096 tokens
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 5s and retrying (1/4)
+    [oneshot] gemini unavailable (provider error (HTTP 503): This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.); switching provider
+    [oneshot] the provider is busy (HTTP 503); waiting 10s and retrying (2/4)
+    [oneshot] gemini unavailable (rate limit / quota (HTTP 429): You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-); switching provider
+    [oneshot] attempt 2 could not be completed: All providers failed. gemini: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: This m
+    [agent] stopped: All providers failed. gemini: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later. | gemini: You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-
+    Installing dependencies and building the output (first time can take a few minutes)...
+    [browser] final check: On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"]; found 0; On desktop (1280px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"]; found 0; On phone (390px): expected exactly one [data-fe-transfer="pilot-accordion"] button; found 0
+    Code changes: 0 files (+0 -0 lines), see changes.diff
+    -> quota reached during this run; it will be redone when you resume
+
+QUOTA REACHED after 0 new run(s) today (7/32 done). Run the same command again after the quota resets (midnight Pacific) to continue.
